@@ -2,10 +2,11 @@ import asyncio
 import json
 import logging
 
-from minecraft import Buffer, Connection, ConnectionStatus, Server, utils
-from minecraft.connection import CloseConnection
+from cubes import Buffer, Server, utils
+from cubes.connection import CloseConnection, Connection, ConnectionStatus
 
 CURRRENT_PROTOCOL_VERSION = 756
+
 
 log = logging.getLogger(__name__)
 

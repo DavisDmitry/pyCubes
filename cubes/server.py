@@ -3,8 +3,8 @@ import logging
 import signal
 from typing import Awaitable, Callable, Optional
 
-from minecraft.buffer import Buffer
-from minecraft.connection import CloseConnection, Connection, ConnectionStatus
+from cubes.buffer import Buffer
+from cubes.connection import CloseConnection, Connection, ConnectionStatus
 
 log = logging.getLogger(__name__)
 

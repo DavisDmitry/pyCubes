@@ -5,7 +5,7 @@ from contextvars import ContextVar
 from enum import IntEnum
 from typing import Optional
 
-from minecraft.buffer import Buffer, EmptyBuffer
+from cubes.buffer import Buffer, EmptyBuffer
 
 _CONNECTION = ContextVar(__name__)
 

@@ -1,6 +1,6 @@
-# PyCubes
+# pyCubes
 
-PyCubes — это библиотека для получения и обработки пакетов от клиента Minecraft Java Edition.
+pyCubes — это библиотека для получения и обработки пакетов от клиента Minecraft Java Edition.
 
 **❗ 0.x версии не стабильны, классы, их методы и аргументы могут изменяться.**
 
@@ -8,7 +8,7 @@ PyCubes — это библиотека для получения и обраб�
 
 ```bash
 git clone git@github.com:DavisDmitry/pyCubes.git
-cd PyCubes
+cd pyCubes
 ```
 
 ## Использование
@@ -16,7 +16,7 @@ cd PyCubes
 Сначала вам нужно создать экземпляр сервера:
 
 ```python3
-from minecraft import Server
+from cubes import Server
 
 server = Server('127.0.0.1', 25565)
 ```
@@ -25,7 +25,7 @@ server = Server('127.0.0.1', 25565)
 
 ```python3
 import struct
-from minecraft import Buffer, ConnectionStatus
+from cubes import Buffer, ConnectionStatus
 
 async def process_handshake(packet: Buffer) -> None:
     print('Protocol version:', packet.unpack_varint())
