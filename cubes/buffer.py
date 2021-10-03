@@ -54,7 +54,7 @@ class ReadBuffer(_Buffer):
         """Reads length bytes from buffer.
 
         Note:
-            If length <= 0 or None returns all buffer data.
+            If length <= 0 or None returns all buffer data from current position.
 
         Args:
             length: number of bytes to read
@@ -63,7 +63,7 @@ class ReadBuffer(_Buffer):
             result = self._data[self._pos : self._pos + length]
             self._pos += length
         else:
-            result = self._data[self._pos]
+            result = self._data[self._pos :]
         return result
 
     @property
@@ -99,7 +99,7 @@ class ReadBuffer(_Buffer):
     @property
     def long(self) -> int:
         """Signed 64-bit integer."""
-        return struct.unpack(">l", self.read(8))[0]
+        return struct.unpack(">q", self.read(8))[0]
 
     @property
     def float(self) -> float:
@@ -118,29 +118,42 @@ class ReadBuffer(_Buffer):
         Note:
             Max string length is 32767 (b'\xff\xff\x01') bytes — 3 bytes VarInt prefix.
         """
-        return self.read(self._unpack_varint_varlong(max_bytes=3)).decode()
+        return self.read(self._unpack_varint(max_bytes=3)).decode()
 
-    def _unpack_varint_varlong(self, max_bytes: int = 5) -> int:
+    def _unpack_varint(self, max_bytes: int = 5) -> int:
         result = 0
         for i in range(max_bytes):
             byte = self.read(1)
             if byte == b"":
-                return result
-            byte = byte[0]
+                break
+            byte = ord(byte)
             result |= (byte & 0x7F) << 7 * i
             if not byte & 0x80:
                 break
+        if result & (1 << 31):
+            result -= 1 << 32
         return result
 
     @property
     def varint(self) -> int:
         """Variable-length integer."""
-        return self._unpack_varint_varlong()
+        return self._unpack_varint()
 
     @property
     def varlong(self) -> int:
         """Variable-length integer."""
-        return self._unpack_varint_varlong(max_bytes=10)
+        result = 0
+        for i in range(10):
+            byte = self.read(1)
+            if byte == b"":
+                break
+            byte = ord(byte)
+            result |= (byte & 0x7F) << 7 * i
+            if not byte & 0x80:
+                break
+        if result & (1 << 63):
+            result -= 1 << 64
+        return result
 
 
 class WriteBuffer(_Buffer):
@@ -153,7 +166,7 @@ class WriteBuffer(_Buffer):
         Todo:
             * implement compression
         """
-        return self._encode_varint_varlong(len(self._data), 3) + self._data
+        return self._encode_varint(len(self._data), 3) + self._data
 
     def write(self, data: bytes) -> "WriteBuffer":
         """Appends data to buffer."""
@@ -186,7 +199,7 @@ class WriteBuffer(_Buffer):
 
     def pack_long(self, value: int) -> "WriteBuffer":
         """Packs signed 64-bit integer."""
-        return self.write(struct.pack(">l", value))
+        return self.write(struct.pack(">q", value))
 
     def pack_float(self, value: float) -> "WriteBuffer":
         """Packs signed 32-bit float."""
@@ -198,26 +211,39 @@ class WriteBuffer(_Buffer):
 
     def pack_string(self, value: str) -> "WriteBuffer":
         """Packs UTF-8 string."""
-        self.write(self._encode_varint_varlong(len(value), 3))
+        self.write(self._encode_varint(len(value), 3))
         return self.write(value.encode())
 
     @staticmethod
-    def _encode_varint_varlong(value: int, max_bytes: int = 5) -> bytes:
+    def _encode_varint(value: int, max_bytes: int = 5) -> bytes:
         if value < 0:
             value += 1 << 32
         result = b""
         for _ in range(max_bytes):
             byte = value & 0x7F
             value >>= 7
-            result += struct.pack(">B", byte | (0x80 if value > 0 else 0))
+            result += struct.pack("B", byte | (0x80 if value > 0 else 0))
+            if value == 0:
+                break
+        return result
+
+    @staticmethod
+    def _encode_varlong(value: int) -> bytes:
+        if value < 0:
+            value += 1 << 64
+        result = b""
+        for _ in range(10):
+            byte = value & 0x7F
+            value >>= 7
+            result += struct.pack("B", byte | (0x80 if value > 0 else 0))
             if value == 0:
                 break
         return result
 
     def pack_varint(self, value: int) -> "WriteBuffer":
         """Packs variable-length integer."""
-        return self.write(self._encode_varint_varlong(value, 5))
+        return self.write(self._encode_varint(value))
 
     def pack_varlong(self, value: int) -> "WriteBuffer":
         """Packs variable-length integer."""
-        return self.write(self._encode_varint_varlong(value, 10))
+        return self.write(self._encode_varlong(value))
