@@ -1,19 +1,20 @@
 # pyCubes
 
-pyCubes — это библиотека для получения и обработки пакетов от клиента Minecraft Java Edition.
+pyCubes is a library for serializing and deserializing Minecraft Java Edition packets.
 
-**❗ 0.x версии не стабильны, классы, их методы и аргументы могут изменяться.**
+**❗ 0.x versions are not stable. The library API is subject to change.**
 
-Для использования PyCubes склонируйте этот репозиторий и перейдите в директорию с ним:
+[Русская версия](https://github.com/DavisDmitry/pyCubes/blob/master/README.ru.md)
+
+Installation:
 
 ```bash
-git clone git@github.com:DavisDmitry/pyCubes.git
-cd pyCubes
+pip install pyCubes
 ```
 
-## Использование
+## Usage:
 
-Сначала вам нужно создать экземпляр сервера:
+First you need to create application instance:
 
 ```python3
 import cubes
@@ -21,7 +22,7 @@ import cubes
 app = cubes.Application('127.0.0.1', 25565)
 ```
 
-После этого добавьте низкоуровневый хендлер:
+After that add a low-level handler:
 
 ```python3
 async def process_handshake(packet: cubes.ReadBuffer) -> None:
@@ -33,31 +34,31 @@ async def process_handshake(packet: cubes.ReadBuffer) -> None:
 app.add_low_level_handler(cubes.ConnectionStatus.HANDSHAKE, 0x00, process_handshake)
 ```
 
-Остаётся только запустить сервер:
+All that remains is to launch the application:
 
 ```python3
 app.run()
 ```
 
-Более подробный пример можно найти [здесь](https://github.com/DavisDmitry/pyCubes/blob/main/example.py).
+A more detailed example can be found [here](https://github.com/DavisDmitry/pyCubes/blob/master/example.py).
 
-Все пакеты описаны [здесь](https://wiki.vg/Protocol).
+All packages are described [here](https://wiki.vg/Protocol).
 
-## Разработка
+## Development
 
-Запуск форматирования:
+Run formatting:
 
 ```bash
 make format
 ```
 
-Запуск линтеров:
+Run linters:
 
 ```bash
 make lint
 ```
 
-Запуск тестов:
+Run tests:
 
 ```bash
 make test
