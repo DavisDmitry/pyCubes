@@ -16,30 +16,27 @@ cd pyCubes
 Сначала вам нужно создать экземпляр сервера:
 
 ```python3
-from cubes import Server
+import cubes
 
-server = Server('127.0.0.1', 25565)
+app = cubes.Application('127.0.0.1', 25565)
 ```
 
 После этого добавьте низкоуровневый хендлер:
 
 ```python3
-import struct
-from cubes import Buffer, ConnectionStatus
+async def process_handshake(packet: cubes.ReadBuffer) -> None:
+    print('Protocol version:', packet.varint)
+    print('Server host:', packet.string)
+    print('Server port:', unsigned_short)
+    print('Next state:', ConnectionStatus(packet.varint))
 
-async def process_handshake(packet: Buffer) -> None:
-    print('Protocol version:', packet.unpack_varint())
-    print('Server host:', packet.unpack_string())
-    print('Server port:', struct.unpack('>B', packet.read(2)))
-    print('Next state:', ConnectionStatus(packet.unpack_varint()))
-
-server.add_low_level_handler(ConnectionStatus.HANDSHAKE, 0x00, process_handshake)
+app.add_low_level_handler(ConnectionStatus.HANDSHAKE, 0x00, process_handshake)
 ```
 
 Остаётся только запустить сервер:
 
 ```python3
-server.run()
+app.run()
 ```
 
 Более подробный пример можно найти [здесь](https://github.com/DavisDmitry/pyCubes/blob/main/example.py).

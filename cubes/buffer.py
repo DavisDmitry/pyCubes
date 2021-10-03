@@ -3,36 +3,46 @@ import struct
 from typing import Optional
 
 
-class EmptyBuffer(Exception):
-    pass
+class EmptyBufferError(Exception):
+    """Exception raising when buffer is empty."""
 
 
-class Buffer:
+class _Buffer:
+    # pylint: disable=R0903
     def __init__(self, data: bytes = b""):
-        self._data, self._pos = data, 0
+        self._data = data
 
     @property
     def data(self) -> bytes:
+        """Buffer data."""
         return self._data
 
-    @property
-    def packed(self) -> bytes:
-        # TODO: implement compression
-        return self.encode_varint(len(self._data)) + self._data
 
-    def reset_pos(self) -> None:
+class ReadBuffer(_Buffer):
+    """Class for parsing data by types."""
+
+    def __init__(self, data: bytes = b""):
+        super().__init__(data=data)
         self._pos = 0
 
     @classmethod
-    async def from_reader(
-        cls, reader: asyncio.StreamReader, threshold: int = -1
-    ) -> "Buffer":
-        # TODO: implement compression
+    async def from_reader(cls, reader: asyncio.StreamReader) -> "ReadBuffer":
+        r"""Creates a ReadBuffer instance from asyncio.StreamReader.
+
+        Note:
+            Packet length is 2097151 (b'\xff\xff\x7f') bytes — 3 bytes VarInt prefix.
+
+        Raises:
+            EmptyBufferError: when buffer is empty
+
+        Todo:
+            * implement compression
+        """
         length = 0
         for i in range(3):
             byte = await reader.read(1)
             if byte == b"":
-                raise EmptyBuffer
+                raise EmptyBufferError
             byte = byte[0]
             length |= (byte & 0x7F) << 7 * i
             if not byte & 0x80:
@@ -41,6 +51,14 @@ class Buffer:
         return cls(data)
 
     def read(self, length: Optional[int] = None) -> bytes:
+        """Reads length bytes from buffer.
+
+        Note:
+            If length <= 0 or None returns all buffer data.
+
+        Args:
+            length: number of bytes to read
+        """
         if length:
             result = self._data[self._pos : self._pos + length]
             self._pos += length
@@ -48,16 +66,63 @@ class Buffer:
             result = self._data[self._pos]
         return result
 
-    def write(self, data: bytes) -> "Buffer":
-        self._data += data
-        return self
+    @property
+    def boolean(self) -> bool:
+        """Either False or True."""
+        return struct.unpack("?", self.read(1))[0]
 
-    def unpack_varint(self) -> int:
+    @property
+    def byte(self) -> int:
+        """Signed 8-bit integer."""
+        return struct.unpack("b", self.read(1))[0]
+
+    @property
+    def unsigned_byte(self) -> int:
+        """Unsigned 8-bit integer."""
+        return struct.unpack("B", self.read(1))[0]
+
+    @property
+    def short(self) -> int:
+        """Signed 16-bit integer."""
+        return struct.unpack(">h", self.read(2))[0]
+
+    @property
+    def unsigned_short(self) -> int:
+        """Unsigned 16-bit integer."""
+        return struct.unpack(">H", self.read(2))[0]
+
+    @property
+    def int(self) -> int:
+        """Signed 32-bit integer."""
+        return struct.unpack(">i", self.read(4))[0]
+
+    @property
+    def long(self) -> int:
+        """Signed 64-bit integer."""
+        return struct.unpack(">l", self.read(8))[0]
+
+    @property
+    def float(self) -> float:
+        """Signed 32-bit float."""
+        return struct.unpack(">f", self.read(4))[0]
+
+    @property
+    def double(self) -> float:
+        """Signed 64-bit float."""
+        return struct.unpack(">d", self.read(8))[0]
+
+    @property
+    def string(self) -> str:
+        r"""UTF-8 string.
+
+        Note:
+            Max string length is 32767 (b'\xff\xff\x01') bytes — 3 bytes VarInt prefix.
         """
-        https://wiki.vg/Protocol#VarInt_and_VarLong
-        """
+        return self.read(self._unpack_varint_varlong(max_bytes=3)).decode()
+
+    def _unpack_varint_varlong(self, max_bytes: int = 5) -> int:
         result = 0
-        for i in range(5):
+        for i in range(max_bytes):
             byte = self.read(1)
             if byte == b"":
                 return result
@@ -67,15 +132,81 @@ class Buffer:
                 break
         return result
 
+    @property
+    def varint(self) -> int:
+        """Variable-length integer."""
+        return self._unpack_varint_varlong()
+
+    @property
+    def varlong(self) -> int:
+        """Variable-length integer."""
+        return self._unpack_varint_varlong(max_bytes=10)
+
+
+class WriteBuffer(_Buffer):
+    """Class for serializing data by types."""
+
+    @property
+    def packed(self) -> bytes:
+        """Packed buffer data.
+
+        Todo:
+            * implement compression
+        """
+        return self._encode_varint_varlong(len(self._data), 3) + self._data
+
+    def write(self, data: bytes) -> "WriteBuffer":
+        """Appends data to buffer."""
+        self._data += data
+        return self
+
+    def pack_boolean(self, value: bool) -> "WriteBuffer":
+        """Packs True or False."""
+        return self.write(struct.pack("?", value))
+
+    def pack_byte(self, value: int) -> "WriteBuffer":
+        """Packs signed 8-bit integer."""
+        return self.write(struct.pack("b", value))
+
+    def pack_unsigned_byte(self, value: int) -> "WriteBuffer":
+        """Packs unsigned 8-bit integer."""
+        return self.write(struct.pack("B", value))
+
+    def pack_short(self, value: int) -> "WriteBuffer":
+        """Packs signed 16-bit integer."""
+        return self.write(struct.pack(">h", value))
+
+    def pack_unsigned_short(self, value: int) -> "WriteBuffer":
+        """Packs unsigned 16-bit integer."""
+        return self.write(struct.pack(">H", value))
+
+    def pack_int(self, value: int) -> "WriteBuffer":
+        """Packs signed 32-bit integer."""
+        return self.write(struct.pack(">i", value))
+
+    def pack_long(self, value: int) -> "WriteBuffer":
+        """Packs signed 64-bit integer."""
+        return self.write(struct.pack(">l", value))
+
+    def pack_float(self, value: float) -> "WriteBuffer":
+        """Packs signed 32-bit float."""
+        return self.write(struct.pack(">f", value))
+
+    def pack_double(self, value: float) -> "WriteBuffer":
+        """Packs signed 64-bit double."""
+        return self.write(struct.pack(">d", value))
+
+    def pack_string(self, value: str) -> "WriteBuffer":
+        """Packs UTF-8 string."""
+        self.write(self._encode_varint_varlong(len(value), 3))
+        return self.write(value.encode())
+
     @staticmethod
-    def encode_varint(value: int) -> bytes:
-        """
-        https://wiki.vg/Protocol#VarInt_and_VarLong
-        """
+    def _encode_varint_varlong(value: int, max_bytes: int = 5) -> bytes:
         if value < 0:
             value += 1 << 32
         result = b""
-        for _ in range(5):
+        for _ in range(max_bytes):
             byte = value & 0x7F
             value >>= 7
             result += struct.pack(">B", byte | (0x80 if value > 0 else 0))
@@ -83,21 +214,10 @@ class Buffer:
                 break
         return result
 
-    def pack_varint(self, value: int) -> "Buffer":
-        """
-        https://wiki.vg/Protocol#VarInt_and_VarLong
-        """
-        return self.write(self.encode_varint(value))
+    def pack_varint(self, value: int) -> "WriteBuffer":
+        """Packs variable-length integer."""
+        return self.write(self._encode_varint_varlong(value, 5))
 
-    def unpack_string(self) -> str:
-        """
-        Unpack string from https://wiki.vg/Protocol#Data_types
-        """
-        return self.read(self.unpack_varint()).decode()
-
-    def pack_string(self, value: str) -> "Buffer":
-        """
-        Pack string from https://wiki.vg/Protocol#Data_types
-        """
-        self.pack_varint(len(value))
-        return self.write(value.encode())
+    def pack_varlong(self, value: int) -> "WriteBuffer":
+        """Packs variable-length integer."""
+        return self.write(self._encode_varint_varlong(value, 10))

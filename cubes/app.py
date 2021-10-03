@@ -3,18 +3,17 @@ import logging
 import signal
 from typing import Awaitable, Callable, Optional
 
-from cubes.buffer import Buffer
-from cubes.connection import CloseConnection, Connection, ConnectionStatus
+from cubes import buffer, connection
 
 log = logging.getLogger(__name__)
 
 
 class GracefulExit(SystemExit):
-    pass
+    """Exception raising when server should stop."""
 
 
-async def _default_unhandled_packet_handler(packet: Buffer) -> None:
-    conn = Connection.get_current()
+async def _default_unhandled_packet_handler(packet: buffer.ReadBuffer) -> None:
+    conn = connection.Connection.get_current()
     packet.reset_pos()
     log.debug(
         "Handler for packet id %i with state %s not implemented.",
@@ -23,8 +22,14 @@ async def _default_unhandled_packet_handler(packet: Buffer) -> None:
     )
 
 
-class Server:
-    _handlers: dict[tuple[ConnectionStatus, int], Awaitable]
+class Application:
+    """Class for creating Minecraft Java Edition server implemetation.
+
+    Examples:
+        >>> app = Application('0.0.0.0', 25565)
+    """
+
+    _handlers: dict[tuple[connection.ConnectionStatus, int], Awaitable]
     _unhandled_packet_handler: Awaitable
 
     def __init__(self, host: str, port: int):
@@ -33,6 +38,7 @@ class Server:
         self._unhandled_packet_handler = _default_unhandled_packet_handler
 
     def run(self) -> None:
+        """Starts application."""
         loop = asyncio.get_event_loop()
         try:
             loop.add_signal_handler(signal.SIGINT, self._raise_graceful_exit)
@@ -48,8 +54,18 @@ class Server:
             log.info("Server stopped")
 
     def add_low_level_handler(
-        self, conn_status: ConnectionStatus, packet_id: int, func: Callable
+        self, conn_status: connection.ConnectionStatus, packet_id: int, func: Callable
     ) -> None:
+        """Adds packet handler.
+
+        Raises:
+            ValueError: when handler with the same filter (conn_status and packet_id)
+                already added
+
+        Examples:
+            >>> server.add_low_level_handler(ConnectionStatus.HANDSHAKE,
+                    0x00, process_handshake)
+        """
         if self._handlers.get((conn_status, packet_id)):
             raise ValueError(
                 f"Handler for status {conn_status} and packet "
@@ -72,14 +88,14 @@ class Server:
                 self._accept_connection, self._host, self._port
             )
             await server.serve_forever()
-        except Exception as e:
-            log.exception(e)
-            raise GracefulExit
+        except Exception as exc:
+            log.exception(exc)
+            raise GracefulExit from exc
 
     async def _accept_connection(
         self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter
     ) -> None:
-        conn = Connection(reader, writer)
+        conn = connection.Connection(reader, writer)
         conn.set_current()
         try:
             while True:
@@ -87,15 +103,17 @@ class Server:
                 if not packet:
                     return
                 await self._process_packet(conn, packet)
-        except CloseConnection:
+        except connection.CloseConnection:
             log.debug("Connection closed by packet handler.")
         finally:
             await conn.close()
 
-    async def _process_packet(self, conn: Connection, packet: Buffer) -> None:
+    async def _process_packet(
+        self, conn: connection.Connection, packet: buffer.ReadBuffer
+    ) -> None:
         packet_id = packet.unpack_varint()
         handler = self._handlers.get((conn.status, packet_id))
         handler = handler if handler else self._unhandled_packet_handler
-        buffer: Optional[Buffer] = await handler(packet)
-        if buffer:
+        _buffer: Optional[buffer.WriteBuffer] = await handler(packet)
+        if _buffer:
             await conn.send_packet(buffer)
