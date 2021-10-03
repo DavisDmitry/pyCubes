@@ -27,10 +27,10 @@ app = cubes.Application('127.0.0.1', 25565)
 async def process_handshake(packet: cubes.ReadBuffer) -> None:
     print('Protocol version:', packet.varint)
     print('Server host:', packet.string)
-    print('Server port:', unsigned_short)
-    print('Next state:', ConnectionStatus(packet.varint))
+    print('Server port:', packet.unsigned_short)
+    print('Next state:', cubes.ConnectionStatus(packet.varint))
 
-app.add_low_level_handler(ConnectionStatus.HANDSHAKE, 0x00, process_handshake)
+app.add_low_level_handler(cubes.ConnectionStatus.HANDSHAKE, 0x00, process_handshake)
 ```
 
 Остаётся только запустить сервер:
