@@ -56,3 +56,9 @@ make format
 ```bash
 make lint
 ```
+
+Запуск тестов:
+
+```bash
+make test
+```
