@@ -50,7 +50,7 @@ async def process_status(_) -> cubes.WriteBuffer:
 
 
 async def process_status_ping(packet: cubes.ReadBuffer) -> cubes.WriteBuffer:
-    return cubes.WriteBufferBuffer().pack_varint(0x01).write(packet.read(8))
+    return cubes.WriteBuffer().pack_varint(0x01).write(packet.read(8))
 
 
 async def process_login_start(packet: cubes.ReadBuffer) -> cubes.WriteBuffer:
@@ -65,7 +65,7 @@ async def process_login_start(packet: cubes.ReadBuffer) -> cubes.WriteBuffer:
     )
     await asyncio.sleep(10)
     return (
-        cubes.ReadBuffer()
+        cubes.WriteBuffer()
         .pack_varint(0x1A)
         .pack_string(json.dumps({"text": "Playing not implemented =("}))
     )
