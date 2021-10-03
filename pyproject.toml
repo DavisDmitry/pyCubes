@@ -1,0 +1,57 @@
+[tool.poetry]
+name = "pyCubes"
+version = "0.1.0"
+description = "Library for serializing/deserilizing Minecraft JE packets"
+authors = ["Dmitry Davis <dmitrydavis@protonmail.com>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/DavisDmitry/pyCubes"
+classifiers = [
+    "Framework :: AsyncIO",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Topic :: Internet",
+    "Topic :: Software Development",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed"
+]
+packages = [{include="cubes"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+
+[tool.poetry.dev-dependencies]
+black = "^21.9b0"
+flake8 = "^3.9.2"
+flake8-annotations-complexity = "^0.0.6"
+flake8-annotations-coverage = "^0.0.5"
+flake8-bandit = "^2.1.2"
+flake8-bugbear = "^21.9.2"
+isort = "^5.9.3"
+pylint = "^2.11.1"
+pytest = "^6.2.5"
+pytest-asyncio = "^0.15.1"
+pytest-cov = "^2.12.1"
+
+[tool.black]
+target-version = ['py39']
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+
+[tool.pylint.message_control]
+disable = ["C0114"]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
