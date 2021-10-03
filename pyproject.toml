@@ -1,8 +1,30 @@
 [tool.poetry]
-name = "mc-test"
+name = "pyCubes"
 version = "0.1.0"
 description = "Library for serializing/deserilizing Minecraft JE packets"
 authors = ["Dmitry Davis <dmitrydavis@protonmail.com>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/DavisDmitry/pyCubes"
+classifiers = [
+    "Framework :: AsyncIO",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Topic :: Internet",
+    "Topic :: Software Development",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed"
+]
+packages = [{include="cubes"}]
 
 [tool.poetry.dependencies]
 python = "^3.9"
