@@ -6,3 +6,5 @@ lint:
 	poetry run flake8 cubes
 	poetry run isort --check --diff .
 	poetry run black --check --diff .
+test:
+	poetry run pytest --cov=cubes --cov-report=term-missing
