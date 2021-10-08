@@ -2,6 +2,7 @@ import asyncio
 import contextvars as cv
 import enum
 import logging
+from typing import Optional
 
 from cubes import buffer
 
@@ -31,7 +32,7 @@ class Connection:
         self.status, self._threshold = ConnectionStatus.HANDSHAKE, 0
 
     @classmethod
-    def get_current(cls) -> "Connection" | None:
+    def get_current(cls) -> Optional["Connection"]:
         """Returns current `Connection` instance."""
         return _CONNECTION.get()
 
