@@ -2,7 +2,6 @@ import asyncio
 import contextvars as cv
 import enum
 import logging
-from typing import Optional
 
 from cubes import buffer
 
@@ -32,7 +31,7 @@ class Connection:
         self.status, self._threshold = ConnectionStatus.HANDSHAKE, 0
 
     @classmethod
-    def get_current(cls) -> Optional["Connection"]:
+    def get_current(cls) -> "Connection" | None:
         """Returns current `Connection` instance."""
         return _CONNECTION.get()
 
@@ -45,7 +44,7 @@ class Connection:
         self._writer.close()
         await self._writer.wait_closed()
 
-    async def read_packet(self) -> Optional[buffer.ReadBuffer]:
+    async def read_packet(self) -> buffer.ReadBuffer | None:
         """Reads packet."""
         try:
             return await buffer.ReadBuffer.from_reader(self._reader)

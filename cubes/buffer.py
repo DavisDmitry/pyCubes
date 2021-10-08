@@ -1,6 +1,5 @@
 import asyncio
 import struct
-from typing import Optional
 
 
 class EmptyBufferError(Exception):
@@ -50,7 +49,7 @@ class ReadBuffer(_Buffer):
         data = await reader.read(length)
         return cls(data)
 
-    def read(self, length: Optional[int] = None) -> bytes:
+    def read(self, length: int | None = None) -> bytes:
         """Reads length bytes from buffer.
 
         Note:

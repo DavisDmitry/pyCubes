@@ -1,7 +1,7 @@
 import asyncio
 import logging
 import signal
-from typing import Awaitable, Callable, Optional
+from typing import Awaitable, Callable
 
 from cubes import buffer, connection
 
@@ -114,6 +114,6 @@ class Application:
         packet_id = packet.unpack_varint()
         handler = self._handlers.get((conn.status, packet_id))
         handler = handler if handler else self._unhandled_packet_handler
-        _buffer: Optional[buffer.WriteBuffer] = await handler(packet)
+        _buffer: buffer.WriteBuffer | None = await handler(packet)
         if _buffer:
             await conn.send_packet(buffer)

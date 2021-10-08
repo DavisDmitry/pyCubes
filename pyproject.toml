@@ -27,7 +27,7 @@ classifiers = [
 packages = [{include="cubes"}]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.10"
 
 [tool.poetry.dev-dependencies]
 black = "^21.9b0"
@@ -43,7 +43,7 @@ pytest-asyncio = "^0.15.1"
 pytest-cov = "^2.12.1"
 
 [tool.black]
-target-version = ['py39']
+target-version = ['py310']
 
 [tool.isort]
 profile = "black"
