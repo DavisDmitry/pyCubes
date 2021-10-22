@@ -13,12 +13,12 @@ class GracefulExit(SystemExit):
 
 
 async def _default_unhandled_packet_handler(packet: buffer.ReadBuffer) -> None:
+    packet = buffer.ReadBuffer(packet.data)
     conn = connection.Connection.get_current()
-    packet.reset_pos()
     log.debug(
         "Handler for packet id %i with state %s not implemented.",
-        packet.unpack_varint(),
-        conn.state.name,
+        packet.varint,
+        conn.status.name,
     )
 
 
@@ -48,8 +48,6 @@ class Application:
         log.info("Starting server on %s:%i", self._host, self._port)
         try:
             loop.run_until_complete(self._run())
-        except (GracefulExit, KeyboardInterrupt):
-            pass
         finally:
             log.info("Server stopped")
 
@@ -105,15 +103,17 @@ class Application:
                 await self._process_packet(conn, packet)
         except connection.CloseConnection:
             log.debug("Connection closed by packet handler.")
+        except asyncio.TimeoutError:
+            log.debug("Packet read timeout.")
         finally:
             await conn.close()
 
     async def _process_packet(
         self, conn: connection.Connection, packet: buffer.ReadBuffer
     ) -> None:
-        packet_id = packet.unpack_varint()
+        packet_id = packet.varint
         handler = self._handlers.get((conn.status, packet_id))
         handler = handler if handler else self._unhandled_packet_handler
         _buffer: Optional[buffer.WriteBuffer] = await handler(packet)
         if _buffer:
-            await conn.send_packet(buffer)
+            await conn.send_packet(_buffer)
