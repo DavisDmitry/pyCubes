@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pyCubes"
-version = "0.1.0"
+version = "0.1.1"
 description = "Library for serializing/deserilizing Minecraft JE packets"
 authors = ["Dmitry Davis <dmitrydavis@protonmail.com>"]
 license = "MIT"
