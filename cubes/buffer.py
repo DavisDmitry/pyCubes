@@ -2,6 +2,10 @@ import asyncio
 import struct
 from typing import Optional
 
+import async_timeout as at
+
+_PACKET_READ_TIMEOUT = 5  # float
+
 
 class EmptyBufferError(Exception):
     """Exception raising when buffer is empty."""
@@ -38,17 +42,32 @@ class ReadBuffer(_Buffer):
         Todo:
             * implement compression
         """
-        length = 0
-        for i in range(3):
+        async with at.timeout(_PACKET_READ_TIMEOUT):
+            length = await cls._read_varint_from_reader(reader)
+            data = b""
+            current_length = length
+            while len(data) != length:
+                chunk = await reader.read(length)
+                data += chunk
+                current_length -= len(chunk)
+                await asyncio.sleep(0.001)
+            return cls(data)
+
+    @staticmethod
+    async def _read_varint_from_reader(reader: asyncio.StreamReader) -> int:
+        result = 0
+        for index in range(3):
             byte = await reader.read(1)
-            if byte == b"":
+            if index == 0 and byte == b"":
                 raise EmptyBufferError
-            byte = byte[0]
-            length |= (byte & 0x7F) << 7 * i
+            while byte == b"":
+                byte = await reader.read(1)
+                await asyncio.sleep(0.001)
+            byte = ord(byte)
+            result |= (byte & 0x7F) << 7 * index
             if not byte & 0x80:
                 break
-        data = await reader.read(length)
-        return cls(data)
+        return result
 
     def read(self, length: Optional[int] = None) -> bytes:
         """Reads length bytes from buffer.
@@ -92,7 +111,7 @@ class ReadBuffer(_Buffer):
         return struct.unpack(">H", self.read(2))[0]
 
     @property
-    def int(self) -> int:
+    def integer(self) -> int:
         """Signed 32-bit integer."""
         return struct.unpack(">i", self.read(4))[0]
 
@@ -124,8 +143,6 @@ class ReadBuffer(_Buffer):
         result = 0
         for i in range(max_bytes):
             byte = self.read(1)
-            if byte == b"":
-                break
             byte = ord(byte)
             result |= (byte & 0x7F) << 7 * i
             if not byte & 0x80:
@@ -145,8 +162,6 @@ class ReadBuffer(_Buffer):
         result = 0
         for i in range(10):
             byte = self.read(1)
-            if byte == b"":
-                break
             byte = ord(byte)
             result |= (byte & 0x7F) << 7 * i
             if not byte & 0x80:
@@ -193,7 +208,7 @@ class WriteBuffer(_Buffer):
         """Packs unsigned 16-bit integer."""
         return self.write(struct.pack(">H", value))
 
-    def pack_int(self, value: int) -> "WriteBuffer":
+    def pack_integer(self, value: int) -> "WriteBuffer":
         """Packs signed 32-bit integer."""
         return self.write(struct.pack(">i", value))
 
