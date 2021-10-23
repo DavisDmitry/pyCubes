@@ -1,15 +1,11 @@
 import asyncio
 import contextvars as cv
 import enum
-import logging
 from typing import Optional
 
 from cubes import buffer
 
 _CONNECTION = cv.ContextVar(__name__)
-
-
-log = logging.getLogger(__name__)
 
 
 class CloseConnection(Exception):
@@ -50,7 +46,7 @@ class Connection:
         try:
             return await buffer.ReadBuffer.from_reader(self._reader)
         except buffer.EmptyBufferError:
-            log.debug("Client sent empty packet.")
+            pass
 
     async def send_packet(self, _buffer: buffer.WriteBuffer) -> None:
         """Sends packet."""

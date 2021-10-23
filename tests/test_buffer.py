@@ -149,12 +149,3 @@ async def test_pack_unpack():
 async def test_pack_unpack_empty_buffer():
     with pytest.raises(cubes.buffer.EmptyBufferError):
         await cubes.ReadBuffer.from_reader(_FakeStreamReader())
-
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize(
-    "reader", (_FakeStreamReader(b"\x80"), _FakeStreamReader(b"\x80\x01"))
-)
-async def test_invalid_buffer(reader: _FakeStreamReader):
-    with pytest.raises(asyncio.TimeoutError):
-        await cubes.ReadBuffer.from_reader(reader)
