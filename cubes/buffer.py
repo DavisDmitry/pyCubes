@@ -2,10 +2,6 @@ import asyncio
 import struct
 from typing import Optional
 
-import async_timeout as at
-
-_PACKET_READ_TIMEOUT = 5  # float
-
 
 class EmptyBufferError(Exception):
     """Exception raising when buffer is empty."""
@@ -42,32 +38,16 @@ class ReadBuffer(_Buffer):
         Todo:
             * implement compression
         """
-        async with at.timeout(_PACKET_READ_TIMEOUT):
-            length = await cls._read_varint_from_reader(reader)
-            data = b""
-            current_length = length
-            while len(data) != length:
-                chunk = await reader.read(length)
-                data += chunk
-                current_length -= len(chunk)
-                await asyncio.sleep(0.001)
-            return cls(data)
-
-    @staticmethod
-    async def _read_varint_from_reader(reader: asyncio.StreamReader) -> int:
-        result = 0
+        length = 0
         for index in range(3):
             byte = await reader.read(1)
-            if index == 0 and byte == b"":
+            if byte == b"":
                 raise EmptyBufferError
-            while byte == b"":
-                byte = await reader.read(1)
-                await asyncio.sleep(0.001)
             byte = ord(byte)
-            result |= (byte & 0x7F) << 7 * index
+            length |= (byte & 0x7F) << 7 * index
             if not byte & 0x80:
                 break
-        return result
+        return cls(await reader.read(length))
 
     def read(self, length: Optional[int] = None) -> bytes:
         """Reads length bytes from buffer.
