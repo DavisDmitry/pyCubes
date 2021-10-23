@@ -113,7 +113,8 @@ class Application:
         finally:
             await conn.close()
 
-    async def _read_packets(self, conn: connection.Connection) -> buffer.ReadBuffer:
+    @staticmethod
+    async def _read_packets(conn: connection.Connection) -> buffer.ReadBuffer:
         packet = await conn.read_packet()
         while not packet:
             await asyncio.sleep(0.001)
