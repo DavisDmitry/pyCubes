@@ -5,6 +5,11 @@ from typing import Awaitable, Callable, Optional
 
 from cubes import buffer, connection
 
+# If the client does not send a kee-alive packet within 20 seconds,
+# the connection should be closed].
+# https://wiki.vg/Protocol#Keep_Alive_.28serverbound.29
+_NO_PACKET_TIMEOUT = 20
+
 log = logging.getLogger(__name__)
 
 
@@ -97,16 +102,23 @@ class Application:
         conn.set_current()
         try:
             while True:
-                packet = await conn.read_packet()
-                if not packet:
-                    return
+                packet = await asyncio.wait_for(
+                    self._read_packets(conn), _NO_PACKET_TIMEOUT
+                )
                 await self._process_packet(conn, packet)
         except connection.CloseConnection:
             log.debug("Connection closed by packet handler.")
         except asyncio.TimeoutError:
-            log.debug("Packet read timeout.")
+            log.debug("Dead connection. Closing.")
         finally:
             await conn.close()
+
+    async def _read_packets(self, conn: connection.Connection) -> buffer.ReadBuffer:
+        packet = await conn.read_packet()
+        while not packet:
+            await asyncio.sleep(0.001)
+            packet = await conn.read_packet()
+        return packet
 
     async def _process_packet(
         self, conn: connection.Connection, packet: buffer.ReadBuffer
