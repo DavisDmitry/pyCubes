@@ -6,7 +6,7 @@ from typing import Awaitable, Callable, Optional
 from cubes import buffer, connection
 
 # If the client does not send a kee-alive packet within 20 seconds,
-# the connection should be closed].
+# the connection should be closed.
 # https://wiki.vg/Protocol#Keep_Alive_.28serverbound.29
 _NO_PACKET_TIMEOUT = 20
 
