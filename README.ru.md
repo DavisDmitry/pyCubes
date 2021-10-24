@@ -17,13 +17,13 @@ pip install pyCubes
 ```python3
 import cubes
 
-app = cubes.Application('127.0.0.1', 25565)
+app = cubes.Application()
 ```
 
 После этого добавьте низкоуровневый хендлер:
 
 ```python3
-async def process_handshake(packet: cubes.ReadBuffer) -> None:
+async def process_handshake(packet_id: int, packet: cubes.ReadBuffer) -> None:
     print('Protocol version:', packet.varint)
     print('Server host:', packet.string)
     print('Server port:', packet.unsigned_short)
@@ -35,7 +35,7 @@ app.add_low_level_handler(cubes.ConnectionStatus.HANDSHAKE, 0x00, process_handsh
 Остаётся только запустить приложение:
 
 ```python3
-app.run()
+app.run('127.0.0.1', 25565)
 ```
 
 Более подробный пример можно найти [здесь](https://github.com/DavisDmitry/pyCubes/blob/master/example.py).

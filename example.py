@@ -3,7 +3,7 @@ import json
 import logging
 
 import cubes
-from cubes import utils
+import cubes.utils
 
 _CURRRENT_PROTOCOL_VERSION = 756
 
@@ -11,12 +11,11 @@ _CURRRENT_PROTOCOL_VERSION = 756
 log = logging.getLogger(__name__)
 
 
-async def process_handshake(packet: cubes.ReadBuffer) -> None:
-    conn = cubes.Connection.get_current()
+async def process_handshake(_, packet: cubes.ReadBuffer):
     protocol = packet.varint
     packet.string
     packet.unsigned_short
-    conn.status = intention = cubes.ConnectionStatus(packet.varint)
+    packet.connection.status = intention = cubes.ConnectionStatus(packet.varint)
     if (
         intention == cubes.ConnectionStatus.LOGIN
         and protocol != _CURRRENT_PROTOCOL_VERSION
@@ -25,13 +24,13 @@ async def process_handshake(packet: cubes.ReadBuffer) -> None:
         raise cubes.CloseConnection
 
 
-async def process_legacy_ping(_) -> None:
+async def process_legacy_ping(*_):
     log.warning("Legacy ping not implemeted")
     raise cubes.CloseConnection
 
 
-async def process_status(_) -> cubes.WriteBuffer:
-    return (
+async def process_status(_, packet: cubes.ReadBuffer):
+    await packet.connection.send_packet(
         cubes.WriteBuffer()
         .pack_varint(0x00)
         .pack_string(
@@ -49,31 +48,28 @@ async def process_status(_) -> cubes.WriteBuffer:
     )
 
 
-async def process_status_ping(packet: cubes.ReadBuffer) -> cubes.WriteBuffer:
-    return cubes.WriteBuffer().pack_varint(0x01).write(packet.read(8))
+async def process_status_ping(_, packet: cubes.ReadBuffer):
+    await packet.connection.send_packet(
+        cubes.WriteBuffer().pack_varint(0x01).write(packet.read(8))
+    )
 
 
-async def process_login_start(packet: cubes.ReadBuffer) -> cubes.WriteBuffer:
-    conn = cubes.Connection.get_current()
+async def process_login_start(_, packet: cubes.ReadBuffer):
     player_name = packet.string
     log.info("Player %s trying to login", player_name)
-    uuid = utils.generate_uuid(player_name)
-    conn.status = cubes.ConnectionStatus.PLAY
-    await asyncio.sleep(10)
-    await conn.send_packet(
+    uuid = cubes.utils.generate_uuid(player_name)
+    packet.connection.status = cubes.ConnectionStatus.PLAY
+    await asyncio.sleep(5)
+    await packet.connection.send_packet(
         cubes.WriteBuffer().pack_varint(0x02).write(uuid.bytes).pack_string(player_name)
     )
-    await asyncio.sleep(10)
-    return (
-        cubes.WriteBuffer()
-        .pack_varint(0x1A)
-        .pack_string(json.dumps({"text": "Playing not implemented =("}))
-    )
+    await asyncio.sleep(5)
+    raise cubes.CloseConnection("Playing not implemented")
 
 
 def main() -> None:
     logging.basicConfig(level="DEBUG")
-    app = cubes.Application("127.0.0.1", 25565)
+    app = cubes.Application()
 
     app.add_low_level_handler(cubes.ConnectionStatus.HANDSHAKE, 0x00, process_handshake)
     app.add_low_level_handler(
@@ -83,7 +79,7 @@ def main() -> None:
     app.add_low_level_handler(cubes.ConnectionStatus.STATUS, 0x01, process_status_ping)
     app.add_low_level_handler(cubes.ConnectionStatus.LOGIN, 0x00, process_login_start)
 
-    app.run()
+    app.run("127.0.0.1")
 
 
 if __name__ == "__main__":

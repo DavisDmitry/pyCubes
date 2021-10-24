@@ -1,48 +1,36 @@
 import asyncio
 import logging
 import signal
-from typing import Awaitable, Callable, Optional
+from typing import Awaitable, Callable
 
-from cubes import buffer, connection
-
-# If the client does not send a kee-alive packet within 20 seconds,
-# the connection should be closed.
-# https://wiki.vg/Protocol#Keep_Alive_.28serverbound.29
-_NO_PACKET_TIMEOUT = 20
+from cubes import abc, buffer, connection, types
 
 log = logging.getLogger(__name__)
+
+
+async def _default_unhandled_packet_handler(packet_id: int, packet: buffer.ReadBuffer):
+    log.debug(
+        "Handler for packet id %i and state %s not implemented.",
+        packet_id,
+        packet.connection.status.name,
+    )
 
 
 class GracefulExit(SystemExit):
     """Exception raising when server should stop."""
 
 
-async def _default_unhandled_packet_handler(packet: buffer.ReadBuffer) -> None:
-    packet = buffer.ReadBuffer(packet.data)
-    conn = connection.Connection.get_current()
-    log.debug(
-        "Handler for packet id %i with state %s not implemented.",
-        packet.varint,
-        conn.status.name,
-    )
+class Application(abc.Application):
+    """Class for creating Minecraft Java Edition server implemetation."""
 
+    _handlers: dict[tuple[types.ConnectionStatus, int], Awaitable]
 
-class Application:
-    """Class for creating Minecraft Java Edition server implemetation.
-
-    Examples:
-        >>> app = Application('0.0.0.0', 25565)
-    """
-
-    _handlers: dict[tuple[connection.ConnectionStatus, int], Awaitable]
-    _unhandled_packet_handler: Awaitable
-
-    def __init__(self, host: str, port: int):
-        self._host, self._port = host, port
+    def __init__(self, packet_read_timeout: int = 20):
+        super().__init__(packet_read_timeout)
         self._handlers = {}
-        self._unhandled_packet_handler = _default_unhandled_packet_handler
+        self.unhandled_packet_handler = _default_unhandled_packet_handler
 
-    def run(self) -> None:
+    def run(self, host: str, port: int = 25565) -> None:
         """Starts application."""
         loop = asyncio.get_event_loop()
         try:
@@ -50,14 +38,14 @@ class Application:
             loop.add_signal_handler(signal.SIGTERM, self._raise_graceful_exit)
         except NotImplementedError:  # signals not implemented on windows
             pass
-        log.info("Starting server on %s:%i", self._host, self._port)
+        log.info("Starting server on %s:%i", host, port)
         try:
-            loop.run_until_complete(self._run())
+            loop.run_until_complete(self._run(host, port))
         finally:
             log.info("Server stopped")
 
     def add_low_level_handler(
-        self, conn_status: connection.ConnectionStatus, packet_id: int, func: Callable
+        self, conn_status: types.ConnectionStatus, packet_id: int, func: Callable
     ) -> None:
         """Adds packet handler.
 
@@ -66,7 +54,7 @@ class Application:
                 already added
 
         Examples:
-            >>> server.add_low_level_handler(ConnectionStatus.HANDSHAKE,
+            >>> app.add_low_level_handler(cubes.ConnectionStatus.HANDSHAKE,
                     0x00, process_handshake)
         """
         if self._handlers.get((conn_status, packet_id)):
@@ -85,11 +73,9 @@ class Application:
     def _raise_graceful_exit() -> None:
         raise GracefulExit
 
-    async def _run(self) -> None:
+    async def _run(self, host: str, port: int) -> None:
         try:
-            server = await asyncio.start_server(
-                self._accept_connection, self._host, self._port
-            )
+            server = await asyncio.start_server(self._accept_connection, host, port)
             await server.serve_forever()
         except Exception as exc:
             log.exception(exc)
@@ -98,23 +84,24 @@ class Application:
     async def _accept_connection(
         self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter
     ) -> None:
-        conn = connection.Connection(reader, writer)
-        conn.set_current()
+        # pylint: disable=W0703
+        conn = connection.Connection(reader, writer, self)
         try:
             while True:
                 packet = await asyncio.wait_for(
-                    self._read_packets(conn), _NO_PACKET_TIMEOUT
+                    self._wait_packet(conn), self._packet_read_timeout
                 )
-                await self._process_packet(conn, packet)
-        except connection.CloseConnection:
-            log.debug("Connection closed by packet handler.")
+                asyncio.create_task(self._process_packet(conn, packet))
         except asyncio.TimeoutError:
-            log.debug("Dead connection. Closing.")
+            log.debug("Connection (%s, %i) timed out.", *conn.peername)
+        except Exception as exc:
+            log.exception(exc)
         finally:
-            await conn.close()
+            if not conn.is_closing:
+                await conn.close()
 
     @staticmethod
-    async def _read_packets(conn: connection.Connection) -> buffer.ReadBuffer:
+    async def _wait_packet(conn: connection.Connection) -> abc.AbstractReadBuffer:
         packet = await conn.read_packet()
         while not packet:
             await asyncio.sleep(0.001)
@@ -122,11 +109,22 @@ class Application:
         return packet
 
     async def _process_packet(
-        self, conn: connection.Connection, packet: buffer.ReadBuffer
+        self, conn: connection.Connection, packet: abc.AbstractReadBuffer
     ) -> None:
+        # pylint: disable=W0703
         packet_id = packet.varint
         handler = self._handlers.get((conn.status, packet_id))
         handler = handler if handler else self._unhandled_packet_handler
-        _buffer: Optional[buffer.WriteBuffer] = await handler(packet)
-        if _buffer:
-            await conn.send_packet(_buffer)
+        try:
+            await handler(packet_id, packet)
+        except connection.CloseConnection as exc:
+            await conn.close(exc.reason)
+            log.debug(
+                "Connection (%s, %i) closed by handler (%s, %i). Reason: %s.",
+                *conn.peername,
+                conn.status.name,
+                packet_id,
+                str(exc.reason),
+            )
+        except Exception as exc:
+            log.exception(exc)
