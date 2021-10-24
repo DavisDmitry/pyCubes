@@ -9,6 +9,8 @@ from cubes import types
 class Application(abc.ABC):
     """Class for creating Minecraft Java Edition server implemetation."""
 
+    # pylint: disable=W0201
+
     def __init__(self, packet_read_timeout: int = 20):
         self._packet_read_timeout = packet_read_timeout
 
@@ -22,7 +24,6 @@ class Application(abc.ABC):
     ) -> None:
         """Adds packet handler."""
 
-    @abc.abstractmethod
     def _change_unhandled_packet_handler(self, func: Callable) -> None:
         self._unhandled_packet_handler = func
 

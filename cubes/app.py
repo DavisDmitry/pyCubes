@@ -23,6 +23,8 @@ class GracefulExit(SystemExit):
 class Application(abc.Application):
     """Class for creating Minecraft Java Edition server implemetation."""
 
+    # pylint: disable=W0201
+
     _handlers: dict[tuple[types.ConnectionStatus, int], Awaitable]
 
     def __init__(self, packet_read_timeout: int = 20):
