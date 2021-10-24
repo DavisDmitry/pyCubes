@@ -18,13 +18,13 @@ _MIN_VARLONG, _MAX_VARLONG = -9223372036854775808, 9223372036854775807
 
 def test_read_None():
     data = b"\x00\x01\x02"
-    assert cubes.ReadBuffer(data).read() == data
+    assert cubes.ReadBuffer(None, data).read() == data
 
 
 @pytest.mark.parametrize("value", (True, False))
 def test_boolean(value: bool):
     data = cubes.WriteBuffer().pack_boolean(value).data
-    assert cubes.ReadBuffer(data).boolean == value
+    assert cubes.ReadBuffer(None, data).boolean == value
 
 
 @pytest.mark.parametrize(
@@ -33,7 +33,7 @@ def test_boolean(value: bool):
 )
 def test_byte(value: int):
     data = cubes.WriteBuffer().pack_byte(value).data
-    assert cubes.ReadBuffer(data).byte == value
+    assert cubes.ReadBuffer(None, data).byte == value
 
 
 @pytest.mark.parametrize(
@@ -46,7 +46,7 @@ def test_byte(value: int):
 )
 def test_unsigned_byte(value: int):
     data = cubes.WriteBuffer().pack_unsigned_byte(value).data
-    assert cubes.ReadBuffer(data).unsigned_byte == value
+    assert cubes.ReadBuffer(None, data).unsigned_byte == value
 
 
 @pytest.mark.parametrize(
@@ -59,7 +59,7 @@ def test_unsigned_byte(value: int):
 )
 def test_short(value: int):
     data = cubes.WriteBuffer().pack_short(value).data
-    assert cubes.ReadBuffer(data).short == value
+    assert cubes.ReadBuffer(None, data).short == value
 
 
 @pytest.mark.parametrize(
@@ -72,7 +72,7 @@ def test_short(value: int):
 )
 def test_unsigned_short(value: int):
     data = cubes.WriteBuffer().pack_unsigned_short(value).data
-    assert cubes.ReadBuffer(data).unsigned_short == value
+    assert cubes.ReadBuffer(None, data).unsigned_short == value
 
 
 @pytest.mark.parametrize(
@@ -81,7 +81,7 @@ def test_unsigned_short(value: int):
 )
 def test_integer(value: int):
     data = cubes.WriteBuffer().pack_integer(value).data
-    assert cubes.ReadBuffer(data).integer == value
+    assert cubes.ReadBuffer(None, data).integer == value
 
 
 @pytest.mark.parametrize(
@@ -90,13 +90,13 @@ def test_integer(value: int):
 )
 def test_long(value: int):
     data = cubes.WriteBuffer().pack_long(value).data
-    assert cubes.ReadBuffer(data).long == value
+    assert cubes.ReadBuffer(None, data).long == value
 
 
 def test_string():
     string = "test"
     data = cubes.WriteBuffer().pack_string(string).data
-    assert cubes.ReadBuffer(data).string == string
+    assert cubes.ReadBuffer(None, data).string == string
 
 
 @pytest.mark.parametrize(
@@ -109,7 +109,7 @@ def test_string():
 )
 def test_varint(value: int):
     data = cubes.WriteBuffer().pack_varint(value).data
-    assert cubes.ReadBuffer(data).varint == value
+    assert cubes.ReadBuffer(None, data).varint == value
 
 
 @pytest.mark.parametrize(
@@ -122,7 +122,7 @@ def test_varint(value: int):
 )
 def test_varlong(value: int):
     data = cubes.WriteBuffer().pack_varlong(value).data
-    assert cubes.ReadBuffer(data).varlong == value
+    assert cubes.ReadBuffer(None, data).varlong == value
 
 
 class _FakeStreamReader:
@@ -140,7 +140,7 @@ async def test_pack_unpack():
     packet_id = 0x00
     string = "test"
     data = cubes.WriteBuffer().pack_varint(packet_id).pack_string(string).packed
-    buff = await cubes.ReadBuffer.from_reader(_FakeStreamReader(data))
+    buff = await cubes.ReadBuffer.from_reader(None, _FakeStreamReader(data))
     assert buff.varint == packet_id
     assert buff.string == string
 
@@ -148,4 +148,12 @@ async def test_pack_unpack():
 @pytest.mark.asyncio
 async def test_pack_unpack_empty_buffer():
     with pytest.raises(cubes.buffer.EmptyBufferError):
-        await cubes.ReadBuffer.from_reader(_FakeStreamReader())
+        await cubes.ReadBuffer.from_reader(None, _FakeStreamReader())
+
+
+@pytest.mark.asyncio
+async def test_invalid_buffer():
+    with pytest.raises(asyncio.TimeoutError):
+        await asyncio.wait_for(
+            cubes.ReadBuffer.from_reader(None, _FakeStreamReader(b"\x01")), 0.5
+        )
