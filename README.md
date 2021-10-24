@@ -19,13 +19,13 @@ First you need to create application instance:
 ```python3
 import cubes
 
-app = cubes.Application('127.0.0.1', 25565)
+app = cubes.Application()
 ```
 
 After that add a low-level handler:
 
 ```python3
-async def process_handshake(packet: cubes.ReadBuffer) -> None:
+async def process_handshake(packet_id: int, packet: cubes.ReadBuffer):
     print('Protocol version:', packet.varint)
     print('Server host:', packet.string)
     print('Server port:', packet.unsigned_short)
@@ -37,7 +37,7 @@ app.add_low_level_handler(cubes.ConnectionStatus.HANDSHAKE, 0x00, process_handsh
 All that remains is to launch the application:
 
 ```python3
-app.run()
+app.run('127.0.0.1', 25565)
 ```
 
 A more detailed example can be found [here](https://github.com/DavisDmitry/pyCubes/blob/master/example.py).
