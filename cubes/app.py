@@ -88,6 +88,7 @@ class Application(abc.Application):
         self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter
     ) -> None:
         # pylint: disable=W0703
+        reason = None
         conn = connection.Connection(reader, writer, self)
         try:
             while not conn.is_closing:
@@ -99,11 +100,14 @@ class Application(abc.Application):
                 )
         except asyncio.TimeoutError:
             log.debug("Connection (%s, %i) timed out.", *conn.peername)
+        except connection.CloseConnection as exc:
+            reason = exc.reason
+            log.debug("Connection closed by handler. Reason: %s", exc.reason)
         except Exception as exc:
             log.exception(exc)
         finally:
             if not conn.is_closing:
-                await conn.close()
+                await conn.close(reason)
 
     @staticmethod
     async def _wait_packet(conn: connection.Connection) -> abc.AbstractReadBuffer:
@@ -120,14 +124,7 @@ class Application(abc.Application):
         handler = handler if handler else self._unhandled_packet_handler
         try:
             await handler(packet_id, packet)
-        except connection.CloseConnection as exc:
-            await packet.connection.close(exc.reason)
-            log.debug(
-                "Connection (%s, %i) closed by handler (%s, %i). Reason: %s.",
-                *packet.connection.peername,
-                packet.connection.status.name,
-                packet_id,
-                str(exc.reason),
-            )
+        except connection.CloseConnection:
+            raise
         except Exception as exc:
             log.exception(exc)
