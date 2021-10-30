@@ -95,7 +95,7 @@ class Application(abc.Application):
                     self._wait_packet(conn), self._packet_read_timeout
                 )
                 asyncio.wait_for(
-                    self._process_packet(conn, packet), self._process_packet_timeout
+                    self._process_packet(packet), self._process_packet_timeout
                 )
         except asyncio.TimeoutError:
             log.debug("Connection (%s, %i) timed out.", *conn.peername)
@@ -113,21 +113,19 @@ class Application(abc.Application):
             packet = await conn.read_packet()
         return packet
 
-    async def _process_packet(
-        self, conn: connection.Connection, packet: abc.AbstractReadBuffer
-    ) -> None:
+    async def _process_packet(self, packet: abc.AbstractReadBuffer) -> None:
         # pylint: disable=W0703
         packet_id = packet.varint
-        handler = self._handlers.get((conn.status, packet_id))
+        handler = self._handlers.get((packet.connection.status, packet_id))
         handler = handler if handler else self._unhandled_packet_handler
         try:
             await handler(packet_id, packet)
         except connection.CloseConnection as exc:
-            await conn.close(exc.reason)
+            await packet.connection.close(exc.reason)
             log.debug(
                 "Connection (%s, %i) closed by handler (%s, %i). Reason: %s.",
-                *conn.peername,
-                conn.status.name,
+                *packet.connection.peername,
+                packet.connection.status.name,
                 packet_id,
                 str(exc.reason),
             )
