@@ -275,5 +275,5 @@ class AbstractConnection(abc.ABC):
         """Reads packet."""
 
     @abc.abstractmethod
-    async def send_packet(self, _buffer: AbstractWriteBuffer) -> None:
+    async def send_packet(self, buffer: AbstractWriteBuffer) -> None:
         """Sends packet."""
