@@ -10,10 +10,6 @@ class Application(abc.ABC):
     """Class for creating Minecraft Java Edition server implemetation."""
 
     # pylint: disable=W0201
-
-    def __init__(self, packet_read_timeout: int = 20):
-        self._packet_read_timeout = packet_read_timeout
-
     @abc.abstractmethod
     def run(self, host: str, port: int = 25565) -> None:
         """Starts application."""
