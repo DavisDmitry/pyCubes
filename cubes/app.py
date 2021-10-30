@@ -27,8 +27,9 @@ class Application(abc.Application):
 
     _handlers: dict[tuple[types.ConnectionStatus, int], Awaitable]
 
-    def __init__(self, packet_read_timeout: int = 20):
-        super().__init__(packet_read_timeout)
+    def __init__(self, packet_read_timeout: int = 20, process_packet_timeout: int = 20):
+        self._packet_read_timeout = packet_read_timeout
+        self._process_packet_timeout = process_packet_timeout
         self._handlers = {}
         self.unhandled_packet_handler = _default_unhandled_packet_handler
 
@@ -89,11 +90,13 @@ class Application(abc.Application):
         # pylint: disable=W0703
         conn = connection.Connection(reader, writer, self)
         try:
-            while True:
+            while not conn.is_closing:
                 packet = await asyncio.wait_for(
                     self._wait_packet(conn), self._packet_read_timeout
                 )
-                asyncio.create_task(self._process_packet(conn, packet))
+                asyncio.wait_for(
+                    self._process_packet(conn, packet), self._process_packet_timeout
+                )
         except asyncio.TimeoutError:
             log.debug("Connection (%s, %i) timed out.", *conn.peername)
         except Exception as exc:
