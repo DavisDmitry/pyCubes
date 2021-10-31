@@ -103,7 +103,7 @@ class Application(abc.Application):
                 packet = await asyncio.wait_for(
                     self._wait_packet(conn), self._packet_read_timeout
                 )
-                asyncio.wait_for(
+                await asyncio.wait_for(
                     self._process_packet(packet), self._process_packet_timeout
                 )
         except asyncio.TimeoutError:
