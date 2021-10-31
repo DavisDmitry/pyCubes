@@ -4,15 +4,15 @@ from typing import Optional
 from cubes import abc
 
 
-class BufferError(Exception):
+class CubesBufferError(Exception):
     """Exception raising when buffer can't be reader or created."""
 
 
-class EmptyBufferError(BufferError):
+class EmptyBufferError(CubesBufferError):
     """Exception raising when buffer is empty."""
 
 
-class InvalidLengthError(BufferError):
+class InvalidLengthError(CubesBufferError):
     """Exception raising when packet length (VarInt) can't be readed."""
 
 
