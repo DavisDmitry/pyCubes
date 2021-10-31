@@ -1,7 +1,7 @@
 import abc
 import asyncio
 import struct
-from typing import Callable, Optional
+from typing import Callable, Optional, Union
 
 from cubes import types
 
@@ -233,7 +233,7 @@ class AbstractWriteBuffer(abc.ABC, _BaseBuffer):
         return self.write(self._encode_varlong(value))
 
 
-class _AbstractConnection(abc.ABC):
+class _AbstractBaseConnection(abc.ABC):
     status: types.ConnectionStatus
     _reader: asyncio.StreamReader
     _writer: asyncio.StreamWriter
@@ -254,20 +254,24 @@ class _AbstractConnection(abc.ABC):
         return self._writer.get_extra_info("sockname")
 
     @abc.abstractmethod
-    async def close(self, reason: Optional[str] = None) -> None:
-        """Closes connection."""
+    async def read_packet(self) -> Optional[AbstractReadBuffer]:
+        """Reads a packet."""
 
     @abc.abstractmethod
-    async def read_packet(self) -> Optional[AbstractReadBuffer]:
-        """Reads packet."""
+    async def wait_packet(self) -> AbstractReadBuffer:
+        """Waits and reads a packet."""
 
     @abc.abstractmethod
     async def send_packet(self, buffer: AbstractWriteBuffer) -> None:
         """Sends packet."""
 
 
-class AbstractPlayerConnection(_AbstractConnection, abc.ABC):
-    """Abstract player-to-server connection."""
+class AbstractPlayerConnection(_AbstractBaseConnection, abc.ABC):
+    """Abstract player-to-server connection.
+
+    Attributes:
+        status (cubes.ConnectionStatus): Connection status
+    """
 
     _app: Application
 
@@ -276,5 +280,35 @@ class AbstractPlayerConnection(_AbstractConnection, abc.ABC):
         """Current application."""
         return self._app
 
+    @abc.abstractmethod
+    async def close(self, reason: Optional[str] = None) -> None:
+        """Closes connection."""
 
-AbstractConnection = AbstractPlayerConnection
+
+class AbstractClientConnection(_AbstractBaseConnection, abc.ABC):
+    """Abstract client connection.
+
+    Attributes:
+        status (cubes.ConnectionStatus): Connection status
+    """
+
+    _player: types.PlayerData
+
+    @property
+    def player(self) -> types.PlayerData:
+        """Player data (UUID and name)."""
+        return self._player
+
+    @classmethod
+    @abc.abstractmethod
+    async def connect(
+        cls, host: str, port: int, protocol: int, player_name: str
+    ) -> "AbstractClientConnection":
+        """Creates client connection."""
+
+    @abc.abstractmethod
+    async def close(self) -> None:
+        """Closes connection."""
+
+
+AbstractConnection = Union[AbstractPlayerConnection, AbstractClientConnection]
