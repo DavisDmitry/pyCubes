@@ -98,11 +98,11 @@ class Application(abc.Application):
     ) -> None:
         # pylint: disable=W0703
         reason = None
-        conn = connection.Connection(reader, writer, self)
+        conn = connection.PlayerConnection(reader, writer, self)
         try:
             while not conn.is_closing:
                 packet = await asyncio.wait_for(
-                    self._wait_packet(conn), self._packet_read_timeout
+                    conn.wait_packet(), self._packet_read_timeout
                 )
                 await asyncio.wait_for(
                     self._process_packet(packet), self._process_packet_timeout
@@ -117,14 +117,6 @@ class Application(abc.Application):
         finally:
             if not conn.is_closing:
                 await conn.close(reason)
-
-    @staticmethod
-    async def _wait_packet(conn: connection.Connection) -> abc.AbstractReadBuffer:
-        packet = await conn.read_packet()
-        while not packet:
-            await asyncio.sleep(0.001)
-            packet = await conn.read_packet()
-        return packet
 
     async def _process_packet(self, packet: abc.AbstractReadBuffer) -> None:
         # pylint: disable=W0703
