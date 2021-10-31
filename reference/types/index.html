@@ -14,7 +14,7 @@
     
     
       
-        <title>0.1 -> 0.2 - pyCubes</title>
+        <title>types - pyCubes</title>
       
     
     
@@ -65,7 +65,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#01-02" class="md-skip">
+        <a href="#module-types" class="md-skip">
           Skip to content
         </a>
       
@@ -97,7 +97,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              0.1 -> 0.2
+              types
             
           </span>
         </div>
@@ -143,7 +143,7 @@
                 </li>
                 
                 <li class="md-select__item">
-                  <a href="../../ru/migrations/02/" hreflang="ru" class="md-select__link">
+                  <a href="../../ru/reference/types/" hreflang="ru" class="md-select__link">
                     Russian
                   </a>
                 </li>
@@ -271,12 +271,14 @@
 
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" data-md-state="indeterminate" type="checkbox" id="__nav_2" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" checked>
       
       
       
@@ -299,7 +301,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/app/" class="md-nav__link">
+      <a href="../app/" class="md-nav__link">
         app
       </a>
     </li>
@@ -313,7 +315,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/buffer/" class="md-nav__link">
+      <a href="../buffer/" class="md-nav__link">
         buffer
       </a>
     </li>
@@ -327,7 +329,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/connection/" class="md-nav__link">
+      <a href="../connection/" class="md-nav__link">
         connection
       </a>
     </li>
@@ -339,11 +341,176 @@
               
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../../reference/types/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          types
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         types
       </a>
+      
+        
+
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#function-new_class" class="md-nav__link">
+    function new_class
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#function-resolve_bases" class="md-nav__link">
+    function resolve_bases
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#function-prepare_class" class="md-nav__link">
+    function prepare_class
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#function-coroutine" class="md-nav__link">
+    function coroutine
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#class-dynamicclassattribute" class="md-nav__link">
+    class DynamicClassAttribute
+  </a>
+  
+    <nav class="md-nav" aria-label="class DynamicClassAttribute">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#method-__init__" class="md-nav__link">
+    method __init__
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#method-deleter" class="md-nav__link">
+    method deleter
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#method-getter" class="md-nav__link">
+    method getter
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#method-setter" class="md-nav__link">
+    method setter
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#class-genericalias" class="md-nav__link">
+    class GenericAlias
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#class-simplenamespace" class="md-nav__link">
+    class SimpleNamespace
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#class-connectionstatus" class="md-nav__link">
+    class ConnectionStatus
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#class-playerdata" class="md-nav__link">
+    class PlayerData
+  </a>
+  
+    <nav class="md-nav" aria-label="class PlayerData">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#method-__init___1" class="md-nav__link">
+    method __init__
+  </a>
+  
+    <nav class="md-nav" aria-label="method __init__">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#property-name" class="md-nav__link">
+    property name
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#property-uuid" class="md-nav__link">
+    property uuid
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -355,7 +522,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/utils/" class="md-nav__link">
+      <a href="../utils/" class="md-nav__link">
         utils
       </a>
     </li>
@@ -390,6 +557,144 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#function-new_class" class="md-nav__link">
+    function new_class
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#function-resolve_bases" class="md-nav__link">
+    function resolve_bases
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#function-prepare_class" class="md-nav__link">
+    function prepare_class
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#function-coroutine" class="md-nav__link">
+    function coroutine
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#class-dynamicclassattribute" class="md-nav__link">
+    class DynamicClassAttribute
+  </a>
+  
+    <nav class="md-nav" aria-label="class DynamicClassAttribute">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#method-__init__" class="md-nav__link">
+    method __init__
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#method-deleter" class="md-nav__link">
+    method deleter
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#method-getter" class="md-nav__link">
+    method getter
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#method-setter" class="md-nav__link">
+    method setter
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#class-genericalias" class="md-nav__link">
+    class GenericAlias
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#class-simplenamespace" class="md-nav__link">
+    class SimpleNamespace
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#class-connectionstatus" class="md-nav__link">
+    class ConnectionStatus
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#class-playerdata" class="md-nav__link">
+    class PlayerData
+  </a>
+  
+    <nav class="md-nav" aria-label="class PlayerData">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#method-__init___1" class="md-nav__link">
+    method __init__
+  </a>
+  
+    <nav class="md-nav" aria-label="method __init__">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#property-name" class="md-nav__link">
+    property name
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#property-uuid" class="md-nav__link">
+    property uuid
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -400,13 +705,95 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/DavisDmitry/pyCubes/edit/master/docs/migrations/02.md" title="Edit this page" class="md-content__button md-icon">
+                  <a href="https://github.com/DavisDmitry/pyCubes/edit/master/docs/reference/types.md" title="Edit this page" class="md-content__button md-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
                   </a>
                 
                 
-                <h1 id="01-02">0.1 -&gt; 0.2</h1>
-<p>original</p>
+                <!-- markdownlint-disable -->
+
+<p><a href="https://github.com/DavisDmitry/pyCubes/tree/0.1.1/cubes/types.py#L0"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a></p>
+<h1 id="module-types"><kbd>module</kbd> <code>types</code></h1>
+<p>Define names for built-in types that aren't directly accessible as a builtin. </p>
+<hr />
+<p><a href="https://github.com/DavisDmitry/pyCubes/tree/0.1.1/types/new_class#L69"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a></p>
+<h2 id="function-new_class"><kbd>function</kbd> <code>new_class</code></h2>
+<div class="highlight"><pre><span></span><code><span class="n">new_class</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="o">=</span><span class="p">(),</span> <span class="n">kwds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exec_body</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</code></pre></div>
+<p>Create a class object dynamically using the appropriate metaclass. </p>
+<hr />
+<p><a href="https://github.com/DavisDmitry/pyCubes/tree/0.1.1/types/resolve_bases#L79"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a></p>
+<h2 id="function-resolve_bases"><kbd>function</kbd> <code>resolve_bases</code></h2>
+<div class="highlight"><pre><span></span><code><span class="n">resolve_bases</span><span class="p">(</span><span class="n">bases</span><span class="p">)</span>
+</code></pre></div>
+<p>Resolve MRO entries dynamically as specified by PEP 560. </p>
+<hr />
+<p><a href="https://github.com/DavisDmitry/pyCubes/tree/0.1.1/types/prepare_class#L100"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a></p>
+<h2 id="function-prepare_class"><kbd>function</kbd> <code>prepare_class</code></h2>
+<div class="highlight"><pre><span></span><code><span class="n">prepare_class</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="o">=</span><span class="p">(),</span> <span class="n">kwds</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</code></pre></div>
+<p>Call the <strong>prepare</strong> method of the appropriate metaclass. </p>
+<p>Returns (metaclass, namespace, kwds) as a 3-tuple </p>
+<p><em>metaclass</em> is the appropriate metaclass <em>namespace</em> is the prepared class namespace <em>kwds</em> is an updated copy of the passed in kwds argument with any 'metaclass' entry removed. If no kwds argument is passed in, this will be an empty dict. </p>
+<hr />
+<p><a href="https://github.com/DavisDmitry/pyCubes/tree/0.1.1/types/coroutine#L244"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a></p>
+<h2 id="function-coroutine"><kbd>function</kbd> <code>coroutine</code></h2>
+<div class="highlight"><pre><span></span><code><span class="n">coroutine</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+</code></pre></div>
+<p>Convert regular generator function to a coroutine. </p>
+<hr />
+<p><a href="https://github.com/DavisDmitry/pyCubes/tree/0.1.1/cubes/types.py"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a></p>
+<h2 id="class-dynamicclassattribute"><kbd>class</kbd> <code>DynamicClassAttribute</code></h2>
+<p>Route attribute access on a class to <strong>getattr</strong>. </p>
+<p>This is a descriptor, used to define attributes that act differently when accessed through an instance and through a class.  Instance access remains normal, but access to an attribute through a class will be routed to the class's <strong>getattr</strong> method; this is done by raising AttributeError. </p>
+<p>This allows one to have properties active on an instance, and have virtual attributes on the class with the same name (see Enum for an example). </p>
+<p><a href="https://github.com/DavisDmitry/pyCubes/tree/0.1.1/types/__init__#L161"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a></p>
+<h3 id="method-__init__"><kbd>method</kbd> <code>__init__</code></h3>
+<div class="highlight"><pre><span></span><code><span class="fm">__init__</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fdel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<p><a href="https://github.com/DavisDmitry/pyCubes/tree/0.1.1/types/deleter#L201"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a></p>
+<h3 id="method-deleter"><kbd>method</kbd> <code>deleter</code></h3>
+<div class="highlight"><pre><span></span><code><span class="n">deleter</span><span class="p">(</span><span class="n">fdel</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<p><a href="https://github.com/DavisDmitry/pyCubes/tree/0.1.1/types/getter#L190"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a></p>
+<h3 id="method-getter"><kbd>method</kbd> <code>getter</code></h3>
+<div class="highlight"><pre><span></span><code><span class="n">getter</span><span class="p">(</span><span class="n">fget</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<p><a href="https://github.com/DavisDmitry/pyCubes/tree/0.1.1/types/setter#L196"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a></p>
+<h3 id="method-setter"><kbd>method</kbd> <code>setter</code></h3>
+<div class="highlight"><pre><span></span><code><span class="n">setter</span><span class="p">(</span><span class="n">fset</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<p><a href="https://github.com/DavisDmitry/pyCubes/tree/0.1.1/cubes/types.py"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a></p>
+<h2 id="class-genericalias"><kbd>class</kbd> <code>GenericAlias</code></h2>
+<p>Represent a PEP 585 generic type </p>
+<p>E.g. for t = list[int], t.<strong>origin</strong> is list and t.<strong>args</strong> is (int,). </p>
+<hr />
+<p><a href="https://github.com/DavisDmitry/pyCubes/tree/0.1.1/cubes/types.py"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a></p>
+<h2 id="class-simplenamespace"><kbd>class</kbd> <code>SimpleNamespace</code></h2>
+<p>A simple attribute-based namespace. </p>
+<p>SimpleNamespace(**kwargs) </p>
+<hr />
+<p><a href="https://github.com/DavisDmitry/pyCubes/tree/0.1.1/cubes/types.py#L5"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a></p>
+<h2 id="class-connectionstatus"><kbd>class</kbd> <code>ConnectionStatus</code></h2>
+<p>An enumeration. </p>
+<hr />
+<p><a href="https://github.com/DavisDmitry/pyCubes/tree/0.1.1/cubes/types.py#L13"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a></p>
+<h2 id="class-playerdata"><kbd>class</kbd> <code>PlayerData</code></h2>
+<p>Class for storing the most important player data. </p>
+<p><a href="https://github.com/DavisDmitry/pyCubes/tree/0.1.1/cubes/types.py#L16"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a></p>
+<h3 id="method-__init___1"><kbd>method</kbd> <code>__init__</code></h3>
+<div class="highlight"><pre><span></span><code><span class="fm">__init__</span><span class="p">(</span><span class="n">uuid</span><span class="p">:</span> <span class="n">UUID</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h4 id="property-name"><kbd>property</kbd> name</h4>
+<p>Player name. </p>
+<hr />
+<h4 id="property-uuid"><kbd>property</kbd> uuid</h4>
+<p>Player UUID. </p>
                 
               
               
@@ -426,7 +813,7 @@
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
         
-        <a href="../.." class="md-footer__link md-footer__link--prev" aria-label="Previous: None" rel="prev">
+        <a href="../connection/" class="md-footer__link md-footer__link--prev" aria-label="Previous: connection" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
           </div>
@@ -435,20 +822,20 @@
               <span class="md-footer__direction">
                 Previous
               </span>
-              None
+              connection
             </div>
           </div>
         </a>
       
       
         
-        <a href="../../reference/app/" class="md-footer__link md-footer__link--next" aria-label="Next: None" rel="next">
+        <a href="../utils/" class="md-footer__link md-footer__link--next" aria-label="Next: utils" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              None
+              utils
             </div>
           </div>
           <div class="md-footer__button md-icon">
