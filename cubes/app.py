@@ -87,7 +87,8 @@ class Application(abc.Application):
     async def _run(self, host: str, port: int) -> None:
         try:
             server = await asyncio.start_server(self._accept_connection, host, port)
-            await server.serve_forever()
+            async with server:
+                await server.serve_forever()
         except Exception as exc:
             log.exception(exc)
             raise GracefulExit from exc
@@ -103,7 +104,7 @@ class Application(abc.Application):
                 packet = await asyncio.wait_for(
                     self._wait_packet(conn), self._packet_read_timeout
                 )
-                asyncio.wait_for(
+                await asyncio.wait_for(
                     self._process_packet(packet), self._process_packet_timeout
                 )
         except asyncio.TimeoutError:
