@@ -97,7 +97,7 @@ class Application(abc.Application):
     ) -> None:
         # pylint: disable=W0703
         reason = None
-        conn = connection.Connection(reader, writer, self)
+        conn = connection.PlayerConnection(reader, writer, self)
         try:
             while not conn.is_closing:
                 packet = await asyncio.wait_for(
@@ -118,7 +118,7 @@ class Application(abc.Application):
                 await conn.close(reason)
 
     @staticmethod
-    async def _wait_packet(conn: connection.Connection) -> abc.AbstractReadBuffer:
+    async def _wait_packet(conn: connection.PlayerConnection) -> abc.AbstractReadBuffer:
         packet = await conn.read_packet()
         while not packet:
             await asyncio.sleep(0.001)

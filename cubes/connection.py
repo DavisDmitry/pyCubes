@@ -15,7 +15,7 @@ class CloseConnection(Exception):
         self.reason = reason
 
 
-class Connection(abc.AbstractConnection):
+class PlayerConnection(abc.AbstractPlayerConnection):
     """Client or server connection.
 
     Attributes:
@@ -28,7 +28,7 @@ class Connection(abc.AbstractConnection):
         writer: asyncio.StreamWriter,
         app: abc.Application,
     ):
-        super().__init__(reader, writer, app)
+        self._reader, self._writer, self._app = reader, writer, app
         self.status = types.ConnectionStatus.HANDSHAKE
 
     async def close(self, reason: Optional[str] = None) -> None:

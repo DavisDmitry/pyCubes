@@ -233,23 +233,10 @@ class AbstractWriteBuffer(abc.ABC, _BaseBuffer):
         return self.write(self._encode_varlong(value))
 
 
-class AbstractConnection(abc.ABC):
-    """Abstract client or server connection."""
-
+class _AbstractConnection(abc.ABC):
     status: types.ConnectionStatus
-
-    def __init__(
-        self,
-        reader: asyncio.StreamReader,
-        writer: asyncio.StreamWriter,
-        app: Application,
-    ):
-        self._reader, self._writer, self._app = reader, writer, app
-
-    @property
-    def app(self) -> Application:
-        """Current application."""
-        return self._app
+    _reader: asyncio.StreamReader
+    _writer: asyncio.StreamWriter
 
     @property
     def is_closing(self) -> bool:
@@ -277,3 +264,17 @@ class AbstractConnection(abc.ABC):
     @abc.abstractmethod
     async def send_packet(self, buffer: AbstractWriteBuffer) -> None:
         """Sends packet."""
+
+
+class AbstractPlayerConnection(_AbstractConnection, abc.ABC):
+    """Abstract player-to-server connection."""
+
+    _app: Application
+
+    @property
+    def app(self) -> Application:
+        """Current application."""
+        return self._app
+
+
+AbstractConnection = AbstractPlayerConnection
