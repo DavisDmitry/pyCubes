@@ -152,6 +152,12 @@ async def test_pack_unpack_empty_buffer():
 
 
 @pytest.mark.asyncio
+async def test_invalid_length_error():
+    with pytest.raises(cubes.buffer.InvalidLengthError):
+        await cubes.ReadBuffer.from_reader(None, _FakeStreamReader(b"\x80"))
+
+
+@pytest.mark.asyncio
 async def test_invalid_buffer():
     with pytest.raises(asyncio.TimeoutError):
         await asyncio.wait_for(

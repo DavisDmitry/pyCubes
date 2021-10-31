@@ -4,8 +4,16 @@ from typing import Optional
 from cubes import abc
 
 
-class EmptyBufferError(Exception):
+class CubesBufferError(Exception):
+    """Exception raising when buffer can't be reader or created."""
+
+
+class EmptyBufferError(CubesBufferError):
     """Exception raising when buffer is empty."""
+
+
+class InvalidLengthError(CubesBufferError):
+    """Exception raising when packet length (VarInt) can't be readed."""
 
 
 class ReadBuffer(abc.AbstractReadBuffer):
@@ -26,6 +34,7 @@ class ReadBuffer(abc.AbstractReadBuffer):
 
         Raises:
             EmptyBufferError: when buffer is empty
+            InvalidLengthError: when packet length (VarInt) can't be reader
 
         Todo:
             * implement compression
@@ -34,7 +43,9 @@ class ReadBuffer(abc.AbstractReadBuffer):
         for index in range(3):
             byte = await reader.read(1)
             if byte == b"":
-                raise EmptyBufferError
+                if index == 0:
+                    raise EmptyBufferError
+                raise InvalidLengthError
             byte = ord(byte)
             length |= (byte & 0x7F) << 7 * index
             if not byte & 0x80:
