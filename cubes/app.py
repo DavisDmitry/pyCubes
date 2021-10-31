@@ -87,7 +87,8 @@ class Application(abc.Application):
     async def _run(self, host: str, port: int) -> None:
         try:
             server = await asyncio.start_server(self._accept_connection, host, port)
-            await server.serve_forever()
+            async with server:
+                await server.serve_forever()
         except Exception as exc:
             log.exception(exc)
             raise GracefulExit from exc
