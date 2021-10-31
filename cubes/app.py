@@ -1,7 +1,7 @@
 import asyncio
 import logging
 import signal
-from typing import Awaitable, Callable
+from typing import Callable, Coroutine
 
 from cubes import abc, buffer, connection, types
 
@@ -10,8 +10,8 @@ log = logging.getLogger(__name__)
 
 async def _default_unhandled_packet_handler(packet_id: int, packet: buffer.ReadBuffer):
     log.debug(
-        "Handler for packet id %i and state %s not implemented.",
-        packet_id,
+        "Handler for packet id %s and state %s not implemented.",
+        hex(packet_id),
         packet.connection.status.name,
     )
 
@@ -25,7 +25,10 @@ class Application(abc.Application):
 
     # pylint: disable=W0201
 
-    _handlers: dict[tuple[types.ConnectionStatus, int], Awaitable]
+    _handlers: dict[
+        tuple[types.ConnectionStatus, int],
+        Callable[[int, abc.AbstractReadBuffer], Coroutine],
+    ]
 
     def __init__(self, packet_read_timeout: int = 20, process_packet_timeout: int = 20):
         self._packet_read_timeout = packet_read_timeout
@@ -48,7 +51,10 @@ class Application(abc.Application):
             log.info("Server stopped")
 
     def add_low_level_handler(
-        self, conn_status: types.ConnectionStatus, packet_id: int, func: Callable
+        self,
+        conn_status: types.ConnectionStatus,
+        packet_id: int,
+        func: Callable[[int, abc.AbstractReadBuffer], Coroutine],
     ) -> None:
         """Adds packet handler.
 
@@ -67,7 +73,9 @@ class Application(abc.Application):
             )
         self._handlers[(conn_status, packet_id)] = func
 
-    def _change_unhandled_packet_handler(self, func: Callable) -> None:
+    def _change_unhandled_packet_handler(
+        self, func: Callable[[int, abc.AbstractReadBuffer], Coroutine]
+    ) -> None:
         self._unhandled_packet_handler = func
 
     unhandled_packet_handler = property(fset=_change_unhandled_packet_handler)
