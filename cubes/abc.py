@@ -33,7 +33,7 @@ class _BaseBuffer:
 
     @property
     def data(self) -> bytes:
-        """Buffer data."""
+        """bytes: Buffer data."""
         return self._data
 
 
@@ -57,57 +57,57 @@ class AbstractReadBuffer(abc.ABC, _BaseBuffer):
 
     @property
     def connection(self) -> "AbstractConnection":
-        """Current connection."""
+        """cubes.abc.Connection: Current connection."""
         return self._conn
 
     @property
     def boolean(self) -> bool:
-        """Either False or True."""
+        """bool: Either False or True."""
         return struct.unpack("?", self.read(1))[0]
 
     @property
     def byte(self) -> int:
-        """Signed 8-bit integer."""
+        """int: Signed 8-bit integer."""
         return struct.unpack("b", self.read(1))[0]
 
     @property
     def unsigned_byte(self) -> int:
-        """Unsigned 8-bit integer."""
+        """int: Unsigned 8-bit integer."""
         return struct.unpack("B", self.read(1))[0]
 
     @property
     def short(self) -> int:
-        """Signed 16-bit integer."""
+        """int: Signed 16-bit integer."""
         return struct.unpack(">h", self.read(2))[0]
 
     @property
     def unsigned_short(self) -> int:
-        """Unsigned 16-bit integer."""
+        """int: Unsigned 16-bit integer."""
         return struct.unpack(">H", self.read(2))[0]
 
     @property
     def integer(self) -> int:
-        """Signed 32-bit integer."""
+        """int: Signed 32-bit integer."""
         return struct.unpack(">i", self.read(4))[0]
 
     @property
     def long(self) -> int:
-        """Signed 64-bit integer."""
+        """int: Signed 64-bit integer."""
         return struct.unpack(">q", self.read(8))[0]
 
     @property
     def float(self) -> float:
-        """Signed 32-bit float."""
+        """float: Signed 32-bit float."""
         return struct.unpack(">f", self.read(4))[0]
 
     @property
     def double(self) -> float:
-        """Signed 64-bit float."""
+        """float: Signed 64-bit float."""
         return struct.unpack(">d", self.read(8))[0]
 
     @property
     def string(self) -> str:
-        r"""UTF-8 string.
+        r"""str: UTF-8 string.
 
         Note:
             Max string length is 32767 (b'\xff\xff\x01') bytes — 3 bytes VarInt prefix.
@@ -127,12 +127,12 @@ class AbstractReadBuffer(abc.ABC, _BaseBuffer):
 
     @property
     def varint(self) -> int:
-        """Variable-length integer."""
+        """int: Variable-length integer."""
         return self._unpack_varint()
 
     @property
     def varlong(self) -> int:
-        """Variable-length integer."""
+        """int: Variable-length integer."""
         result = 0
         for i in range(10):
             byte = ord(self.read(1))
@@ -150,7 +150,7 @@ class AbstractWriteBuffer(abc.ABC, _BaseBuffer):
     @property
     @abc.abstractmethod
     def packed(self) -> bytes:
-        """Packed buffer data."""
+        """bytes: Packed buffer data."""
 
     def write(self, data: bytes) -> "AbstractWriteBuffer":
         """Appends data to buffer."""
@@ -240,17 +240,17 @@ class _AbstractBaseConnection(abc.ABC):
 
     @property
     def is_closing(self) -> bool:
-        """Is connection closing."""
+        """bool: Is connection closing."""
         return self._writer.is_closing()
 
     @property
     def peername(self) -> tuple[str, int]:
-        """Client host and port."""
+        """tuple[str, int]: Client host and port."""
         return self._writer.get_extra_info("peername")
 
     @property
     def sockname(self) -> tuple[str, int]:
-        """Server host and port."""
+        """tuple[str, int]: Server host and port."""
         return self._writer.get_extra_info("sockname")
 
     @abc.abstractmethod
@@ -277,7 +277,7 @@ class AbstractPlayerConnection(_AbstractBaseConnection, abc.ABC):
 
     @property
     def app(self) -> Application:
-        """Current application."""
+        """cubes.abc.AbstractApplication: Current application."""
         return self._app
 
     @abc.abstractmethod
@@ -296,7 +296,7 @@ class AbstractClientConnection(_AbstractBaseConnection, abc.ABC):
 
     @property
     def player(self) -> types_.PlayerData:
-        """Player data (UUID and name)."""
+        """cubes.PlayerData: Player data (UUID and name)."""
         return self._player
 
     @classmethod

@@ -17,7 +17,7 @@ async def _default_unhandled_packet_handler(packet_id: int, packet: buffer.ReadB
 
 
 class GracefulExit(SystemExit):
-    """Exception raising when server should stop."""
+    """Rises when the server should stop."""
 
 
 class Application(abc.Application):
@@ -76,9 +76,11 @@ class Application(abc.Application):
     def _change_unhandled_packet_handler(
         self, func: Callable[[int, abc.AbstractReadBuffer], Coroutine]
     ) -> None:
+        """Setter for unhandled packets handler."""
         self._unhandled_packet_handler = func
 
     unhandled_packet_handler = property(fset=_change_unhandled_packet_handler)
+    unhandled_packet_handler.__doc__ = _change_unhandled_packet_handler.__doc__
 
     @staticmethod
     def _raise_graceful_exit() -> None:

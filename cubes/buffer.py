@@ -5,15 +5,15 @@ from cubes import abc
 
 
 class CubesBufferError(Exception):
-    """Exception raising when buffer can't be reader or created."""
+    """Rised when buffer can't be reader or created."""
 
 
 class EmptyBufferError(CubesBufferError):
-    """Exception raising when buffer is empty."""
+    """Raised when buffer is empty."""
 
 
 class InvalidLengthError(CubesBufferError):
-    """Exception raising when packet length (VarInt) can't be readed."""
+    """Raised when packet length (VarInt) can't be readed."""
 
 
 class ReadBuffer(abc.AbstractReadBuffer):
@@ -30,7 +30,8 @@ class ReadBuffer(abc.AbstractReadBuffer):
         r"""Creates a ReadBuffer instance from asyncio.StreamReader.
 
         Note:
-            Packet length is 2097151 (b'\xff\xff\x7f') bytes — 3 bytes VarInt prefix.
+            Max packet length is 2097151 (b'\xff\xff\x7f') bytes — 3 bytes
+                VarInt prefix.
 
         Raises:
             EmptyBufferError: when buffer is empty
@@ -61,10 +62,10 @@ class ReadBuffer(abc.AbstractReadBuffer):
         return cls(conn, data)
 
     def read(self, length: Optional[int] = None) -> bytes:
-        """Reads length bytes from buffer.
+        """Reads `length` bytes from buffer.
 
         Note:
-            If length <= 0 or None returns all buffer data from current position.
+            If `length` is `None` returns all buffer data from current position.
 
         Args:
             length: number of bytes to read
@@ -82,7 +83,7 @@ class WriteBuffer(abc.AbstractWriteBuffer):
 
     @property
     def packed(self) -> bytes:
-        """Packed buffer data.
+        """bytes: Packed buffer data.
 
         Todo:
             * implement compression

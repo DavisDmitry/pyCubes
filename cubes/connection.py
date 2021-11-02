@@ -9,7 +9,7 @@ from cubes import types_
 
 
 class CloseConnection(Exception):
-    """Raising when connection should be closed."""
+    """Raised when a connection should be closed."""
 
     def __init__(self, reason: Optional[str] = None):
         super().__init__(reason)
@@ -17,21 +17,22 @@ class CloseConnection(Exception):
 
 
 class DisconnectedByServerError(Exception):
-    """Raising when server sends disconnect packet."""
+    """Raised when a disconnect packet is received from a server."""
 
     def __init__(self, state: types_.ConnectionStatus, reason: str) -> None:
         super().__init__(f"State: {state.name}, reason: {reason}.")
 
 
 class UnexpectedPacketError(Exception):
-    """Raising when server sends unexpected packet."""
+    """Raised when an unexpected packet is received from a server."""
 
     def __init__(self, packet_id: int) -> None:
         super().__init__(f"Packet ID: {hex(packet_id)}")
 
 
 class InvalidPlayerNameError(Exception):
-    """Raising when server sent Login Success packet with invalid player name."""
+    """Raised when a Successful Login packet with an invalid name is received\
+        from a server."""
 
     def __init__(self, valid_name: str, invalid_name: str) -> None:
         super().__init__(f"{valid_name} != {invalid_name}")
@@ -57,7 +58,7 @@ class _BaseConnection:
         return packet
 
     async def send_packet(self, buffer: abc.AbstractWriteBuffer) -> None:
-        """Sends packet."""
+        """Sends the packet."""
         self._writer.write(buffer.packed)
         await self._writer.drain()
 
@@ -80,7 +81,7 @@ class PlayerConnection(_BaseConnection, abc.AbstractPlayerConnection):
         self.status = types_.ConnectionStatus.HANDSHAKE
 
     async def close(self, reason: Optional[str] = None) -> None:
-        """Closes connection."""
+        """Closes the connection."""
         if reason:
             reason = json.dumps({"text": reason})
             if self.status == types_.ConnectionStatus.LOGIN:
@@ -140,6 +141,6 @@ class ClientConnection(_BaseConnection, abc.AbstractClientConnection):
         return cls(reader, writer, player)
 
     async def close(self) -> None:
-        """Closes connection."""
+        """Closes the connection."""
         self._writer.close()
         await self._writer.wait_closed()
