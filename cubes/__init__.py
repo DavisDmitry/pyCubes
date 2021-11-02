@@ -8,4 +8,4 @@ from cubes.connection import (
     PlayerConnection,
     UnexpectedPacketError,
 )
-from cubes.types import ConnectionStatus, PlayerData
+from cubes.types_ import ConnectionStatus, PlayerData

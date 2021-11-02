@@ -3,7 +3,7 @@ import asyncio
 import struct
 from typing import Callable, Optional, Union
 
-from cubes import types
+from cubes import types_
 
 
 class Application(abc.ABC):
@@ -16,7 +16,7 @@ class Application(abc.ABC):
 
     @abc.abstractmethod
     def add_low_level_handler(
-        self, conn_status: types.ConnectionStatus, packet_id: int, func: Callable
+        self, conn_status: types_.ConnectionStatus, packet_id: int, func: Callable
     ) -> None:
         """Adds packet handler."""
 
@@ -234,7 +234,7 @@ class AbstractWriteBuffer(abc.ABC, _BaseBuffer):
 
 
 class _AbstractBaseConnection(abc.ABC):
-    status: types.ConnectionStatus
+    status: types_.ConnectionStatus
     _reader: asyncio.StreamReader
     _writer: asyncio.StreamWriter
 
@@ -292,10 +292,10 @@ class AbstractClientConnection(_AbstractBaseConnection, abc.ABC):
         status (cubes.ConnectionStatus): Connection status
     """
 
-    _player: types.PlayerData
+    _player: types_.PlayerData
 
     @property
-    def player(self) -> types.PlayerData:
+    def player(self) -> types_.PlayerData:
         """Player data (UUID and name)."""
         return self._player
 

@@ -3,7 +3,7 @@ import logging
 import signal
 from typing import Callable, Coroutine
 
-from cubes import abc, buffer, connection, types
+from cubes import abc, buffer, connection, types_
 
 log = logging.getLogger(__name__)
 
@@ -26,7 +26,7 @@ class Application(abc.Application):
     # pylint: disable=W0201
 
     _handlers: dict[
-        tuple[types.ConnectionStatus, int],
+        tuple[types_.ConnectionStatus, int],
         Callable[[int, abc.AbstractReadBuffer], Coroutine],
     ]
 
@@ -52,7 +52,7 @@ class Application(abc.Application):
 
     def add_low_level_handler(
         self,
-        conn_status: types.ConnectionStatus,
+        conn_status: types_.ConnectionStatus,
         packet_id: int,
         func: Callable[[int, abc.AbstractReadBuffer], Coroutine],
     ) -> None:

@@ -18,7 +18,7 @@ class PlayerData:
 
     @property
     def uuid(self) -> _uuid.UUID:
-        "Player UUID."
+        """Player UUID."""
         return self._uuid
 
     @property
