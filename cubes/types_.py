@@ -3,7 +3,11 @@ import uuid as _uuid
 
 
 class ConnectionStatus(enum.IntEnum):
-    # pylint: disable=C0115
+    """Connection Status enumeration.
+
+    HANDSHAKE, STATUS, LOGIN, PlAY
+    """
+
     HANDSHAKE = 0
     STATUS = 1
     LOGIN = 2
@@ -18,12 +22,12 @@ class PlayerData:
 
     @property
     def uuid(self) -> _uuid.UUID:
-        "Player UUID."
+        """uuid.UUID: Player UUID."""
         return self._uuid
 
     @property
     def name(self) -> str:
-        """Player name."""
+        """str: Player name."""
         return self._name
 
     def __eq__(self, other: "PlayerData") -> bool:
