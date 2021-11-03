@@ -19,7 +19,7 @@ jobs:
       - name: Change version
         env:
           VERSION: ${{ github.event.inputs.version }}
-        run: python scripts/change_version.py
+        run: python scripts/edit_version.py
       - name: Configure git
         run: |
           git config user.email dmitrydavis@protonmail.com
@@ -31,6 +31,7 @@ jobs:
           git push
 
   generate-api-reference:
+    need: change-version
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -59,6 +60,7 @@ jobs:
           git push
 
   create-release:
+    needs: generate-api-reference
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
