@@ -28,7 +28,7 @@ jobs:
         run: |
           git add pyproject.toml
           git commit -m "🔖 Release version $VERSION"
-          git push
+          git push --force
 
   generate-api-reference:
     needs: change-version
@@ -57,7 +57,7 @@ jobs:
         run: |
           git add docs
           git commit -m "📝 Generate current API Reference"
-          git push
+          git push --force
 
   create-release:
     needs: generate-api-reference
