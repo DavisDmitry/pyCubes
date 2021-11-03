@@ -52,6 +52,7 @@ extra:
 
 nav:
   - index.md
+  - dev.md
   - Current API Reference:
     - app: reference/app.md
     - buffer: reference/buffer.md
