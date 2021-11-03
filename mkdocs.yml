@@ -1,0 +1,60 @@
+site_name: pyCubes
+
+theme:
+  name: material
+  logo: assets/command_block.png
+  favicon: assets/command_block.png
+  icon:
+    repo: fontawesome/brands/github-alt
+  palette:
+    - scheme: default 
+      primary: green
+      toggle:
+        icon: material/lightbulb
+        name: Switch to light mode
+    - scheme: slate
+      primary: green
+      toggle:
+        icon: material/lightbulb-outline
+        name: Switch to dark mode
+  features:
+    - navigation.expand
+    - nvaigation.top
+    - content.code.annotate
+
+plugins:
+  - search:
+      lang:
+        - en
+        - ru
+  - i18n:
+      default_language: en
+      material_alternate: true
+      languages:
+        en: English
+        ru: Russian
+      nav_translations:
+        ru:
+          Migrations: Миграции
+
+repo_url: https://github.com/DavisDmitry/pyCubes
+repo_name: DavisDmitry/pyCubes
+
+markdown_extensions:
+  - pymdownx.superfences
+
+extra:
+  social:
+      - icon: fontawesome/brands/github
+        link: https://github.com/DavisDmitry
+      - icon: fontawesome/brands/telegram
+        link: https://t.me/ancaptimes
+
+nav:
+  - index.md
+  - Current API Reference:
+    - app: reference/app.md
+    - buffer: reference/buffer.md
+    - connection: reference/connection.md
+    - types_: reference/types_.md
+    - utils: reference/utils.md
