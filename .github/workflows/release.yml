@@ -31,7 +31,7 @@ jobs:
           git push
 
   generate-api-reference:
-    need: change-version
+    needs: change-version
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
