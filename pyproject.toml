@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "pyCubes"
 version = "0.1.1"
-description = "Library for serializing/deserilizing Minecraft JE packets"
+description = "Library for creating servers and clients Minecraft Java Edition"
 authors = ["Dmitry Davis <dmitrydavis@protonmail.com>"]
 license = "MIT"
 readme = "README.md"
@@ -28,6 +28,10 @@ packages = [{include="cubes"}]
 
 [tool.poetry.dependencies]
 python = "^3.9"
+mkdocs-material = {version = "^7.3.6", extras = ["docs"]}
+mkdocs-static-i18n = {version = "^0.21", extras = ["docs"]}
+lazydocs = {version = "^0.4.8", extras = ["docs"]}
+pydocstyle = {version = "^6.1.1", extras = ["docs"]}
 
 [tool.poetry.dev-dependencies]
 black = "^21.9b0"
