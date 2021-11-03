@@ -42,6 +42,8 @@ repo_name: DavisDmitry/pyCubes
 
 markdown_extensions:
   - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true 
 
 extra:
   social:
@@ -53,6 +55,8 @@ extra:
 nav:
   - index.md
   - dev.md
+  - Migrations:
+    - '0.1 -> 0.2': migrations/0_2.md
   - Current API Reference:
     - app: reference/app.md
     - buffer: reference/buffer.md
