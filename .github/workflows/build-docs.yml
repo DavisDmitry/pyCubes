@@ -3,7 +3,7 @@ name: Build docs
 on:
   release:
     types:
-      - created
+      - published
 
 jobs:
   build:
