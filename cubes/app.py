@@ -30,6 +30,8 @@ class Application(abc.Application):
         Callable[[int, abc.AbstractReadBuffer], Coroutine],
     ]
 
+    __slots__ = ("_packet_read_timeout", "_process_packet_timeout", "_handlers")
+
     def __init__(self, packet_read_timeout: int = 20, process_packet_timeout: int = 20):
         self._packet_read_timeout = packet_read_timeout
         self._process_packet_timeout = process_packet_timeout

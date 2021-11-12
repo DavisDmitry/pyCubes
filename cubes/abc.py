@@ -9,6 +9,8 @@ from cubes import types_
 class Application(abc.ABC):
     """Class for creating Minecraft Java Edition server implemetation."""
 
+    __slots__ = ("_unhandled_packet_handler",)
+
     # pylint: disable=W0201
     @abc.abstractmethod
     def run(self, host: str, port: int = 25565) -> None:
@@ -28,6 +30,8 @@ class Application(abc.ABC):
 
 class _BaseBuffer:
     # pylint: disable=R0903
+    __slots__ = ("_data",)
+
     def __init__(self, data: bytes = b""):
         self._data = data
 
@@ -39,6 +43,8 @@ class _BaseBuffer:
 
 class AbstractReadBuffer(abc.ABC, _BaseBuffer):
     """Abstract class for parsing data by types."""
+
+    __slots__ = ("_conn",)
 
     def __init__(self, conn: "AbstractConnection", data: bytes = b"") -> None:
         super().__init__(data)
@@ -235,8 +241,11 @@ class AbstractWriteBuffer(abc.ABC, _BaseBuffer):
 
 class _AbstractBaseConnection(abc.ABC):
     status: types_.ConnectionStatus
+
     _reader: asyncio.StreamReader
     _writer: asyncio.StreamWriter
+
+    __slots__ = ("status", "_reader", "_writer")
 
     @property
     def is_closing(self) -> bool:
@@ -275,6 +284,8 @@ class AbstractPlayerConnection(_AbstractBaseConnection, abc.ABC):
 
     _app: Application
 
+    __slots__ = ("_app",)
+
     @property
     def app(self) -> Application:
         """cubes.abc.AbstractApplication: Current application."""
@@ -293,6 +304,8 @@ class AbstractClientConnection(_AbstractBaseConnection, abc.ABC):
     """
 
     _player: types_.PlayerData
+
+    __slots__ = ("_player",)
 
     @property
     def player(self) -> types_.PlayerData:

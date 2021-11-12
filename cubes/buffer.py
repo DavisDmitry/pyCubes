@@ -19,6 +19,8 @@ class InvalidLengthError(CubesBufferError):
 class ReadBuffer(abc.AbstractReadBuffer):
     """Class for parsing data by types."""
 
+    __slots__ = ("_pos",)
+
     def __init__(self, conn: abc.AbstractConnection, data: bytes = b""):
         super().__init__(conn, data)
         self._pos = 0
