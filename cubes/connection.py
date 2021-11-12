@@ -70,6 +70,8 @@ class PlayerConnection(_BaseConnection, abc.AbstractPlayerConnection):
         status (cubes.ConnectionStatus): Connection status.
     """
 
+    __slots__ = ("status",)
+
     def __init__(
         self,
         reader: asyncio.StreamReader,
@@ -102,6 +104,8 @@ class ClientConnection(_BaseConnection, abc.AbstractClientConnection):
     Attributes:
         status (cubes.ConnectionStatus): Connection status
     """
+
+    __slots__ = ("status",)
 
     def __init__(
         self,

@@ -17,6 +17,8 @@ class ConnectionStatus(enum.IntEnum):
 class PlayerData:
     """Class for storing the most important player data."""
 
+    __slots__ = ("_uuid", "_name")
+
     def __init__(self, uuid: _uuid.UUID, name: str):
         self._uuid, self._name = uuid, name
 
