@@ -133,6 +133,19 @@ def test_varlong(value: int):
     assert cubes.ReadBuffer(None, data).varlong == value
 
 
+@pytest.mark.parametrize(
+    "value",
+    [
+        _MIN_UNSIGNED_BYTE,
+        _MAX_UNSIGNED_BYTE,
+        *[random.randint(_MIN_UNSIGNED_BYTE, _MAX_UNSIGNED_BYTE) for _ in range(3)],
+    ],
+)
+def test_angle(value: int):
+    data = cubes.WriteBuffer().pack_angle(value).data
+    assert cubes.ReadBuffer(None, data).angle == value
+
+
 def test_uuid():
     value = uuid.uuid4()
     data = cubes.WriteBuffer().pack_uuid(value).data

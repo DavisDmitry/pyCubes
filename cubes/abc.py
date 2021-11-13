@@ -159,6 +159,14 @@ class AbstractReadBuffer(abc.ABC, _BaseBuffer):
         return result
 
     @property
+    def angle(self) -> int:
+        """int: Angle.
+
+        A rotation angle in steps of 1/256 of a full turn.
+        """
+        return self.unsigned_byte
+
+    @property
     def uuid(self) -> uuid.UUID:
         """UUID: UUID."""
         return uuid.UUID(bytes=self.read(16))
@@ -255,6 +263,10 @@ class AbstractWriteBuffer(abc.ABC, _BaseBuffer):
     def pack_varlong(self, value: int) -> "AbstractWriteBuffer":
         """Packs variable-length integer."""
         return self.write(self._encode_varlong(value))
+
+    def pack_angle(self, value: int) -> "AbstractWriteBuffer":
+        """Packs Angle."""
+        return self.pack_unsigned_byte(value)
 
     def pack_uuid(self, value: uuid.UUID) -> "AbstractWriteBuffer":
         """Packs UUID."""
