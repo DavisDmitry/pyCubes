@@ -120,6 +120,14 @@ class AbstractReadBuffer(abc.ABC, _BaseBuffer):
         """
         return self.read(self._unpack_varint(max_bytes=3)).decode()
 
+    @property
+    def identifier(self) -> tuple[str, str]:
+        """tuple[str, str]: Identifier.
+
+        Namespaced location in format `(namespace, location)`.
+        """
+        return tuple(self.string.split(":", 1))
+
     def _unpack_varint(self, max_bytes: int = 5) -> int:
         result = 0
         for i in range(max_bytes):
@@ -203,6 +211,10 @@ class AbstractWriteBuffer(abc.ABC, _BaseBuffer):
         """Packs UTF-8 string."""
         self.write(self._encode_varint(len(value), 3))
         return self.write(value.encode())
+
+    def pack_identifier(self, namespace: str, location: str) -> "AbstractWriteBuffer":
+        """Packs Identifier (namespaced location)."""
+        return self.pack_string(f"{namespace}:{location}")
 
     @staticmethod
     def _encode_varint(value: int, max_bytes: int = 5) -> bytes:

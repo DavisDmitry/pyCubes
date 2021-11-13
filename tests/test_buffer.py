@@ -99,6 +99,13 @@ def test_string():
     assert cubes.ReadBuffer(None, data).string == string
 
 
+def test_identifier():
+    identrifier = ("minecraft", "thing")
+    data = cubes.WriteBuffer().pack_identifier(*identrifier).data
+    assert cubes.ReadBuffer(None, data).string == "minecraft:thing"
+    assert cubes.ReadBuffer(None, data).identifier == identrifier
+
+
 @pytest.mark.parametrize(
     "value",
     [
