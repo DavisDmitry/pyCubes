@@ -1,5 +1,6 @@
 import asyncio
 import random
+import uuid
 
 import pytest
 
@@ -130,6 +131,12 @@ def test_varint(value: int):
 def test_varlong(value: int):
     data = cubes.WriteBuffer().pack_varlong(value).data
     assert cubes.ReadBuffer(None, data).varlong == value
+
+
+def test_uuid():
+    value = uuid.uuid4()
+    data = cubes.WriteBuffer().pack_uuid(value).data
+    assert cubes.ReadBuffer(None, data).uuid == value
 
 
 class _FakeStreamReader:

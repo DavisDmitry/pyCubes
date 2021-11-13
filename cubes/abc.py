@@ -1,6 +1,7 @@
 import abc
 import asyncio
 import struct
+import uuid
 from typing import Callable, Optional, Union
 
 from cubes import types_
@@ -157,6 +158,11 @@ class AbstractReadBuffer(abc.ABC, _BaseBuffer):
             result -= 1 << 64
         return result
 
+    @property
+    def uuid(self) -> uuid.UUID:
+        """UUID: UUID."""
+        return uuid.UUID(bytes=self.read(16))
+
 
 class AbstractWriteBuffer(abc.ABC, _BaseBuffer):
     """Abstract class for serializing data by types."""
@@ -249,6 +255,10 @@ class AbstractWriteBuffer(abc.ABC, _BaseBuffer):
     def pack_varlong(self, value: int) -> "AbstractWriteBuffer":
         """Packs variable-length integer."""
         return self.write(self._encode_varlong(value))
+
+    def pack_uuid(self, value: uuid.UUID) -> "AbstractWriteBuffer":
+        """Packs UUID."""
+        return self.write(value.bytes)
 
 
 class _AbstractBaseConnection(abc.ABC):
