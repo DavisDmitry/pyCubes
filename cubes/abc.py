@@ -2,7 +2,7 @@ import abc
 import asyncio
 import struct
 import uuid
-from typing import Callable, Optional, Union
+from typing import Any, Callable, Optional, Sequence, Union
 
 from cubes import types_
 
@@ -117,7 +117,8 @@ class AbstractReadBuffer(abc.ABC, _BaseBuffer):
         r"""str: UTF-8 string.
 
         Note:
-            Max string length is 32767 (b'\xff\xff\x01') bytes — 3 bytes VarInt prefix.
+            Max string length is 32767 (b'\xff\xff\x01') bytes —
+                3 bytes VarInt prefix.
         """
         return self.read(self._unpack_varint(max_bytes=3)).decode()
 
@@ -156,6 +157,64 @@ class AbstractReadBuffer(abc.ABC, _BaseBuffer):
                 break
         if result & (1 << 63):
             result -= 1 << 64
+        return result
+
+    @property
+    def entity_metadata(self) -> Sequence[tuple[types_.EntitiMetadataType, Any]]:
+        """Sequence[tuple[cubes.EntityMetadataType, Any]]: Entity Metadata.
+
+        Miscellaneous information about an entity. More information:
+            https://wiki.vg/Entity_metadata#Entity_Metadata_Format
+
+        Todo:
+            * use match case in 3.10
+        """
+        # pylint: disable=R0912
+        result = []
+        next_index = self.unsigned_byte
+        while next_index != 255:
+            type_ = types_.EntitiMetadataType(self.varint)
+            if type_ == types_.EntitiMetadataType.BYTE:
+                data = self.byte
+            elif type_ in (
+                types_.EntitiMetadataType.VARINT,
+                types_.EntitiMetadataType.DIRECTION,
+            ):
+                data = self.varint
+            elif type_ == types_.EntitiMetadataType.FLOAT:
+                data = self.float
+            elif type_ in (
+                types_.EntitiMetadataType.STRING,
+                types_.EntitiMetadataType.CHAT,
+                types_.EntitiMetadataType.POSE,
+            ):
+                data = self.string
+            elif type_ == types_.EntitiMetadataType.OPTCHAT:
+                data = self.boolean
+                data = self.string if data else None
+            elif type_ == types_.EntitiMetadataType.BOOLEAN:
+                data = self.boolean
+            elif type_ == types_.EntitiMetadataType.ROTATION:
+                data = tuple(*[self.float for _ in range(3)])
+            elif type_ == types_.EntitiMetadataType.OPTUUID:
+                data = self.boolean
+                data = self.uuid if data else None
+            elif type_ == types_.EntitiMetadataType.OPTBLOCKID:
+                data = self.boolean
+                data = self.varint if data else None
+            elif type_ == types_.EntitiMetadataType.VILLAGER_DATA:
+                data = tuple(*[self.varint for _ in range(3)])
+            elif type_ == types_.EntitiMetadataType.OPTVARINT:
+                data = self.varint
+                data = data - 1 if data != 0x00 else None
+            else:
+                raise NotImplementedError(
+                    f"Unsupported Entity Metadata Type: {type_.value}."
+                )
+
+            result.append((type_, data))
+            next_index = self.unsigned_byte
+
         return result
 
     @property
@@ -263,6 +322,74 @@ class AbstractWriteBuffer(abc.ABC, _BaseBuffer):
     def pack_varlong(self, value: int) -> "AbstractWriteBuffer":
         """Packs variable-length integer."""
         return self.write(self._encode_varlong(value))
+
+    def pack_entity_metadata(
+        self, values: Sequence[tuple[types_.EntitiMetadataType, Any]]
+    ) -> "AbstractWriteBuffer":
+        """Packs Entity Metadata.
+
+        https://wiki.vg/Entity_metadata#Entity_Metadata_Format
+
+        Todo:
+            * use match case in 3.10
+        """
+        # pylint: disable=R0912
+        for index, (type_, value) in enumerate(values):
+            type_: types_.EntitiMetadataType
+            self.pack_unsigned_byte(index)
+            self.pack_varint(type_.value)
+            if type_ == types_.EntitiMetadataType.BYTE:
+                self.pack_byte(value)
+            elif type_ in (
+                types_.EntitiMetadataType.VARINT,
+                types_.EntitiMetadataType.DIRECTION,
+                types_.EntitiMetadataType.POSE,
+            ):
+                self.pack_varint(value)
+            elif type_ == types_.EntitiMetadataType.FLOAT:
+                self.pack_float(value)
+            elif type_ in (
+                types_.EntitiMetadataType.STRING,
+                types_.EntitiMetadataType.CHAT,
+            ):
+                self.pack_string(value)
+            elif type_ == types_.EntitiMetadataType.OPTCHAT:
+                if value is None:
+                    self.pack_boolean(False)
+                else:
+                    self.pack_boolean(True)
+                    self.pack_string(value)
+            elif type_ == types_.EntitiMetadataType.BOOLEAN:
+                self.pack_boolean(value)
+            elif type_ == types_.EntitiMetadataType.ROTATION:
+                value: tuple[float, float, float]
+                for data in value:
+                    self.pack_float(data)
+            elif type_ == types_.EntitiMetadataType.OPTUUID:
+                if value is None:
+                    self.pack_boolean(False)
+                else:
+                    self.pack_boolean(True)
+                    self.pack_uuid(value)
+            elif type_ == types_.EntitiMetadataType.OPTBLOCKID:
+                if value is None:
+                    self.pack_boolean(False)
+                else:
+                    self.pack_boolean(True)
+                    self.pack_varint(value)
+            elif type_ == types_.EntitiMetadataType.VILLAGER_DATA:
+                value: tuple[int, int, int]
+                for data in value:
+                    self.pack_varint(data)
+            elif type_ == types_.EntitiMetadataType.OPTVARINT:
+                if value is None:
+                    self.pack_varint(0)
+                else:
+                    self.pack_varint(value + 1)
+            else:
+                raise NotImplementedError(
+                    f"Unsupported Entity Metadata Type: {type_.value}."
+                )
 
     def pack_angle(self, value: int) -> "AbstractWriteBuffer":
         """Packs Angle."""

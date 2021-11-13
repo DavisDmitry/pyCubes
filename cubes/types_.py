@@ -14,6 +14,36 @@ class ConnectionStatus(enum.IntEnum):
     PLAY = 3
 
 
+class EntitiMetadataType(enum.IntEnum):
+    """Entity Metadata Type enumeration.
+
+    BYTE, VARINT, FLOAT, STRING, CHAT, OPTCHAT, SLOT, BOOLEAN,
+        ROTATION, POSITION, OPTPOSITION, DIRECTION, OPTUUID,
+        OPTBLOCKID, NBT, PARTICLE, VILLAGER_DATA, OPTVARINT, POSE
+    """
+
+    BYTE = 0
+    VARINT = 1
+    FLOAT = 2
+    STRING = 3
+    CHAT = 4
+    OPTCHAT = 5
+    SLOT = 6
+    BOOLEAN = 7
+    ROTATION = 8
+    POSITION = 9
+    OPTPOSITION = 10
+    DIRECTION = 11
+    OPTUUID = 12
+    OPTBLOCKID = 13
+    NBT = 14
+    PARTICLE = 15
+    VILLAGER_DATA = 16
+    DATA = 17
+    OPTVARINT = 18
+    POSE = 19
+
+
 class PlayerData:
     """Class for storing the most important player data."""
 
