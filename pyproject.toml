@@ -36,7 +36,7 @@ pydocstyle = {version = "^6.1.1", optional = true}
 
 [tool.poetry.dev-dependencies]
 black = "^21.11b1"
-flake8 = "^3.9.2"
+flake8 = "^4.0.1"
 flake8-annotations-complexity = "^0.0.6"
 flake8-annotations-coverage = "^0.0.5"
 flake8-bandit = "^2.1.2"
