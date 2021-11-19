@@ -4,6 +4,8 @@ import struct
 import uuid
 from typing import Any, Callable, Optional, Sequence, Union
 
+import nbtlib
+
 from cubes import types_
 
 
@@ -161,7 +163,8 @@ class AbstractReadBuffer(abc.ABC, _BaseBuffer):
 
     @property
     def entity_metadata(self) -> Sequence[tuple[types_.EntitiMetadataType, Any]]:
-        """Sequence[tuple[cubes.EntityMetadataType, Any]]: Entity Metadata.
+        """typing.Sequence[tuple[cubes.EntityMetadataType, \
+            typing.Any]]: Entity Metadata.
 
         Miscellaneous information about an entity. More information:
             https://wiki.vg/Entity_metadata#Entity_Metadata_Format
@@ -202,6 +205,8 @@ class AbstractReadBuffer(abc.ABC, _BaseBuffer):
             elif type_ == types_.EntitiMetadataType.OPTBLOCKID:
                 data = self.boolean
                 data = self.varint if data else None
+            elif type_ == types_.EntitiMetadataType.NBT:
+                data = self.nbt
             elif type_ == types_.EntitiMetadataType.VILLAGER_DATA:
                 data = tuple(*[self.varint for _ in range(3)])
             elif type_ == types_.EntitiMetadataType.OPTVARINT:
@@ -218,6 +223,14 @@ class AbstractReadBuffer(abc.ABC, _BaseBuffer):
         return result
 
     @property
+    def nbt(self) -> nbtlib.Compound:
+        """nbtlib.Compound: Named Binary Tag.
+
+        https://wiki.vg/NBT
+        """
+        return nbtlib.Compound.parse(self)
+
+    @property
     def angle(self) -> int:
         """int: Angle.
 
@@ -227,7 +240,7 @@ class AbstractReadBuffer(abc.ABC, _BaseBuffer):
 
     @property
     def uuid(self) -> uuid.UUID:
-        """UUID: UUID."""
+        """uuid.UUID: UUID."""
         return uuid.UUID(bytes=self.read(16))
 
 
@@ -377,6 +390,8 @@ class AbstractWriteBuffer(abc.ABC, _BaseBuffer):
                 else:
                     self.pack_boolean(True)
                     self.pack_varint(value)
+            elif type_ == types_.EntitiMetadataType.NBT:
+                self.pack_nbt(value)
             elif type_ == types_.EntitiMetadataType.VILLAGER_DATA:
                 value: tuple[int, int, int]
                 for data in value:
@@ -390,6 +405,11 @@ class AbstractWriteBuffer(abc.ABC, _BaseBuffer):
                 raise NotImplementedError(
                     f"Unsupported Entity Metadata Type: {type_.value}."
                 )
+
+    def pack_nbt(self, value: nbtlib.Compound) -> "AbstractReadBuffer":
+        """Packs NBT Tag."""
+        value.write(self)
+        return self
 
     def pack_angle(self, value: int) -> "AbstractWriteBuffer":
         """Packs Angle."""

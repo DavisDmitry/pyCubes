@@ -2,6 +2,7 @@ import asyncio
 import random
 import uuid
 
+import nbtlib
 import pytest
 
 import cubes
@@ -131,6 +132,59 @@ def test_varint(value: int):
 def test_varlong(value: int):
     data = cubes.WriteBuffer().pack_varlong(value).data
     assert cubes.ReadBuffer(None, data).varlong == value
+
+
+def test_nbt():
+    tag = nbtlib.Compound(
+        {
+            "nested compound test": nbtlib.Compound(
+                {
+                    "egg": nbtlib.Compound(
+                        {"name": nbtlib.String("Eggbert"), "value": nbtlib.Float(0.5)}
+                    ),
+                    "ham": nbtlib.Compound(
+                        {"name": nbtlib.String("Hampus"), "value": nbtlib.Float(0.75)}
+                    ),
+                }
+            ),
+            "intTest": nbtlib.Int(2147483647),
+            "byteTest": nbtlib.Byte(127),
+            "stringTest": nbtlib.String(
+                "HELLO WORLD THIS IS A TEST STRING \xc5\xc4\xd6!"
+            ),
+            "listTest (long)": nbtlib.List(
+                (
+                    nbtlib.Long(11),
+                    nbtlib.Long(12),
+                    nbtlib.Long(13),
+                    nbtlib.Long(14),
+                    nbtlib.Long(15),
+                )
+            ),
+            "doubleTest": nbtlib.Double(0.49312871321823148),
+            "floatTest": nbtlib.Float(0.49823147058486938),
+            "longTest": nbtlib.Long(9223372036854775807),
+            "listTest (compound)": nbtlib.List(
+                (
+                    nbtlib.Compound(
+                        {
+                            "created-on": nbtlib.Long(1264099775885),
+                            "name": nbtlib.String("Compound tag #0"),
+                        }
+                    ),
+                    nbtlib.Compound(
+                        {
+                            "created-on": nbtlib.Long(1264099775885),
+                            "name": nbtlib.String("Compound tag #1"),
+                        }
+                    ),
+                )
+            ),
+            "shortTest": nbtlib.Short(32767),
+        }
+    )
+    data = cubes.WriteBuffer().pack_nbt(tag).data
+    assert cubes.ReadBuffer(None, data).nbt == tag
 
 
 @pytest.mark.parametrize(
