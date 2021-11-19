@@ -4,9 +4,7 @@ import struct
 import uuid
 from typing import Any, Callable, Optional, Sequence, Union
 
-import nbtlib
-
-from cubes import types_
+from cubes import nbt, types_
 
 
 class Application(abc.ABC):
@@ -223,12 +221,12 @@ class AbstractReadBuffer(abc.ABC, _BaseBuffer):
         return result
 
     @property
-    def nbt(self) -> nbtlib.Compound:
-        """nbtlib.Compound: Named Binary Tag.
+    def nbt(self) -> nbt.Compound:
+        """cubes.nbt.Compound: Named Binary Tag.
 
         https://wiki.vg/NBT
         """
-        return nbtlib.Compound.parse(self)
+        return nbt.Compound.parse(self)
 
     @property
     def angle(self) -> int:
@@ -406,7 +404,7 @@ class AbstractWriteBuffer(abc.ABC, _BaseBuffer):
                     f"Unsupported Entity Metadata Type: {type_.value}."
                 )
 
-    def pack_nbt(self, value: nbtlib.Compound) -> "AbstractReadBuffer":
+    def pack_nbt(self, value: nbt.Compound) -> "AbstractReadBuffer":
         """Packs NBT Tag."""
         value.write(self)
         return self
