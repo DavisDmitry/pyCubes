@@ -95,6 +95,18 @@ def test_long(value: int):
     assert cubes.ReadBuffer(None, data).long == value
 
 
+@pytest.mark.parametrize("value", (0, -1, 0.49823147058486938))
+def test_float(value: float):
+    data = cubes.WriteBuffer().pack_float(value).data
+    assert cubes.ReadBuffer(None, data).float == value
+
+
+@pytest.mark.parametrize("value", (0, -1, 0.49312871321823148))
+def test_double(value: float):
+    data = cubes.WriteBuffer().pack_double(value).data
+    assert cubes.ReadBuffer(None, data).double == value
+
+
 def test_string():
     string = "test"
     data = cubes.WriteBuffer().pack_string(string).data
