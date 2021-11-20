@@ -159,38 +159,38 @@ class AbstractReadBuffer(abc.ABC, _BaseBuffer):
             result -= 1 << 64
         return result
 
-    def _parse_entity_metadata(self, type_: types_.EntitiMetadataType) -> Any:
+    def _parse_entity_metadata(self, type_: types_.EntityMetadataType) -> Any:
         match type_:
-            case types_.EntitiMetadataType.BYTE:
+            case types_.EntityMetadataType.BYTE:
                 return self.byte
             case (
-                types_.EntitiMetadataType.VARINT
-                | types_.EntitiMetadataType.DIRECTION
-                | types_.EntitiMetadataType.POSE
+                types_.EntityMetadataType.VARINT
+                | types_.EntityMetadataType.DIRECTION
+                | types_.EntityMetadataType.POSE
             ):
                 data = self.varint
-            case types_.EntitiMetadataType.FLOAT:
+            case types_.EntityMetadataType.FLOAT:
                 data = self.float
-            case (types_.EntitiMetadataType.STRING | types_.EntitiMetadataType.CHAT):
+            case (types_.EntityMetadataType.STRING | types_.EntityMetadataType.CHAT):
                 data = self.string
-            case types_.EntitiMetadataType.OPTCHAT:
+            case types_.EntityMetadataType.OPTCHAT:
                 data = self.boolean
                 data = self.string if data else None
-            case types_.EntitiMetadataType.BOOLEAN:
+            case types_.EntityMetadataType.BOOLEAN:
                 data = self.boolean
-            case types_.EntitiMetadataType.ROTATION:
+            case types_.EntityMetadataType.ROTATION:
                 data = tuple([self.float for _ in range(3)])
-            case types_.EntitiMetadataType.OPTUUID:
+            case types_.EntityMetadataType.OPTUUID:
                 data = self.boolean
                 data = self.uuid if data else None
-            case types_.EntitiMetadataType.OPTBLOCKID:
+            case types_.EntityMetadataType.OPTBLOCKID:
                 data = self.boolean
                 data = self.varint if data else None
-            case types_.EntitiMetadataType.NBT:
+            case types_.EntityMetadataType.NBT:
                 data = self.nbt
-            case types_.EntitiMetadataType.VILLAGER_DATA:
+            case types_.EntityMetadataType.VILLAGER_DATA:
                 data = tuple([self.varint for _ in range(3)])
-            case types_.EntitiMetadataType.OPTVARINT:
+            case types_.EntityMetadataType.OPTVARINT:
                 data = self.varint
                 data = data - 1 if data != 0x00 else None
             case _:
@@ -200,7 +200,7 @@ class AbstractReadBuffer(abc.ABC, _BaseBuffer):
         return data
 
     @property
-    def entity_metadata(self) -> Sequence[tuple[types_.EntitiMetadataType, Any]]:
+    def entity_metadata(self) -> Sequence[tuple[types_.EntityMetadataType, Any]]:
         """typing.Sequence[tuple[cubes.EntityMetadataType, \
             typing.Any]]: Entity Metadata.
 
@@ -211,7 +211,7 @@ class AbstractReadBuffer(abc.ABC, _BaseBuffer):
         result = []
         next_index = self.unsigned_byte
         while next_index != 255:
-            type_ = types_.EntitiMetadataType(self.varint)
+            type_ = types_.EntityMetadataType(self.varint)
             result.append((type_, self._parse_entity_metadata(type_)))
             next_index = self.unsigned_byte
         return result
@@ -331,52 +331,52 @@ class AbstractWriteBuffer(abc.ABC, _BaseBuffer):
         return self.write(self._encode_varlong(value))
 
     def _pack_entity_metadata(
-        self, type_: types_.EntitiMetadataType, value: Any
+        self, type_: types_.EntityMetadataType, value: Any
     ) -> None:
         match type_:
-            case types_.EntitiMetadataType.BYTE:
+            case types_.EntityMetadataType.BYTE:
                 self.pack_byte(value)
             case (
-                types_.EntitiMetadataType.VARINT
-                | types_.EntitiMetadataType.DIRECTION
-                | types_.EntitiMetadataType.POSE
+                types_.EntityMetadataType.VARINT
+                | types_.EntityMetadataType.DIRECTION
+                | types_.EntityMetadataType.POSE
             ):
                 self.pack_varint(value)
-            case types_.EntitiMetadataType.FLOAT:
+            case types_.EntityMetadataType.FLOAT:
                 self.pack_float(value)
-            case (types_.EntitiMetadataType.STRING | types_.EntitiMetadataType.CHAT):
+            case (types_.EntityMetadataType.STRING | types_.EntityMetadataType.CHAT):
                 self.pack_string(value)
-            case types_.EntitiMetadataType.OPTCHAT:
+            case types_.EntityMetadataType.OPTCHAT:
                 if value is None:
                     self.pack_boolean(False)
                 else:
                     self.pack_boolean(True)
                     self.pack_string(value)
-            case types_.EntitiMetadataType.BOOLEAN:
+            case types_.EntityMetadataType.BOOLEAN:
                 self.pack_boolean(value)
-            case types_.EntitiMetadataType.ROTATION:
+            case types_.EntityMetadataType.ROTATION:
                 value: tuple[float, float, float]
                 for data in value:
                     self.pack_float(data)
-            case types_.EntitiMetadataType.OPTUUID:
+            case types_.EntityMetadataType.OPTUUID:
                 if value is None:
                     self.pack_boolean(False)
                 else:
                     self.pack_boolean(True)
                     self.pack_uuid(value)
-            case types_.EntitiMetadataType.OPTBLOCKID:
+            case types_.EntityMetadataType.OPTBLOCKID:
                 if value is None:
                     self.pack_boolean(False)
                 else:
                     self.pack_boolean(True)
                     self.pack_varint(value)
-            case types_.EntitiMetadataType.NBT:
+            case types_.EntityMetadataType.NBT:
                 self.pack_nbt(value)
-            case types_.EntitiMetadataType.VILLAGER_DATA:
+            case types_.EntityMetadataType.VILLAGER_DATA:
                 value: tuple[int, int, int]
                 for data in value:
                     self.pack_varint(data)
-            case types_.EntitiMetadataType.OPTVARINT:
+            case types_.EntityMetadataType.OPTVARINT:
                 if value is None:
                     self.pack_varint(0)
                 else:
@@ -387,7 +387,7 @@ class AbstractWriteBuffer(abc.ABC, _BaseBuffer):
                 )
 
     def pack_entity_metadata(
-        self, values: Sequence[tuple[types_.EntitiMetadataType, Any]]
+        self, values: Sequence[tuple[types_.EntityMetadataType, Any]]
     ) -> "AbstractWriteBuffer":
         """Packs Entity Metadata.
 
@@ -395,7 +395,7 @@ class AbstractWriteBuffer(abc.ABC, _BaseBuffer):
         """
         # pylint: disable=R0912
         for index, (type_, value) in enumerate(values):
-            type_: types_.EntitiMetadataType
+            type_: types_.EntityMetadataType
             self.pack_unsigned_byte(index)
             self.pack_varint(type_.value)
             self._pack_entity_metadata(type_, value)

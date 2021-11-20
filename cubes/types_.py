@@ -14,7 +14,7 @@ class ConnectionStatus(enum.IntEnum):
     PLAY = 3
 
 
-class EntitiMetadataType(enum.IntEnum):
+class EntityMetadataType(enum.IntEnum):
     """Entity Metadata Type enumeration.
 
     BYTE, VARINT, FLOAT, STRING, CHAT, OPTCHAT, SLOT, BOOLEAN,

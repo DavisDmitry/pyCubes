@@ -136,31 +136,31 @@ def test_varlong(value: int):
 
 def test_implemented_entity_metadata():
     value = [
-        (cubes.EntitiMetadataType.BYTE, random.randint(_MIN_BYTE, _MAX_BYTE)),
-        (cubes.EntitiMetadataType.VARINT, random.randint(_MIN_VARINT, _MAX_VARINT)),
-        (cubes.EntitiMetadataType.FLOAT, 0),
-        (cubes.EntitiMetadataType.STRING, "test"),
-        (cubes.EntitiMetadataType.CHAT, "test"),
-        (cubes.EntitiMetadataType.OPTCHAT, None),
-        (cubes.EntitiMetadataType.OPTCHAT, "test"),
-        (cubes.EntitiMetadataType.BOOLEAN, True),
-        (cubes.EntitiMetadataType.ROTATION, (0, 1, 2)),
-        (cubes.EntitiMetadataType.DIRECTION, random.randint(0, 5)),
-        (cubes.EntitiMetadataType.OPTUUID, None),
-        (cubes.EntitiMetadataType.OPTUUID, uuid.uuid4()),
-        (cubes.EntitiMetadataType.OPTBLOCKID, None),
-        (cubes.EntitiMetadataType.OPTBLOCKID, 0),
+        (cubes.EntityMetadataType.BYTE, random.randint(_MIN_BYTE, _MAX_BYTE)),
+        (cubes.EntityMetadataType.VARINT, random.randint(_MIN_VARINT, _MAX_VARINT)),
+        (cubes.EntityMetadataType.FLOAT, 0),
+        (cubes.EntityMetadataType.STRING, "test"),
+        (cubes.EntityMetadataType.CHAT, "test"),
+        (cubes.EntityMetadataType.OPTCHAT, None),
+        (cubes.EntityMetadataType.OPTCHAT, "test"),
+        (cubes.EntityMetadataType.BOOLEAN, True),
+        (cubes.EntityMetadataType.ROTATION, (0, 1, 2)),
+        (cubes.EntityMetadataType.DIRECTION, random.randint(0, 5)),
+        (cubes.EntityMetadataType.OPTUUID, None),
+        (cubes.EntityMetadataType.OPTUUID, uuid.uuid4()),
+        (cubes.EntityMetadataType.OPTBLOCKID, None),
+        (cubes.EntityMetadataType.OPTBLOCKID, 0),
         (
-            cubes.EntitiMetadataType.NBT,
+            cubes.EntityMetadataType.NBT,
             nbtlib.Compound({"test": nbtlib.String("test")}),
         ),
         (
-            cubes.EntitiMetadataType.VILLAGER_DATA,
+            cubes.EntityMetadataType.VILLAGER_DATA,
             (random.randint(0, 6), random.randint(0, 14), random.randint(1, 5)),
         ),
-        (cubes.EntitiMetadataType.OPTVARINT, None),
-        (cubes.EntitiMetadataType.OPTVARINT, random.randint(_MIN_VARINT, _MAX_VARINT)),
-        (cubes.EntitiMetadataType.POSE, random.randint(0, 7)),
+        (cubes.EntityMetadataType.OPTVARINT, None),
+        (cubes.EntityMetadataType.OPTVARINT, random.randint(_MIN_VARINT, _MAX_VARINT)),
+        (cubes.EntityMetadataType.POSE, random.randint(0, 7)),
     ]
     data = cubes.WriteBuffer().pack_entity_metadata(value).data
     value2 = cubes.ReadBuffer(None, data).entity_metadata
@@ -179,10 +179,10 @@ def test_not_implemented_entity_metadata_unpack(data: bytes):
 @pytest.mark.parametrize(
     "value",
     (
-        (cubes.EntitiMetadataType.SLOT, None),
-        (cubes.EntitiMetadataType.POSITION, None),
-        (cubes.EntitiMetadataType.OPTPOSITION, None),
-        (cubes.EntitiMetadataType.PARTICLE, None),
+        (cubes.EntityMetadataType.SLOT, None),
+        (cubes.EntityMetadataType.POSITION, None),
+        (cubes.EntityMetadataType.OPTPOSITION, None),
+        (cubes.EntityMetadataType.PARTICLE, None),
     ),
 )
 def test_not_implemented_entity_metadata_pack(value):
