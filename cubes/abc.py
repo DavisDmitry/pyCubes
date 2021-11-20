@@ -31,7 +31,6 @@ class Application(abc.ABC):
 
 class _BaseBuffer:
     # pylint: disable=R0903
-    __slots__ = ("_data",)
 
     def __init__(self, data: bytes = b""):
         self._data = data
@@ -42,14 +41,26 @@ class _BaseBuffer:
         return self._data
 
 
-class AbstractReadBuffer(abc.ABC, _BaseBuffer):
+class _ConnectionMixin:
+    # pylint: disable=R0903
+
+    def __init__(self, conn: "AbstractConnection"):
+        self._conn = conn
+
+    @property
+    def connection(self) -> "AbstractConnection":
+        """cubes.abc.Connection: Current connection."""
+        return self._conn
+
+
+class AbstractReadBuffer(abc.ABC, _BaseBuffer, _ConnectionMixin):
     """Abstract class for parsing data by types."""
 
-    __slots__ = ("_conn",)
+    __slots__ = ("_data", "_conn")
 
-    def __init__(self, conn: "AbstractConnection", data: bytes = b"") -> None:
-        super().__init__(data)
-        self._conn = conn
+    def __init__(self, conn: "AbstractConnection", data: bytes = b""):
+        _BaseBuffer.__init__(self, data)
+        _ConnectionMixin.__init__(self, conn)
 
     @classmethod
     @abc.abstractmethod
@@ -61,11 +72,6 @@ class AbstractReadBuffer(abc.ABC, _BaseBuffer):
     @abc.abstractmethod
     def read(self, length: Optional[int] = None) -> bytes:
         """Reads length bytes from buffer."""
-
-    @property
-    def connection(self) -> "AbstractConnection":
-        """cubes.abc.Connection: Current connection."""
-        return self._conn
 
     @property
     def boolean(self) -> bool:
@@ -176,6 +182,8 @@ class AbstractReadBuffer(abc.ABC, _BaseBuffer):
             case types_.EntityMetadataType.OPTCHAT:
                 data = self.boolean
                 data = self.string if data else None
+            case types_.EntityMetadataType.SLOT:
+                data = self.slot
             case types_.EntityMetadataType.BOOLEAN:
                 data = self.boolean
             case types_.EntityMetadataType.ROTATION:
@@ -217,6 +225,16 @@ class AbstractReadBuffer(abc.ABC, _BaseBuffer):
             result.append((type_, self._parse_entity_metadata(type_)))
             next_index = self.unsigned_byte
         return result
+
+    @property
+    def slot(self) -> Optional[tuple[int, int, nbt.Compound]]:
+        """Optional[tuple[int, int, nbt.Compound]]: Slot data structure.
+
+        https://wiki.vg/Slot_Data
+        """
+        if not self.boolean:
+            return None
+        return self.varint, self.byte, self.nbt
 
     @property
     def nbt(self) -> nbt.Compound:
@@ -354,6 +372,8 @@ class AbstractWriteBuffer(abc.ABC, _BaseBuffer):
                 else:
                     self.pack_boolean(True)
                     self.pack_string(value)
+            case types_.EntityMetadataType.SLOT:
+                self.pack_slot(value)
             case types_.EntityMetadataType.BOOLEAN:
                 self.pack_boolean(value)
             case types_.EntityMetadataType.ROTATION:
@@ -403,8 +423,19 @@ class AbstractWriteBuffer(abc.ABC, _BaseBuffer):
             self._pack_entity_metadata(type_, value)
         return self.write(b"\xff")
 
+    def pack_slot(
+        self, value: Optional[tuple[int, int, nbt.Compound]]
+    ) -> "AbstractReadBuffer":
+        """Packs Slot data."""
+        if value is None:
+            return self.pack_boolean(False)
+        item_id, count, nbt_ = value
+        self.pack_varint(item_id)
+        self.pack_byte(count)
+        return self.pack_nbt(nbt_)
+
     def pack_nbt(self, value: nbt.Compound) -> "AbstractReadBuffer":
-        """Packs NBT Tag."""
+        """Packs Named Binary Tag."""
         value.write(self)
         return self
 

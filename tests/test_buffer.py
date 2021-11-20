@@ -1,8 +1,10 @@
 import asyncio
 import random
 import uuid
+from typing import Optional
 
 import nbtlib
+from nbtlib.tag import Compound
 import pytest
 
 import cubes
@@ -155,6 +157,7 @@ def test_implemented_entity_metadata():
         (cubes.EntityMetadataType.CHAT, "test"),
         (cubes.EntityMetadataType.OPTCHAT, None),
         (cubes.EntityMetadataType.OPTCHAT, "test"),
+        (cubes.EntityMetadataType.SLOT, None),
         (cubes.EntityMetadataType.BOOLEAN, True),
         (cubes.EntityMetadataType.ROTATION, (0, 1, 2)),
         (cubes.EntityMetadataType.DIRECTION, random.randint(0, 5)),
@@ -175,13 +178,11 @@ def test_implemented_entity_metadata():
         (cubes.EntityMetadataType.POSE, random.randint(0, 7)),
     ]
     data = cubes.WriteBuffer().pack_entity_metadata(value).data
-    value2 = cubes.ReadBuffer(None, data).entity_metadata
-    assert value2 == value
+    assert cubes.ReadBuffer(None, data).entity_metadata == value
 
 
 @pytest.mark.parametrize(
-    "data",
-    (b"\x00\x06\x00\xff", b"\x00\t\x00\xff", b"\x00\n\x00\xff", b"\x00\x0f\x00\xff"),
+    "data", (b"\x00\t\x00\xff", b"\x00\n\x00\xff", b"\x00\x0f\x00\xff")
 )
 def test_not_implemented_entity_metadata_unpack(data: bytes):
     with pytest.raises(NotImplementedError):
@@ -191,7 +192,6 @@ def test_not_implemented_entity_metadata_unpack(data: bytes):
 @pytest.mark.parametrize(
     "value",
     (
-        (cubes.EntityMetadataType.SLOT, None),
         (cubes.EntityMetadataType.POSITION, None),
         (cubes.EntityMetadataType.OPTPOSITION, None),
         (cubes.EntityMetadataType.PARTICLE, None),
@@ -200,6 +200,18 @@ def test_not_implemented_entity_metadata_unpack(data: bytes):
 def test_not_implemented_entity_metadata_pack(value):
     with pytest.raises(NotImplementedError):
         cubes.WriteBuffer().pack_entity_metadata([value])
+
+
+@pytest.mark.parametrize(
+    "value",
+    (
+        None,
+        (1, random.randint(1, 64), nbtlib.Compound({"test": nbtlib.String("test")})),
+    ),
+)
+def test_slot(value: Optional[tuple[int, int, nbtlib.Compound]]):
+    data = cubes.WriteBuffer().pack_slot(value).data
+    return cubes.ReadBuffer(None, data).slot == value
 
 
 def test_nbt():
