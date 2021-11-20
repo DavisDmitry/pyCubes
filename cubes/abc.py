@@ -179,7 +179,8 @@ class AbstractReadBuffer(abc.ABC, _BaseBuffer):
             case types_.EntityMetadataType.BOOLEAN:
                 data = self.boolean
             case types_.EntityMetadataType.ROTATION:
-                data = tuple([self.float for _ in range(3)])
+                data = [self.float for _ in range(3)]
+                data = tuple(data)
             case types_.EntityMetadataType.OPTUUID:
                 data = self.boolean
                 data = self.uuid if data else None
@@ -189,7 +190,8 @@ class AbstractReadBuffer(abc.ABC, _BaseBuffer):
             case types_.EntityMetadataType.NBT:
                 data = self.nbt
             case types_.EntityMetadataType.VILLAGER_DATA:
-                data = tuple([self.varint for _ in range(3)])
+                data = [self.varint for _ in range(3)]
+                data = tuple(data)
             case types_.EntityMetadataType.OPTVARINT:
                 data = self.varint
                 data = data - 1 if data != 0x00 else None
