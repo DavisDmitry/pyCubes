@@ -164,17 +164,14 @@ class AbstractReadBuffer(abc.ABC, _BaseBuffer):
             case types_.EntitiMetadataType.BYTE:
                 return self.byte
             case (
-                types_.EntitiMetadataType.VARINT,
-                types_.EntitiMetadataType.DIRECTION,
+                types_.EntitiMetadataType.VARINT
+                | types_.EntitiMetadataType.DIRECTION
+                | types_.EntitiMetadataType.POSE
             ):
                 data = self.varint
             case types_.EntitiMetadataType.FLOAT:
                 data = self.float
-            case (
-                types_.EntitiMetadataType.STRING,
-                types_.EntitiMetadataType.CHAT,
-                types_.EntitiMetadataType.POSE,
-            ):
+            case (types_.EntitiMetadataType.STRING | types_.EntitiMetadataType.CHAT):
                 data = self.string
             case types_.EntitiMetadataType.OPTCHAT:
                 data = self.boolean
@@ -182,7 +179,7 @@ class AbstractReadBuffer(abc.ABC, _BaseBuffer):
             case types_.EntitiMetadataType.BOOLEAN:
                 data = self.boolean
             case types_.EntitiMetadataType.ROTATION:
-                data = tuple(*[self.float for _ in range(3)])
+                data = tuple([self.float for _ in range(3)])
             case types_.EntitiMetadataType.OPTUUID:
                 data = self.boolean
                 data = self.uuid if data else None
@@ -192,13 +189,13 @@ class AbstractReadBuffer(abc.ABC, _BaseBuffer):
             case types_.EntitiMetadataType.NBT:
                 data = self.nbt
             case types_.EntitiMetadataType.VILLAGER_DATA:
-                data = tuple(*[self.varint for _ in range(3)])
+                data = tuple([self.varint for _ in range(3)])
             case types_.EntitiMetadataType.OPTVARINT:
                 data = self.varint
                 data = data - 1 if data != 0x00 else None
             case _:
                 raise NotImplementedError(
-                    f"Unsupported Entity Metadata Type: {type_.value}."
+                    f"Unsupported Entity Metadata Type: {type_.name}."
                 )
         return data
 
@@ -340,17 +337,14 @@ class AbstractWriteBuffer(abc.ABC, _BaseBuffer):
             case types_.EntitiMetadataType.BYTE:
                 self.pack_byte(value)
             case (
-                types_.EntitiMetadataType.VARINT,
-                types_.EntitiMetadataType.DIRECTION,
-                types_.EntitiMetadataType.POSE,
+                types_.EntitiMetadataType.VARINT
+                | types_.EntitiMetadataType.DIRECTION
+                | types_.EntitiMetadataType.POSE
             ):
                 self.pack_varint(value)
             case types_.EntitiMetadataType.FLOAT:
                 self.pack_float(value)
-            case (
-                types_.EntitiMetadataType.STRING,
-                types_.EntitiMetadataType.CHAT,
-            ):
+            case (types_.EntitiMetadataType.STRING | types_.EntitiMetadataType.CHAT):
                 self.pack_string(value)
             case types_.EntitiMetadataType.OPTCHAT:
                 if value is None:
@@ -389,7 +383,7 @@ class AbstractWriteBuffer(abc.ABC, _BaseBuffer):
                     self.pack_varint(value + 1)
             case _:
                 raise NotImplementedError(
-                    f"Unsupported Entity Metadata Type: {type_.value}."
+                    f"Unsupported Entity Metadata Type: {type_.name}."
                 )
 
     def pack_entity_metadata(
@@ -405,7 +399,7 @@ class AbstractWriteBuffer(abc.ABC, _BaseBuffer):
             self.pack_unsigned_byte(index)
             self.pack_varint(type_.value)
             self._pack_entity_metadata(type_, value)
-        return self
+        return self.write(b"\xff")
 
     def pack_nbt(self, value: nbt.Compound) -> "AbstractReadBuffer":
         """Packs NBT Tag."""
