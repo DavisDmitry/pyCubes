@@ -134,6 +134,62 @@ def test_varlong(value: int):
     assert cubes.ReadBuffer(None, data).varlong == value
 
 
+def test_implemented_entity_metadata():
+    value = [
+        (cubes.EntitiMetadataType.BYTE, random.randint(_MIN_BYTE, _MAX_BYTE)),
+        (cubes.EntitiMetadataType.VARINT, random.randint(_MIN_VARINT, _MAX_VARINT)),
+        (cubes.EntitiMetadataType.FLOAT, 0),
+        (cubes.EntitiMetadataType.STRING, "test"),
+        (cubes.EntitiMetadataType.CHAT, "test"),
+        (cubes.EntitiMetadataType.OPTCHAT, None),
+        (cubes.EntitiMetadataType.OPTCHAT, "test"),
+        (cubes.EntitiMetadataType.BOOLEAN, True),
+        (cubes.EntitiMetadataType.ROTATION, (0, 1, 2)),
+        (cubes.EntitiMetadataType.DIRECTION, random.randint(0, 5)),
+        (cubes.EntitiMetadataType.OPTUUID, None),
+        (cubes.EntitiMetadataType.OPTUUID, uuid.uuid4()),
+        (cubes.EntitiMetadataType.OPTBLOCKID, None),
+        (cubes.EntitiMetadataType.OPTBLOCKID, 0),
+        (
+            cubes.EntitiMetadataType.NBT,
+            nbtlib.Compound({"test": nbtlib.String("test")}),
+        ),
+        (
+            cubes.EntitiMetadataType.VILLAGER_DATA,
+            (random.randint(0, 6), random.randint(0, 14), random.randint(1, 5)),
+        ),
+        (cubes.EntitiMetadataType.OPTVARINT, None),
+        (cubes.EntitiMetadataType.OPTVARINT, random.randint(_MIN_VARINT, _MAX_VARINT)),
+        (cubes.EntitiMetadataType.POSE, random.randint(0, 7)),
+    ]
+    data = cubes.WriteBuffer().pack_entity_metadata(value).data
+    value2 = cubes.ReadBuffer(None, data).entity_metadata
+    assert value2 == value
+
+
+@pytest.mark.parametrize(
+    "data",
+    (b"\x00\x06\x00\xff", b"\x00\t\x00\xff", b"\x00\n\x00\xff", b"\x00\x0f\x00\xff"),
+)
+def test_not_implemented_entity_metadata_unpack(data: bytes):
+    with pytest.raises(NotImplementedError):
+        cubes.ReadBuffer(None, data).entity_metadata
+
+
+@pytest.mark.parametrize(
+    "value",
+    (
+        (cubes.EntitiMetadataType.SLOT, None),
+        (cubes.EntitiMetadataType.POSITION, None),
+        (cubes.EntitiMetadataType.OPTPOSITION, None),
+        (cubes.EntitiMetadataType.PARTICLE, None),
+    ),
+)
+def test_not_implemented_entity_metadata_pack(value):
+    with pytest.raises(NotImplementedError):
+        cubes.WriteBuffer().pack_entity_metadata([value])
+
+
 def test_nbt():
     tag = nbtlib.Compound(
         {
