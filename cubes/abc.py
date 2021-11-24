@@ -247,25 +247,6 @@ class AbstractReadBuffer(abc.ABC, _BaseBuffer, _ConnectionMixin):
         return nbt.Compound.parse(self)
 
     @property
-    def position(self) -> tuple[int, int, int]:
-        """tuple[int, int, int]: Block position (x, y, z).
-
-        https://wiki.vg/Data_types#Position
-
-        Note:
-            1.14+ support only.
-        """
-        value = self.long
-        x_cord, y_cord, z_cord = value >> 38, value & 0xFF, value << 26 >> 38
-        if x_cord >= 2 ** 25:
-            x_cord -= 2 ** 26
-        if y_cord >= 2 ** 11:
-            y_cord -= 2 ** 12
-        if z_cord >= 2 ** 25:
-            z_cord -= 2 ** 26
-        return x_cord, y_cord, z_cord
-
-    @property
     def angle(self) -> int:
         """int: Angle.
 
@@ -461,14 +442,6 @@ class AbstractWriteBuffer(abc.ABC, _BaseBuffer):
         """Packs Named Binary Tag."""
         value.write(self)
         return self
-
-    def pack_position(
-        self, x_cord: int, y_cord: int, z_cord: int
-    ) -> "AbstractReadBuffer":
-        """Packs Position."""
-        return self.pack_long(
-            (x_cord & 0x3FF << 38) | (z_cord & 0x3FF << 12) | (y_cord & 0xFF)
-        )
 
     def pack_angle(self, value: int) -> "AbstractWriteBuffer":
         """Packs Angle."""
