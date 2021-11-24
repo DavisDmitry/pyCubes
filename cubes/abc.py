@@ -1,9 +1,10 @@
 import abc
 import asyncio
 import struct
-from typing import Callable, Optional, Union
+import uuid
+from typing import Any, Callable, Optional, Sequence, Union
 
-from cubes import types_
+from cubes import nbt, types_
 
 
 class Application(abc.ABC):
@@ -30,7 +31,6 @@ class Application(abc.ABC):
 
 class _BaseBuffer:
     # pylint: disable=R0903
-    __slots__ = ("_data",)
 
     def __init__(self, data: bytes = b""):
         self._data = data
@@ -41,14 +41,28 @@ class _BaseBuffer:
         return self._data
 
 
-class AbstractReadBuffer(abc.ABC, _BaseBuffer):
+class _ConnectionMixin:
+    # pylint: disable=R0903
+
+    def __init__(self, conn: "AbstractConnection"):
+        self._conn = conn
+
+    @property
+    def connection(self) -> "AbstractConnection":
+        """cubes.abc.Connection: Current connection."""
+        return self._conn
+
+
+class AbstractReadBuffer(abc.ABC, _BaseBuffer, _ConnectionMixin):
     """Abstract class for parsing data by types."""
 
-    __slots__ = ("_conn",)
+    # pylint: disable=R0904
 
-    def __init__(self, conn: "AbstractConnection", data: bytes = b"") -> None:
-        super().__init__(data)
-        self._conn = conn
+    __slots__ = ("_data", "_conn")
+
+    def __init__(self, conn: "AbstractConnection", data: bytes = b""):
+        _BaseBuffer.__init__(self, data)
+        _ConnectionMixin.__init__(self, conn)
 
     @classmethod
     @abc.abstractmethod
@@ -60,11 +74,6 @@ class AbstractReadBuffer(abc.ABC, _BaseBuffer):
     @abc.abstractmethod
     def read(self, length: Optional[int] = None) -> bytes:
         """Reads length bytes from buffer."""
-
-    @property
-    def connection(self) -> "AbstractConnection":
-        """cubes.abc.Connection: Current connection."""
-        return self._conn
 
     @property
     def boolean(self) -> bool:
@@ -116,9 +125,18 @@ class AbstractReadBuffer(abc.ABC, _BaseBuffer):
         r"""str: UTF-8 string.
 
         Note:
-            Max string length is 32767 (b'\xff\xff\x01') bytes — 3 bytes VarInt prefix.
+            Max string length is 32767 (b'\xff\xff\x01') bytes —
+                3 bytes VarInt prefix.
         """
         return self.read(self._unpack_varint(max_bytes=3)).decode()
+
+    @property
+    def identifier(self) -> tuple[str, str]:
+        """tuple[str, str]: Identifier.
+
+        Namespaced location in format `(namespace, location)`.
+        """
+        return tuple(self.string.split(":", 1))
 
     def _unpack_varint(self, max_bytes: int = 5) -> int:
         result = 0
@@ -149,9 +167,122 @@ class AbstractReadBuffer(abc.ABC, _BaseBuffer):
             result -= 1 << 64
         return result
 
+    def _parse_entity_metadata(self, type_: types_.EntityMetadataType) -> Any:
+        match type_:
+            case types_.EntityMetadataType.BYTE:
+                return self.byte
+            case (
+                types_.EntityMetadataType.VARINT
+                | types_.EntityMetadataType.DIRECTION
+                | types_.EntityMetadataType.POSE
+            ):
+                data = self.varint
+            case types_.EntityMetadataType.FLOAT:
+                data = self.float
+            case (types_.EntityMetadataType.STRING | types_.EntityMetadataType.CHAT):
+                data = self.string
+            case types_.EntityMetadataType.OPTCHAT:
+                data = self.boolean
+                data = self.string if data else None
+            case types_.EntityMetadataType.SLOT:
+                data = self.slot
+            case types_.EntityMetadataType.BOOLEAN:
+                data = self.boolean
+            case types_.EntityMetadataType.ROTATION:
+                data = [self.float for _ in range(3)]
+                data = tuple(data)
+            case types_.EntityMetadataType.OPTUUID:
+                data = self.boolean
+                data = self.uuid if data else None
+            case types_.EntityMetadataType.OPTBLOCKID:
+                data = self.boolean
+                data = self.varint if data else None
+            case types_.EntityMetadataType.NBT:
+                data = self.nbt
+            case types_.EntityMetadataType.VILLAGER_DATA:
+                data = [self.varint for _ in range(3)]
+                data = tuple(data)
+            case types_.EntityMetadataType.OPTVARINT:
+                data = self.varint
+                data = data - 1 if data != 0x00 else None
+            case _:
+                raise NotImplementedError(
+                    f"Unsupported Entity Metadata Type: {type_.name}."
+                )
+        return data
+
+    @property
+    def entity_metadata(self) -> Sequence[tuple[types_.EntityMetadataType, Any]]:
+        """typing.Sequence[tuple[cubes.EntityMetadataType, \
+            typing.Any]]: Entity Metadata.
+
+        Miscellaneous information about an entity. More information:
+            https://wiki.vg/Entity_metadata#Entity_Metadata_Format
+        """
+        # pylint: disable=R0912
+        result = []
+        next_index = self.unsigned_byte
+        while next_index != 255:
+            type_ = types_.EntityMetadataType(self.varint)
+            result.append((type_, self._parse_entity_metadata(type_)))
+            next_index = self.unsigned_byte
+        return result
+
+    @property
+    def slot(self) -> Optional[tuple[int, int, nbt.Compound]]:
+        """Optional[tuple[int, int, nbt.Compound]]: Slot data structure.
+
+        https://wiki.vg/Slot_Data
+        """
+        if not self.boolean:
+            return None
+        return self.varint, self.byte, self.nbt
+
+    @property
+    def nbt(self) -> nbt.Compound:
+        """cubes.nbt.Compound: Named Binary Tag.
+
+        https://wiki.vg/NBT
+        """
+        return nbt.Compound.parse(self)
+
+    @property
+    def position(self) -> tuple[int, int, int]:
+        """tuple[int, int, int]: Block position (x, y, z).
+
+        https://wiki.vg/Data_types#Position
+
+        Note:
+            1.14+ support only.
+        """
+        value = self.long
+        x_cord, y_cord, z_cord = value >> 38, value & 0xFF, value << 26 >> 38
+        if x_cord >= 2 ** 25:
+            x_cord -= 2 ** 26
+        if y_cord >= 2 ** 11:
+            y_cord -= 2 ** 12
+        if z_cord >= 2 ** 25:
+            z_cord -= 2 ** 26
+        return x_cord, y_cord, z_cord
+
+    @property
+    def angle(self) -> int:
+        """int: Angle.
+
+        A rotation angle in steps of 1/256 of a full turn.
+        """
+        return self.unsigned_byte
+
+    @property
+    def uuid(self) -> uuid.UUID:
+        """uuid.UUID: UUID."""
+        return uuid.UUID(bytes=self.read(16))
+
 
 class AbstractWriteBuffer(abc.ABC, _BaseBuffer):
     """Abstract class for serializing data by types."""
+
+    # pylint: disable=R0904
 
     @property
     @abc.abstractmethod
@@ -204,6 +335,10 @@ class AbstractWriteBuffer(abc.ABC, _BaseBuffer):
         self.write(self._encode_varint(len(value), 3))
         return self.write(value.encode())
 
+    def pack_identifier(self, namespace: str, location: str) -> "AbstractWriteBuffer":
+        """Packs Identifier (namespaced location)."""
+        return self.pack_string(f"{namespace}:{location}")
+
     @staticmethod
     def _encode_varint(value: int, max_bytes: int = 5) -> bytes:
         if value < 0:
@@ -237,6 +372,111 @@ class AbstractWriteBuffer(abc.ABC, _BaseBuffer):
     def pack_varlong(self, value: int) -> "AbstractWriteBuffer":
         """Packs variable-length integer."""
         return self.write(self._encode_varlong(value))
+
+    def _pack_entity_metadata(
+        self, type_: types_.EntityMetadataType, value: Any
+    ) -> None:
+        match type_:
+            case types_.EntityMetadataType.BYTE:
+                self.pack_byte(value)
+            case (
+                types_.EntityMetadataType.VARINT
+                | types_.EntityMetadataType.DIRECTION
+                | types_.EntityMetadataType.POSE
+            ):
+                self.pack_varint(value)
+            case types_.EntityMetadataType.FLOAT:
+                self.pack_float(value)
+            case (types_.EntityMetadataType.STRING | types_.EntityMetadataType.CHAT):
+                self.pack_string(value)
+            case types_.EntityMetadataType.OPTCHAT:
+                if value is None:
+                    self.pack_boolean(False)
+                else:
+                    self.pack_boolean(True)
+                    self.pack_string(value)
+            case types_.EntityMetadataType.SLOT:
+                self.pack_slot(value)
+            case types_.EntityMetadataType.BOOLEAN:
+                self.pack_boolean(value)
+            case types_.EntityMetadataType.ROTATION:
+                value: tuple[float, float, float]
+                for data in value:
+                    self.pack_float(data)
+            case types_.EntityMetadataType.OPTUUID:
+                if value is None:
+                    self.pack_boolean(False)
+                else:
+                    self.pack_boolean(True)
+                    self.pack_uuid(value)
+            case types_.EntityMetadataType.OPTBLOCKID:
+                if value is None:
+                    self.pack_boolean(False)
+                else:
+                    self.pack_boolean(True)
+                    self.pack_varint(value)
+            case types_.EntityMetadataType.NBT:
+                self.pack_nbt(value)
+            case types_.EntityMetadataType.VILLAGER_DATA:
+                value: tuple[int, int, int]
+                for data in value:
+                    self.pack_varint(data)
+            case types_.EntityMetadataType.OPTVARINT:
+                if value is None:
+                    self.pack_varint(0)
+                else:
+                    self.pack_varint(value + 1)
+            case _:
+                raise NotImplementedError(
+                    f"Unsupported Entity Metadata Type: {type_.name}."
+                )
+
+    def pack_entity_metadata(
+        self, values: Sequence[tuple[types_.EntityMetadataType, Any]]
+    ) -> "AbstractWriteBuffer":
+        """Packs Entity Metadata.
+
+        https://wiki.vg/Entity_metadata#Entity_Metadata_Format
+        """
+        # pylint: disable=R0912
+        for index, (type_, value) in enumerate(values):
+            type_: types_.EntityMetadataType
+            self.pack_unsigned_byte(index)
+            self.pack_varint(type_.value)
+            self._pack_entity_metadata(type_, value)
+        return self.write(b"\xff")
+
+    def pack_slot(
+        self, value: Optional[tuple[int, int, nbt.Compound]]
+    ) -> "AbstractReadBuffer":
+        """Packs Slot data."""
+        if value is None:
+            return self.pack_boolean(False)
+        item_id, count, nbt_ = value
+        self.pack_varint(item_id)
+        self.pack_byte(count)
+        return self.pack_nbt(nbt_)
+
+    def pack_nbt(self, value: nbt.Compound) -> "AbstractReadBuffer":
+        """Packs Named Binary Tag."""
+        value.write(self)
+        return self
+
+    def pack_position(
+        self, x_cord: int, y_cord: int, z_cord: int
+    ) -> "AbstractReadBuffer":
+        """Packs Position."""
+        return self.pack_long(
+            (x_cord & 0x3FF << 38) | (z_cord & 0x3FF << 12) | (y_cord & 0xFF)
+        )
+
+    def pack_angle(self, value: int) -> "AbstractWriteBuffer":
+        """Packs Angle."""
+        return self.pack_unsigned_byte(value)
+
+    def pack_uuid(self, value: uuid.UUID) -> "AbstractWriteBuffer":
+        """Packs UUID."""
+        return self.write(value.bytes)
 
 
 class _AbstractBaseConnection(abc.ABC):

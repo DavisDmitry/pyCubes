@@ -61,6 +61,7 @@ nav:
     - app: reference/app.md
     - buffer: reference/buffer.md
     - connection: reference/connection.md
+    - nbt: reference/nbt.md
     - types_: reference/types_.md
     - utils: reference/utils.md
   - Legacy API References:
