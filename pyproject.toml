@@ -15,7 +15,7 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: Implementation :: CPython",
     "Topic :: Internet",
     "Topic :: Software Development",
@@ -27,15 +27,15 @@ classifiers = [
 packages = [{include="cubes"}]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.10"
 mkdocs-material = {version = "^7.3.6", optional = true}
 mkdocs-static-i18n = {version = "^0.21", optional = true}
 lazydocs = {version = "^0.4.8", optional = true}
 pydocstyle = {version = "^6.1.1", optional = true}
 
 [tool.poetry.dev-dependencies]
-black = "^21.9b0"
-flake8 = "^3.9.2"
+black = "^21.11b1"
+flake8 = "^4.0.1"
 flake8-annotations-complexity = "^0.0.6"
 flake8-annotations-coverage = "^0.0.5"
 flake8-bandit = "^2.1.2"
@@ -50,7 +50,7 @@ pytest-cov = "^2.12.1"
 docs = ["mkdocs-material", "mkdocs-static-i18n", "lazydocs", "pydocstyle"]
 
 [tool.black]
-target-version = ['py39']
+target-version = ['py310']
 
 [tool.isort]
 profile = "black"
