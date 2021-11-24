@@ -366,7 +366,7 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "mkdocs-static-i18n"
-version = "0.21"
+version = "0.22"
 description = "MkDocs i18n plugin using static translation markdown files"
 category = "main"
 optional = true
@@ -739,7 +739,7 @@ docs = ["mkdocs-material", "mkdocs-static-i18n", "lazydocs", "pydocstyle"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "7c9054653e965b28ce01dd993ae43c92782355d4def09eb26baefbec1889fa4b"
+content-hash = "53486a227ceeeb1a109520124492422c45b9104d67b998deb8c58a205edff4ca"
 
 [metadata.files]
 astroid = [
@@ -993,7 +993,7 @@ mkdocs-material-extensions = [
     {file = "mkdocs_material_extensions-1.0.3-py3-none-any.whl", hash = "sha256:a82b70e533ce060b2a5d9eb2bc2e1be201cf61f901f93704b4acf6e3d5983a44"},
 ]
 mkdocs-static-i18n = [
-    {file = "mkdocs-static-i18n-0.21.tar.gz", hash = "sha256:f4851fc5e00906e2a6306b872f18f2c7f74d25cc237dfb1253ca9a7040690e2a"},
+    {file = "mkdocs-static-i18n-0.22.tar.gz", hash = "sha256:a51e65a7465709379dcba28a1e8f3601091b801690f6280a90832b903fa02bd9"},
 ]
 mypy-extensions = [
     {file = "mypy_extensions-0.4.3-py2.py3-none-any.whl", hash = "sha256:090fedd75945a69ae91ce1303b5824f428daf5a028d2f6ab8a299250a846f15d"},
