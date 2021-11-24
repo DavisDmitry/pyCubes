@@ -1,6 +1,9 @@
 import asyncio
 import random
+import uuid
+from typing import Optional
 
+import nbtlib
 import pytest
 
 import cubes
@@ -93,10 +96,29 @@ def test_long(value: int):
     assert cubes.ReadBuffer(None, data).long == value
 
 
+@pytest.mark.parametrize("value", (0, -1, 0.49823147058486938))
+def test_float(value: float):
+    data = cubes.WriteBuffer().pack_float(value).data
+    assert cubes.ReadBuffer(None, data).float == value
+
+
+@pytest.mark.parametrize("value", (0, -1, 0.49312871321823148))
+def test_double(value: float):
+    data = cubes.WriteBuffer().pack_double(value).data
+    assert cubes.ReadBuffer(None, data).double == value
+
+
 def test_string():
     string = "test"
     data = cubes.WriteBuffer().pack_string(string).data
     assert cubes.ReadBuffer(None, data).string == string
+
+
+def test_identifier():
+    identrifier = ("minecraft", "thing")
+    data = cubes.WriteBuffer().pack_identifier(*identrifier).data
+    assert cubes.ReadBuffer(None, data).string == "minecraft:thing"
+    assert cubes.ReadBuffer(None, data).identifier == identrifier
 
 
 @pytest.mark.parametrize(
@@ -123,6 +145,144 @@ def test_varint(value: int):
 def test_varlong(value: int):
     data = cubes.WriteBuffer().pack_varlong(value).data
     assert cubes.ReadBuffer(None, data).varlong == value
+
+
+def test_implemented_entity_metadata():
+    value = [
+        (cubes.EntityMetadataType.BYTE, random.randint(_MIN_BYTE, _MAX_BYTE)),
+        (cubes.EntityMetadataType.VARINT, random.randint(_MIN_VARINT, _MAX_VARINT)),
+        (cubes.EntityMetadataType.FLOAT, 0),
+        (cubes.EntityMetadataType.STRING, "test"),
+        (cubes.EntityMetadataType.CHAT, "test"),
+        (cubes.EntityMetadataType.OPTCHAT, None),
+        (cubes.EntityMetadataType.OPTCHAT, "test"),
+        (cubes.EntityMetadataType.SLOT, None),
+        (cubes.EntityMetadataType.BOOLEAN, True),
+        (cubes.EntityMetadataType.ROTATION, (0, 1, 2)),
+        (cubes.EntityMetadataType.DIRECTION, random.randint(0, 5)),
+        (cubes.EntityMetadataType.OPTUUID, None),
+        (cubes.EntityMetadataType.OPTUUID, uuid.uuid4()),
+        (cubes.EntityMetadataType.OPTBLOCKID, None),
+        (cubes.EntityMetadataType.OPTBLOCKID, 0),
+        (
+            cubes.EntityMetadataType.NBT,
+            nbtlib.Compound({"test": nbtlib.String("test")}),
+        ),
+        (
+            cubes.EntityMetadataType.VILLAGER_DATA,
+            (random.randint(0, 6), random.randint(0, 14), random.randint(1, 5)),
+        ),
+        (cubes.EntityMetadataType.OPTVARINT, None),
+        (cubes.EntityMetadataType.OPTVARINT, random.randint(_MIN_VARINT, _MAX_VARINT)),
+        (cubes.EntityMetadataType.POSE, random.randint(0, 7)),
+    ]
+    data = cubes.WriteBuffer().pack_entity_metadata(value).data
+    assert cubes.ReadBuffer(None, data).entity_metadata == value
+
+
+@pytest.mark.parametrize(
+    "data", (b"\x00\t\x00\xff", b"\x00\n\x00\xff", b"\x00\x0f\x00\xff")
+)
+def test_not_implemented_entity_metadata_unpack(data: bytes):
+    with pytest.raises(NotImplementedError):
+        cubes.ReadBuffer(None, data).entity_metadata
+
+
+@pytest.mark.parametrize(
+    "value",
+    (
+        (cubes.EntityMetadataType.POSITION, None),
+        (cubes.EntityMetadataType.OPTPOSITION, None),
+        (cubes.EntityMetadataType.PARTICLE, None),
+    ),
+)
+def test_not_implemented_entity_metadata_pack(value):
+    with pytest.raises(NotImplementedError):
+        cubes.WriteBuffer().pack_entity_metadata([value])
+
+
+@pytest.mark.parametrize(
+    "value",
+    (
+        None,
+        (1, random.randint(1, 64), nbtlib.Compound({"test": nbtlib.String("test")})),
+    ),
+)
+def test_slot(value: Optional[tuple[int, int, nbtlib.Compound]]):
+    data = cubes.WriteBuffer().pack_slot(value).data
+    return cubes.ReadBuffer(None, data).slot == value
+
+
+def test_nbt():
+    tag = nbtlib.Compound(
+        {
+            "nested compound test": nbtlib.Compound(
+                {
+                    "egg": nbtlib.Compound(
+                        {"name": nbtlib.String("Eggbert"), "value": nbtlib.Float(0.5)}
+                    ),
+                    "ham": nbtlib.Compound(
+                        {"name": nbtlib.String("Hampus"), "value": nbtlib.Float(0.75)}
+                    ),
+                }
+            ),
+            "intTest": nbtlib.Int(2147483647),
+            "byteTest": nbtlib.Byte(127),
+            "stringTest": nbtlib.String(
+                "HELLO WORLD THIS IS A TEST STRING \xc5\xc4\xd6!"
+            ),
+            "listTest (long)": nbtlib.List(
+                (
+                    nbtlib.Long(11),
+                    nbtlib.Long(12),
+                    nbtlib.Long(13),
+                    nbtlib.Long(14),
+                    nbtlib.Long(15),
+                )
+            ),
+            "doubleTest": nbtlib.Double(0.49312871321823148),
+            "floatTest": nbtlib.Float(0.49823147058486938),
+            "longTest": nbtlib.Long(9223372036854775807),
+            "listTest (compound)": nbtlib.List(
+                (
+                    nbtlib.Compound(
+                        {
+                            "created-on": nbtlib.Long(1264099775885),
+                            "name": nbtlib.String("Compound tag #0"),
+                        }
+                    ),
+                    nbtlib.Compound(
+                        {
+                            "created-on": nbtlib.Long(1264099775885),
+                            "name": nbtlib.String("Compound tag #1"),
+                        }
+                    ),
+                )
+            ),
+            "shortTest": nbtlib.Short(32767),
+        }
+    )
+    data = cubes.WriteBuffer().pack_nbt(tag).data
+    assert cubes.ReadBuffer(None, data).nbt == tag
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        _MIN_UNSIGNED_BYTE,
+        _MAX_UNSIGNED_BYTE,
+        *[random.randint(_MIN_UNSIGNED_BYTE, _MAX_UNSIGNED_BYTE) for _ in range(3)],
+    ],
+)
+def test_angle(value: int):
+    data = cubes.WriteBuffer().pack_angle(value).data
+    assert cubes.ReadBuffer(None, data).angle == value
+
+
+def test_uuid():
+    value = uuid.uuid4()
+    data = cubes.WriteBuffer().pack_uuid(value).data
+    assert cubes.ReadBuffer(None, data).uuid == value
 
 
 class _FakeStreamReader:
