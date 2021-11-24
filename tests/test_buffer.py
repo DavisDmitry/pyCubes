@@ -4,7 +4,6 @@ import uuid
 from typing import Optional
 
 import nbtlib
-from nbtlib.tag import Compound
 import pytest
 
 import cubes
