@@ -64,9 +64,3 @@ nav:
     - nbt: reference/nbt.md
     - types_: reference/types_.md
     - utils: reference/utils.md
-  - Legacy API References:
-    - '0.1':
-        - app: legacy/0_1/app.md
-        - buffer: legacy/0_1/buffer.md
-        - connection: legacy/0_1/connection.md
-        - utils: legacy/0_1/utils.md
