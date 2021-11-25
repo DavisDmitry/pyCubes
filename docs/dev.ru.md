@@ -25,13 +25,13 @@ make test
 Необходимо создать переменную окружения `VERSION` . Например:
 
 ```bash
-export VERSION=0.2.0
+export VERSION=0.4.0
 ```
 
-Затем просто запустить скрипт:
+Затем просто запустите скрипт:
 
 ```bash
-python scripts/edit_version.py
+make edit-version
 ```
 
 ## Работа с документацией
@@ -39,7 +39,13 @@ python scripts/edit_version.py
 Cначала нужно установить необходимые утилиты:
 
 ```bash
-poetry install --no-root -E docs
+poetry install -E docs
+```
+
+### Валидация строк документации в коде
+
+```bash
+make validate-docstrings
 ```
 
 ### Генерация API Reference
@@ -47,35 +53,35 @@ poetry install --no-root -E docs
 Для генерации используется переменная окружения `VERSION` . Её нужно экспортировать, например:
 
 ```bash
-export VERSION=0.2.0
+export VERSION=0.4.0
 ```
 
 Генерация:
 
 ```bash
-poetry run scripts/generate_reference.py
+make docs-generate-reference
 ```
 
 ### Перенос API Reference в раздел Legacy
 
 ```bash
-python scripts/move_reference_to_legacy.py
+make docs-move-to-legacy
 ```
 
 ### Запуск dev-сервера
 
 ```bash
-poetry run mkdocs serve
+make docs-serve
 ```
 
 ### Сборка (рендер) документации
 
 ```bash
-poetry run mkdocs build
+make docs-build
 ```
 
 ### Сборка и загрузка на github pages
 
 ```bash
-poetry run mkdocs gh-build
+make docs-deploy
 ```
