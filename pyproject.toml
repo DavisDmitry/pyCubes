@@ -6,6 +6,7 @@ authors = ["Dmitry Davis <dmitrydavis@protonmail.com>"]
 license = "MIT"
 readme = "README.md"
 homepage = "https://github.com/DavisDmitry/pyCubes"
+documentation = "https://pycubes.dmitrydavis.xyz"
 classifiers = [
     "Framework :: AsyncIO",
     "Intended Audience :: Developers",
