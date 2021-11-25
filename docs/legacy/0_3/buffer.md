@@ -1,6 +1,6 @@
 <!-- markdownlint-disable -->
 
-<a href="https://github.com/DavisDmitry/pyCubes/tree/0.3.0/cubes/buffer.py#L0"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/DavisDmitry/pyCubes/tree/0.2.0/cubes/buffer.py#L0"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 # <kbd>module</kbd> `buffer`
 
@@ -11,7 +11,7 @@
 
 ---
 
-<a href="https://github.com/DavisDmitry/pyCubes/tree/0.3.0/cubes/buffer.py#L7"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/DavisDmitry/pyCubes/tree/0.2.0/cubes/buffer.py#L7"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `CubesBufferError`
 Rised when buffer can't be reader or created. 
@@ -22,7 +22,7 @@ Rised when buffer can't be reader or created.
 
 ---
 
-<a href="https://github.com/DavisDmitry/pyCubes/tree/0.3.0/cubes/buffer.py#L11"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/DavisDmitry/pyCubes/tree/0.2.0/cubes/buffer.py#L11"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `EmptyBufferError`
 Raised when buffer is empty. 
@@ -33,7 +33,7 @@ Raised when buffer is empty.
 
 ---
 
-<a href="https://github.com/DavisDmitry/pyCubes/tree/0.3.0/cubes/buffer.py#L15"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/DavisDmitry/pyCubes/tree/0.2.0/cubes/buffer.py#L15"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `InvalidLengthError`
 Raised when packet length (VarInt) can't be readed. 
@@ -44,12 +44,12 @@ Raised when packet length (VarInt) can't be readed.
 
 ---
 
-<a href="https://github.com/DavisDmitry/pyCubes/tree/0.3.0/cubes/buffer.py#L19"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/DavisDmitry/pyCubes/tree/0.2.0/cubes/buffer.py#L19"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `ReadBuffer`
 Class for parsing data by types. 
 
-<a href="https://github.com/DavisDmitry/pyCubes/tree/0.3.0/cubes/buffer.py#L24"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/DavisDmitry/pyCubes/tree/0.2.0/cubes/buffer.py#L22"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -64,14 +64,6 @@ __init__(
 
 
 
-
----
-
-#### <kbd>property</kbd> angle
-
-int: Angle. 
-
-A rotation angle in steps of 1/256 of a full turn. 
 
 ---
 
@@ -105,25 +97,9 @@ float: Signed 64-bit float.
 
 ---
 
-#### <kbd>property</kbd> entity_metadata
-
-typing.Sequence[tuple[cubes.EntityMetadataType,             typing.Any]]: Entity Metadata. 
-
-Miscellaneous information about an entity. More information:  https://wiki.vg/Entity_metadata#Entity_Metadata_Format 
-
----
-
 #### <kbd>property</kbd> float
 
 float: Signed 32-bit float. 
-
----
-
-#### <kbd>property</kbd> identifier
-
-tuple[str, str]: Identifier. 
-
-Namespaced location in format `(namespace, location)`. 
 
 ---
 
@@ -139,25 +115,9 @@ int: Signed 64-bit integer.
 
 ---
 
-#### <kbd>property</kbd> nbt
-
-cubes.nbt.Compound: Named Binary Tag. 
-
-https://wiki.vg/NBT 
-
----
-
 #### <kbd>property</kbd> short
 
 int: Signed 16-bit integer. 
-
----
-
-#### <kbd>property</kbd> slot
-
-Optional[tuple[int, int, nbt.Compound]]: Slot data structure. 
-
-https://wiki.vg/Slot_Data 
 
 ---
 
@@ -185,12 +145,6 @@ int: Unsigned 16-bit integer.
 
 ---
 
-#### <kbd>property</kbd> uuid
-
-uuid.UUID: UUID. 
-
----
-
 #### <kbd>property</kbd> varint
 
 int: Variable-length integer. 
@@ -205,7 +159,7 @@ int: Variable-length integer.
 
 ---
 
-<a href="https://github.com/DavisDmitry/pyCubes/tree/0.3.0/cubes/buffer.py#L28"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/DavisDmitry/pyCubes/tree/0.2.0/cubes/buffer.py#L26"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>classmethod</kbd> `from_reader`
 
@@ -237,7 +191,7 @@ Creates a ReadBuffer instance from asyncio.StreamReader.
 
 ---
 
-<a href="https://github.com/DavisDmitry/pyCubes/tree/0.3.0/cubes/buffer.py#L66"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/DavisDmitry/pyCubes/tree/0.2.0/cubes/buffer.py#L64"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `read`
 
@@ -261,7 +215,7 @@ Reads `length` bytes from buffer.
 
 ---
 
-<a href="https://github.com/DavisDmitry/pyCubes/tree/0.3.0/cubes/buffer.py#L83"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/DavisDmitry/pyCubes/tree/0.2.0/cubes/buffer.py#L81"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `WriteBuffer`
 Class for serializing data by types. 

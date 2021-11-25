@@ -1,6 +1,6 @@
 <!-- markdownlint-disable -->
 
-<a href="https://github.com/DavisDmitry/pyCubes/tree/0.2.0/cubes/utils.py#L0"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/DavisDmitry/pyCubes/tree/0.3.0/cubes/utils.py#L0"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 # <kbd>module</kbd> `utils`
 
@@ -10,7 +10,7 @@
 
 ---
 
-<a href="https://github.com/DavisDmitry/pyCubes/tree/0.2.0/cubes/utils.py#L6"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/DavisDmitry/pyCubes/tree/0.3.0/cubes/utils.py#L6"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `generate_uuid`
 

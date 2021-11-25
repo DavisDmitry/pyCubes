@@ -1,6 +1,6 @@
 <!-- markdownlint-disable -->
 
-<a href="https://github.com/DavisDmitry/pyCubes/tree/0.2.0/cubes/app.py#L0"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/DavisDmitry/pyCubes/tree/0.3.0/cubes/app.py#L0"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 # <kbd>module</kbd> `app`
 
@@ -11,7 +11,7 @@
 
 ---
 
-<a href="https://github.com/DavisDmitry/pyCubes/tree/0.2.0/cubes/app.py#L19"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/DavisDmitry/pyCubes/tree/0.3.0/cubes/app.py#L19"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `GracefulExit`
 Rises when the server should stop. 
@@ -22,12 +22,12 @@ Rises when the server should stop.
 
 ---
 
-<a href="https://github.com/DavisDmitry/pyCubes/tree/0.2.0/cubes/app.py#L23"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/DavisDmitry/pyCubes/tree/0.3.0/cubes/app.py#L23"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `Application`
 Class for creating Minecraft Java Edition server implemetation. 
 
-<a href="https://github.com/DavisDmitry/pyCubes/tree/0.2.0/cubes/app.py#L33"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/DavisDmitry/pyCubes/tree/0.3.0/cubes/app.py#L35"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -50,7 +50,7 @@ Setter for unhandled packets handler.
 
 ---
 
-<a href="https://github.com/DavisDmitry/pyCubes/tree/0.2.0/cubes/app.py#L53"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/DavisDmitry/pyCubes/tree/0.3.0/cubes/app.py#L55"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `add_low_level_handler`
 
@@ -79,7 +79,7 @@ Adds packet handler.
 
 ---
 
-<a href="https://github.com/DavisDmitry/pyCubes/tree/0.2.0/cubes/app.py#L39"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/DavisDmitry/pyCubes/tree/0.3.0/cubes/app.py#L41"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `run`
 
