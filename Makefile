@@ -20,9 +20,6 @@ validate-docstrings:
 docs-generate-reference:
 	poetry run python scripts/generate_reference.py
 
-docs-move-to-legacy:
-	poetry run python scripts/move_reference_to_legacy.py
-
 docs-serve:
 	poetry run mkdocs serve
 
