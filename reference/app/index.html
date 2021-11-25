@@ -493,6 +493,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../nbt/" class="md-nav__link">
+        nbt
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../types_/" class="md-nav__link">
         types_
       </a>
@@ -744,17 +758,17 @@
                 
                 <!-- markdownlint-disable -->
 
-<p><a href="https://github.com/DavisDmitry/pyCubes/tree/0.2.0/cubes/app.py#L0"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a></p>
+<p><a href="https://github.com/DavisDmitry/pyCubes/tree/0.3.0/cubes/app.py#L0"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a></p>
 <h1 id="module-app"><kbd>module</kbd> <code>app</code></h1>
 <hr />
-<p><a href="https://github.com/DavisDmitry/pyCubes/tree/0.2.0/cubes/app.py#L19"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a></p>
+<p><a href="https://github.com/DavisDmitry/pyCubes/tree/0.3.0/cubes/app.py#L19"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a></p>
 <h2 id="class-gracefulexit"><kbd>class</kbd> <code>GracefulExit</code></h2>
 <p>Rises when the server should stop. </p>
 <hr />
-<p><a href="https://github.com/DavisDmitry/pyCubes/tree/0.2.0/cubes/app.py#L23"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a></p>
+<p><a href="https://github.com/DavisDmitry/pyCubes/tree/0.3.0/cubes/app.py#L23"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a></p>
 <h2 id="class-application"><kbd>class</kbd> <code>Application</code></h2>
 <p>Class for creating Minecraft Java Edition server implemetation. </p>
-<p><a href="https://github.com/DavisDmitry/pyCubes/tree/0.2.0/cubes/app.py#L33"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a></p>
+<p><a href="https://github.com/DavisDmitry/pyCubes/tree/0.3.0/cubes/app.py#L35"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a></p>
 <h3 id="method-__init__"><kbd>method</kbd> <code>__init__</code></h3>
 <div class="highlight"><pre><span></span><code><span class="fm">__init__</span><span class="p">(</span><span class="n">packet_read_timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">process_packet_timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">)</span>
 </code></pre></div>
@@ -762,7 +776,7 @@
 <h4 id="property-unhandled_packet_handler"><kbd>property</kbd> unhandled_packet_handler</h4>
 <p>Setter for unhandled packets handler. </p>
 <hr />
-<p><a href="https://github.com/DavisDmitry/pyCubes/tree/0.2.0/cubes/app.py#L53"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a></p>
+<p><a href="https://github.com/DavisDmitry/pyCubes/tree/0.3.0/cubes/app.py#L55"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a></p>
 <h3 id="method-add_low_level_handler"><kbd>method</kbd> <code>add_low_level_handler</code></h3>
 <div class="highlight"><pre><span></span><code><span class="n">add_low_level_handler</span><span class="p">(</span>
     <span class="n">conn_status</span><span class="p">:</span> <span class="n">ConnectionStatus</span><span class="p">,</span>
@@ -779,7 +793,7 @@
  <code>app.add_low_level_handler(cubes.ConnectionStatus.HANDSHAKE,</code>
              0x00, process_handshake)</p>
 <hr />
-<p><a href="https://github.com/DavisDmitry/pyCubes/tree/0.2.0/cubes/app.py#L39"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a></p>
+<p><a href="https://github.com/DavisDmitry/pyCubes/tree/0.3.0/cubes/app.py#L41"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a></p>
 <h3 id="method-run"><kbd>method</kbd> <code>run</code></h3>
 <div class="highlight"><pre><span></span><code><span class="n">run</span><span class="p">(</span><span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">25565</span><span class="p">)</span> <span class="err">→</span> <span class="kc">None</span>
 </code></pre></div>

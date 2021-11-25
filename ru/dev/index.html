@@ -355,6 +355,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    Валидация строк документации в коде
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#api-reference" class="md-nav__link">
     Генерация API Reference
   </a>
@@ -376,7 +383,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     Сборка (рендер) документации
   </a>
   
@@ -514,6 +521,20 @@
     <li class="md-nav__item">
       <a href="../reference/connection/" class="md-nav__link">
         connection
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/nbt/" class="md-nav__link">
+        nbt
       </a>
     </li>
   
@@ -754,6 +775,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    Валидация строк документации в коде
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#api-reference" class="md-nav__link">
     Генерация API Reference
   </a>
@@ -775,7 +803,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     Сборка (рендер) документации
   </a>
   
@@ -823,33 +851,36 @@
 </code></pre></div>
 <h3 id="_5">Изменение версии</h3>
 <p>Необходимо создать переменную окружения <code>VERSION</code> . Например:</p>
-<div class="highlight"><pre><span></span><code><span class="nb">export</span> <span class="nv">VERSION</span><span class="o">=</span><span class="m">0</span>.2.0
+<div class="highlight"><pre><span></span><code><span class="nb">export</span> <span class="nv">VERSION</span><span class="o">=</span><span class="m">0</span>.4.0
 </code></pre></div>
-<p>Затем просто запустить скрипт:</p>
-<div class="highlight"><pre><span></span><code>python scripts/edit_version.py
+<p>Затем просто запустите скрипт:</p>
+<div class="highlight"><pre><span></span><code>make edit-version
 </code></pre></div>
 <h2 id="_6">Работа с документацией</h2>
 <p>Cначала нужно установить необходимые утилиты:</p>
-<div class="highlight"><pre><span></span><code>poetry install --no-root -E docs
+<div class="highlight"><pre><span></span><code>poetry install -E docs
+</code></pre></div>
+<h3 id="_7">Валидация строк документации в коде</h3>
+<div class="highlight"><pre><span></span><code>make validate-docstrings
 </code></pre></div>
 <h3 id="api-reference">Генерация API Reference</h3>
 <p>Для генерации используется переменная окружения <code>VERSION</code> . Её нужно экспортировать, например:</p>
-<div class="highlight"><pre><span></span><code><span class="nb">export</span> <span class="nv">VERSION</span><span class="o">=</span><span class="m">0</span>.2.0
+<div class="highlight"><pre><span></span><code><span class="nb">export</span> <span class="nv">VERSION</span><span class="o">=</span><span class="m">0</span>.4.0
 </code></pre></div>
 <p>Генерация:</p>
-<div class="highlight"><pre><span></span><code>poetry run scripts/generate_reference.py
+<div class="highlight"><pre><span></span><code>make docs-generate-reference
 </code></pre></div>
 <h3 id="api-reference-legacy">Перенос API Reference в раздел Legacy</h3>
-<div class="highlight"><pre><span></span><code>python scripts/move_reference_to_legacy.py
+<div class="highlight"><pre><span></span><code>make docs-move-to-legacy
 </code></pre></div>
 <h3 id="dev-">Запуск dev-сервера</h3>
-<div class="highlight"><pre><span></span><code>poetry run mkdocs serve
+<div class="highlight"><pre><span></span><code>make docs-serve
 </code></pre></div>
-<h3 id="_7">Сборка (рендер) документации</h3>
-<div class="highlight"><pre><span></span><code>poetry run mkdocs build
+<h3 id="_8">Сборка (рендер) документации</h3>
+<div class="highlight"><pre><span></span><code>make docs-build
 </code></pre></div>
 <h3 id="github-pages">Сборка и загрузка на github pages</h3>
-<div class="highlight"><pre><span></span><code>poetry run mkdocs gh-build
+<div class="highlight"><pre><span></span><code>make docs-deploy
 </code></pre></div>
                 
               

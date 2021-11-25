@@ -310,12 +310,94 @@
     Scripts
   </a>
   
+    <nav class="md-nav" aria-label="Scripts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#run-formatting" class="md-nav__link">
+    Run formatting
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#run-linters" class="md-nav__link">
+    Run linters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#run-tests" class="md-nav__link">
+    Run tests
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#change-version" class="md-nav__link">
+    Change version
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
   <a href="#working-with-documentation" class="md-nav__link">
     Working with documentation
   </a>
+  
+    <nav class="md-nav" aria-label="Working with documentation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#validate-docstrings-in-code" class="md-nav__link">
+    Validate docstrings in code
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generate-api-reference" class="md-nav__link">
+    Generate API Reference
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#move-current-api-reference-to-legacy" class="md-nav__link">
+    Move current API Reference to Legacy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#run-the-development-server" class="md-nav__link">
+    Run the development server
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build-render-the-docs" class="md-nav__link">
+    Build (render) the docs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build-and-deploy-the-documentation-to-github-pages" class="md-nav__link">
+    Build and deploy the documentation to github pages
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -439,6 +521,20 @@
     <li class="md-nav__item">
       <a href="../reference/connection/" class="md-nav__link">
         connection
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/nbt/" class="md-nav__link">
+        nbt
       </a>
     </li>
   
@@ -634,12 +730,94 @@
     Scripts
   </a>
   
+    <nav class="md-nav" aria-label="Scripts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#run-formatting" class="md-nav__link">
+    Run formatting
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#run-linters" class="md-nav__link">
+    Run linters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#run-tests" class="md-nav__link">
+    Run tests
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#change-version" class="md-nav__link">
+    Change version
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
   <a href="#working-with-documentation" class="md-nav__link">
     Working with documentation
   </a>
+  
+    <nav class="md-nav" aria-label="Working with documentation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#validate-docstrings-in-code" class="md-nav__link">
+    Validate docstrings in code
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generate-api-reference" class="md-nav__link">
+    Generate API Reference
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#move-current-api-reference-to-legacy" class="md-nav__link">
+    Move current API Reference to Legacy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#run-the-development-server" class="md-nav__link">
+    Run the development server
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build-render-the-docs" class="md-nav__link">
+    Build (render) the docs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build-and-deploy-the-documentation-to-github-pages" class="md-nav__link">
+    Build and deploy the documentation to github pages
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -662,33 +840,47 @@
                 
                 <h1 id="development">Development</h1>
 <h2 id="scripts">Scripts</h2>
-<p>Run formatting:</p>
+<h3 id="run-formatting">Run formatting</h3>
 <div class="highlight"><pre><span></span><code>make format
 </code></pre></div>
-<p>Run linters:</p>
+<h3 id="run-linters">Run linters</h3>
 <div class="highlight"><pre><span></span><code>make lint
 </code></pre></div>
-<p>Run tests:</p>
+<h3 id="run-tests">Run tests</h3>
 <div class="highlight"><pre><span></span><code>make <span class="nb">test</span>
+</code></pre></div>
+<h3 id="change-version">Change version</h3>
+<p>It is necessary to create the environment variable <code>VERSION</code> . For example:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">export</span> <span class="nv">VERSION</span><span class="o">=</span><span class="m">0</span>.4.0
+</code></pre></div>
+<p>Then just run the script:</p>
+<div class="highlight"><pre><span></span><code>make edit-version
 </code></pre></div>
 <h2 id="working-with-documentation">Working with documentation</h2>
 <p>First you need to install requirments:</p>
-<div class="highlight"><pre><span></span><code>poetry install --no-root -E docs
+<div class="highlight"><pre><span></span><code>poetry install -E docs
 </code></pre></div>
-<p>Generate API Reference:</p>
-<div class="highlight"><pre><span></span><code>poetry run scripts/generate_reference.py
+<h3 id="validate-docstrings-in-code">Validate docstrings in code</h3>
+<div class="highlight"><pre><span></span><code>make validate-docstrings
 </code></pre></div>
-<p>Move current API Reference to Legacy:</p>
-<div class="highlight"><pre><span></span><code>python scripts/move_reference_to_legacy.py
+<h3 id="generate-api-reference">Generate API Reference</h3>
+<p>The environment variable <code>VERSION</code> is used for generation. It needs to be exported, for example:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">export</span> <span class="nv">VERSION</span><span class="o">=</span><span class="m">0</span>.4.0
 </code></pre></div>
-<p>Run the development server:</p>
-<div class="highlight"><pre><span></span><code>poetry run mkdocs serve
+<p>Generate:</p>
+<div class="highlight"><pre><span></span><code>make docs-generate-reference
 </code></pre></div>
-<p>Build (render) the docs:</p>
-<div class="highlight"><pre><span></span><code>poetry run mkdocs build
+<h3 id="move-current-api-reference-to-legacy">Move current API Reference to Legacy</h3>
+<div class="highlight"><pre><span></span><code>make docs-move-to-legacy
 </code></pre></div>
-<p>Build and deploy the documentation to github pages:</p>
-<div class="highlight"><pre><span></span><code>poetry run mkdocs gh-build
+<h3 id="run-the-development-server">Run the development server</h3>
+<div class="highlight"><pre><span></span><code>make docs-serve
+</code></pre></div>
+<h3 id="build-render-the-docs">Build (render) the docs</h3>
+<div class="highlight"><pre><span></span><code>make docs-build
+</code></pre></div>
+<h3 id="build-and-deploy-the-documentation-to-github-pages">Build and deploy the documentation to github pages</h3>
+<div class="highlight"><pre><span></span><code>make docs-deploy
 </code></pre></div>
                 
               
