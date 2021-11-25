@@ -2,22 +2,36 @@
 
 ## Scripts
 
-Run formatting:
+### Run formatting
 
 ```bash
 make format
 ```
 
-Run linters:
+### Run linters
 
 ```bash
 make lint
 ```
 
-Run tests:
+### Run tests
 
 ```bash
 make test
+```
+
+### Change version
+
+It is necessary to create the environment variable `VERSION` . For example:
+
+```bash
+export VERSION=0.4.0
+```
+
+Then just run the script:
+
+```bash
+make edit-version
 ```
 
 ## Working with documentation
@@ -25,35 +39,49 @@ make test
 First you need to install requirments:
 
 ```bash
-poetry install --no-root -E docs
+poetry install -E docs
 ```
 
-Generate API Reference:
+### Validate docstrings in code
 
 ```bash
-poetry run scripts/generate_reference.py
+make validate-docstrings
 ```
 
-Move current API Reference to Legacy:
+### Generate API Reference
+
+The environment variable `VERSION` is used for generation. It needs to be exported, for example:
 
 ```bash
-python scripts/move_reference_to_legacy.py
+export VERSION=0.4.0
 ```
 
-Run the development server:
+Generate:
 
 ```bash
-poetry run mkdocs serve
+make docs-generate-reference
 ```
 
-Build (render) the docs:
+### Move current API Reference to Legacy
 
 ```bash
-poetry run mkdocs build
+make docs-move-to-legacy
 ```
 
-Build and deploy the documentation to github pages:
+### Run the development server
 
 ```bash
-poetry run mkdocs gh-build
+make docs-serve
+```
+
+### Build (render) the docs
+
+```bash
+make docs-build
+```
+
+### Build and deploy the documentation to github pages
+
+```bash
+make docs-deploy
 ```

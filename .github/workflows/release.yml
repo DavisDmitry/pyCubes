@@ -50,11 +50,13 @@ jobs:
           python -m pip install -U pip
           pip install poetry
       - name: Install dependencies
-        run: poetry install --no-dev --no-root -E docs
+        run: poetry install --no-dev -E docs
+      - name: Move current reference to legacy
+        run: make docs-move-to-legacy
       - name: Generate API Reference
         env:
           VERSION: ${{ github.event.inputs.version }}
-        run: poetry run python scripts/generate_reference.py
+        run: make docs-generate-reference
       - name: Configure git
         run: |
           git config user.email dmitrydavis@protonmail.com

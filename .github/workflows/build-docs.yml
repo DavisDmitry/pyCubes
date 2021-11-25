@@ -19,6 +19,6 @@ jobs:
           python -m pip install -U pip
           pip install poetry
       - name: Install dependencies
-        run: poetry install --no-dev --no-root -E docs
+        run: poetry install --no-dev -E docs
       - name: Build and upload docs
-        run: poetry run mkdocs gh-deploy -m "📝 Update docs"
+        run: make docs-deploy
