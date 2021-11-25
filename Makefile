@@ -30,4 +30,4 @@ docs-build:
 	poetry run mkdocs build
 
 docs-deploy:
-	poetry run mkdocs gh-deploy
+	poetry run mkdocs gh-deploy -m "📝 Update docs"
