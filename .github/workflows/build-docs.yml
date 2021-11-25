@@ -20,5 +20,10 @@ jobs:
           pip install poetry
       - name: Install dependencies
         run: poetry install --no-dev -E docs
+      - name: Checkout github branch
+        run: |
+          git fetch
+          git checkout gh-pages
+          git pull
       - name: Build and upload docs
         run: make docs-deploy
