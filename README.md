@@ -1,9 +1,9 @@
 <h1 align="center">pyCubes</h1>
 
 <p align="center">
-<a href="https://pypi.org/projects/pycubes"><img alt="PyPI" src="https://img.shields.io/pypi/v/pycubes"></a>
-<a href="https://pypi.org/projects/pycubes"><img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/pycubes"></a>
-<a href="https://pypi.org/projects/pycubes"><img alt="PyPI - License" src="https://img.shields.io/pypi/l/pyCubes"></a>
+<a href="https://pypi.org/project/pycubes"><img alt="PyPI" src="https://img.shields.io/pypi/v/pycubes"></a>
+<a href="https://pypi.org/project/pycubes"><img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/pycubes"></a>
+<a href="https://pypi.org/project/pycubes"><img alt="PyPI - License" src="https://img.shields.io/pypi/l/pyCubes"></a>
 <a href="https://pepy.tech/project/pycubes"><img alt="Downloads" src="https://pepy.tech/badge/pycubes/month"></a>
 </p>
 <p align="center">
