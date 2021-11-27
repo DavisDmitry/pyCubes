@@ -244,6 +244,8 @@ class AbstractReadBuffer(abc.ABC, _BaseBuffer, _ConnectionMixin):
 
         https://wiki.vg/NBT
         """
+        # skip wrapper compound
+        self.read(3)  # b"\x0A\x00\x00"
         return nbt.Compound.parse(self)
 
     @property
@@ -438,8 +440,9 @@ class AbstractWriteBuffer(abc.ABC, _BaseBuffer):
         self.pack_byte(count)
         return self.pack_nbt(nbt_)
 
-    def pack_nbt(self, value: nbt.Compound) -> "AbstractReadBuffer":
+    def pack_nbt(self, value: nbt.Compound) -> "AbstractWriteBuffer":
         """Packs Named Binary Tag."""
+        self.write(b"\x0A\x00\x00")  # wrap to compound
         value.write(self)
         return self
 
