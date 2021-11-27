@@ -1,8 +1,22 @@
-# pyCubes
+<h1 align="center">pyCubes</h1>
 
 ---
 
-[![PyPI](https://img.shields.io/pypi/v/pyCubes?style=flat)](https://pypi.org/project/pycubes) [![Test](https://github.com/DavisDmitry/pyCubes/actions/workflows/test.yml/badge.svg)](https://github.com/DavisDmitry/pyCubes/actions/workflows/test.yml) [![Lint](https://github.com/DavisDmitry/pyCubes/actions/workflows/lint.yml/badge.svg)](https://github.com/DavisDmitry/pyCubes/actions/workflows/lint.yml) [![codecov](https://codecov.io/gh/DavisDmitry/pyCubes/branch/master/graph/badge.svg?token=Y18ZNYT4YS)](https://codecov.io/gh/DavisDmitry/pyCubes) [![PyPI - License](https://img.shields.io/pypi/l/pyCubes)](https://pypi.org/project/pycubes) [![Downloads](https://pepy.tech/badge/pycubes/month)](https://pepy.tech/project/pycubes) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black) [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
+<p align="center">
+<a href="https://pypi.org/projects/pycubes"><img alt="PyPI" src="https://img.shields.io/pypi/v/pycubes"></a>
+<a href="https://pypi.org/projects/pycubes"><img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/pycubes"></a>
+<a href="https://pypi.org/projects/pycubes"><img alt="PyPI - License" src="https://img.shields.io/pypi/l/pyCubes"></a>
+<a href="https://pepy.tech/project/pycubes"><img alt="Downloads" src="https://pepy.tech/badge/pycubes/month"></a>
+</p>
+<p align="center">
+<a href="https://github.com/DavisDmitry/pyCubes/actions/workflows/test.yml"><img alt="Test" src="https://github.com/DavisDmitry/pyCubes/actions/workflows/test.yml/badge.svg"></a>
+<a href="https://github.com/DavisDmitry/pyCubes/actions/workflows/lint.yml"><img alt="Lint" src="https://github.com/DavisDmitry/pyCubes/actions/workflows/lint.yml/badge.svg"></a>
+<a href="https://codecov.io/gh/DavisDmitry/pyCubes"><img alt="codecov" src="https://codecov.io/gh/DavisDmitry/pyCubes/branch/master/graph/badge.svg?token=Y18ZNYT4YS"></a>
+</p>
+<p align="center">
+<a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
+<a href="https://pycqa.github.io/isort"><img alt="Imports: isort" src="https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336"></a>
+</p>
 
 ---
 pyCubes is a library for creating servers and clients Minecraft Java Edition.
