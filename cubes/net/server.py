@@ -60,13 +60,16 @@ class Server:
 
     async def _accept_connection(self, stream: anyio.abc.SocketStream) -> None:
         # pylint: disable=W0703
-        async with stream:
-            conn = connection.Connection(stream)
-            try:
+        reason = None
+        try:
+            async with stream:
+                conn = connection.Connection(stream)
                 await self._new_connection_handler(conn)
                 await self._process_packets(conn)
-            except Exception as exc:
-                await self._close_connection_handler(conn, exc)
+        except Exception as exc:
+            reason = exc
+        finally:
+            await self._close_connection_handler(conn, reason)
 
     async def run(self, host: str, port: int) -> None:
         listener = await anyio.create_tcp_listener(local_host=host, local_port=port)

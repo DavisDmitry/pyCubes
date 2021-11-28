@@ -20,10 +20,12 @@ class ConnectionStatus(enum.IntEnum):
 
 
 class Connection:
-    __slots__ = ("_stream", "_status")
+    __slots__ = ("_stream", "_remote_address", "_local_address", "_status")
 
     def __init__(self, stream: anyio.abc.SocketStream):
         self._stream = stream
+        self._remote_address = stream.extra(anyio.abc.SocketAttribute.remote_address)
+        self._local_address = stream.extra(anyio.abc.SocketAttribute.local_address)
         self._status = ConnectionStatus.HANDSHAKE
 
     @property
@@ -32,11 +34,11 @@ class Connection:
 
     @property
     def remote_address(self) -> tuple[str, int]:
-        return self._stream.extra(anyio.abc.SocketAttribute.remote_address)
+        return self._remote_address
 
     @property
     def local_address(self) -> tuple[str, int]:
-        return self._stream.extra(anyio.abc.SocketAttribute.local_address)
+        return self._local_address
 
     @status.setter
     def status(self, value: ConnectionStatus):
