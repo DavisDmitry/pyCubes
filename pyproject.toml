@@ -29,7 +29,11 @@ packages = [{include="cubes"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
+anyio = "^3.4.0"
 nbtlib = "2.0.4"
+ujson = {version = "^4.3.0", optional = true, extras = ["fast"]}
+uvloop = {version = "^0.16.0", optional = true, extras = ["fast"]}
+trio = {version = "^0.19.0", optional = true, extras = ["trio"]}
 mkdocs-material = {version = "^7.3.6", optional = true}
 mkdocs-static-i18n = {version = ">=0.21,<0.23", optional = true}
 lazydocs = {version = "^0.4.8", optional = true}
@@ -37,6 +41,7 @@ pydocstyle = {version = "^6.1.1", optional = true}
 
 [tool.poetry.dev-dependencies]
 black = "^21.11b1"
+trio = "^0.19.0"
 flake8 = "^4.0.1"
 flake8-annotations-complexity = "^0.0.6"
 flake8-annotations-coverage = "^0.0.5"
