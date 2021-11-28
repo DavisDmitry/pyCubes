@@ -2,18 +2,6 @@ import enum
 import uuid as _uuid
 
 
-class ConnectionStatus(enum.IntEnum):
-    """Connection Status enumeration.
-
-    HANDSHAKE, STATUS, LOGIN, PlAY
-    """
-
-    HANDSHAKE = 0
-    STATUS = 1
-    LOGIN = 2
-    PLAY = 3
-
-
 class EntityMetadataType(enum.IntEnum):
     """Entity Metadata Type enumeration.
 
