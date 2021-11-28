@@ -1,6 +1,6 @@
 import io
-import signal
 import logging
+import signal
 
 try:
     # ujson available in fast extra (pip install pycubes[fast])
