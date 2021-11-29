@@ -858,7 +858,7 @@ docs = ["mkdocs-material", "mkdocs-static-i18n", "lazydocs", "pydocstyle"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "0e249258f6d0948a86602b63815c660e20accb1a308840e3950221756fcfb416"
+content-hash = "11ec6d33a9ab49b54d392b781d1016de4335cbf3f76c11e2fdf4fa1377641d35"
 
 [metadata.files]
 anyio = [
