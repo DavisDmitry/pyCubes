@@ -17,47 +17,40 @@
 </p>
 
 ---
-<p align="center"><a href="https://pycubes.dmitrydavis.xyz/">Documentation</a></p>
+<p align="center"><a href="https://pycubes.dmitrydavis.xyz">Documentation</a> | <a href="https://github.com/DavisDmitry/pyCubes/examples">Examples</a> | <a href="https://wiki.vg/Protocol">Protocol Specification</a></p>
 
 ---
-pyCubes is a library for creating servers and clients Minecraft Java Edition.
+pyCubes is a library for creating servers and clients for Minecraft Java Edition.
 
 **❗ 0.x versions are not stable. The library API is subject to change.**
 
-Installation:
+## Installation
 
 ```bash
 pip install pyCubes
 ```
 
-## Usage
+With `fast` extra (includes ujson and uvloop):
 
-First you need to create application instance:
-
-```python3
-import cubes
-
-app = cubes.Application()
+```bash
+pip install pyCubes[fast]
 ```
 
-After that add a low-level handler:
+## Features
 
-```python3
-async def process_handshake(packet_id: int, packet: cubes.ReadBuffer):
-    print('Protocol version:', packet.varint)
-    print('Server host:', packet.string)
-    print('Server port:', packet.unsigned_short)
-    print('Next state:', cubes.ConnectionStatus(packet.varint))
+* [Data types](https://wiki.vg/Data_types) (missing Chat, Position, Entity Metadata, Particle and BitSet)
+* Connection
+* Low level server
+* NBT module (wrapper over the [nbtlib](https://github.com/vberlier/nbtlib))
+* `generate_uuid` utility (generates UUID by player_name for using in offline mode)
+* AnyIO support (an asynchronous networking and concurrency library)
 
-app.add_low_level_handler(cubes.ConnectionStatus.HANDSHAKE, 0x00, process_handshake)
-```
+## TODO
 
-All that remains is to launch the application:
-
-```python3
-app.run('127.0.0.1', 25565)
-```
-
-A more detailed example can be found [here](https://github.com/DavisDmitry/pyCubes/blob/master/example.py).
-
-All packages are described [here](https://wiki.vg/Protocol).
+* All packets Data types
+* Packets descriptor
+* High level server application with event driven API
+* High level client application with event driven API
+* High level proxy application with event driven API
+* Chat API (chat messages constructor)
+* Commands API
