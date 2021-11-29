@@ -2,7 +2,7 @@ format:
 	poetry run isort .
 	poetry run black .
 
-lint: validate-docstrings
+lint:
 	poetry run pylint cubes
 	poetry run flake8 cubes
 	poetry run isort --check --diff .
@@ -10,15 +10,6 @@ lint: validate-docstrings
 
 test:
 	poetry run pytest --cov=cubes --cov-report=term-missing
-
-edit-version:
-	poetry run python scripts/edit_version.py
-
-validate-docstrings:
-	poetry run pydocstyle --convention=google --add-ignore=D100,D101,D102,D103,D104,D105,D107,D202 cubes
-
-docs-generate-reference:
-	poetry run python scripts/generate_reference.py
 
 docs-serve:
 	poetry run mkdocs serve
