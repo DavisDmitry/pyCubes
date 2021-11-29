@@ -8,7 +8,6 @@ readme = "README.md"
 homepage = "https://github.com/DavisDmitry/pyCubes"
 documentation = "https://pycubes.dmitrydavis.xyz"
 classifiers = [
-    "Framework :: AsyncIO",
     "Intended Audience :: Developers",
     "Intended Audience :: System Administrators",
     "License :: OSI Approved :: MIT License",
@@ -42,18 +41,16 @@ docs = ["mkdocs-material", "mkdocs-static-i18n", "pymdown-extensions", "mkautodo
 
 [tool.poetry.dev-dependencies]
 black = "^21.11b1"
-trio = "^0.19.0"
 flake8 = "^4.0.1"
 flake8-annotations-complexity = "^0.0.6"
 flake8-annotations-coverage = "^0.0.5"
 flake8-bandit = "^2.1.2"
 flake8-bugbear = "^21.9.2"
 isort = "^5.9.3"
-pydocstyle = "^6.1.1"
 pylint = "^2.12.1"
 pytest = "^6.2.5"
-pytest-asyncio = "^0.16.0"
 pytest-cov = "^3.0.0"
+trio = "^0.19.0"
 
 [tool.black]
 target-version = ['py310']
