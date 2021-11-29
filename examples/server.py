@@ -61,6 +61,7 @@ async def process_status(conn: net.Connection):
 async def process_status_ping(conn: net.Connection, packet: io.BytesIO):
     packet.seek(0)
     await conn.send(packet)
+    await conn.close()
 
 
 async def process_packet(conn: net.Connection, packet: io.BytesIO):
