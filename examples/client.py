@@ -69,14 +69,14 @@ class Client:
         types_.String(self.connection.remote_address[0])
         types_.UnsignedShort(self.connection.remote_address[1])
         types_.VarInt(net.ConnectionStatus.LOGIN)
-        await self.connection.send(handshake)
-
-        self.connection.status = net.ConnectionStatus.LOGIN
 
         login_start = io.BytesIO()
         types_.VarInt(0x00).to_buffer(login_start)
         types_.String(player_name).to_buffer(login_start)
-        await self.connection.send(login_start)
+
+        await self.connection.send(handshake, login_start)
+
+        self.connection.status = net.ConnectionStatus.LOGIN
 
         response = await self.connection.receive()
         packet_id = types_.VarInt.from_buffer(response)
