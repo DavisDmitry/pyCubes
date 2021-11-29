@@ -71,10 +71,17 @@ class Server:
         finally:
             await self._close_connection_handler(conn, reason)
 
-    async def run(self, host: str, port: int) -> None:
+    async def run(
+        self,
+        host: str,
+        port: int,
+        *,
+        task_status: anyio.abc.TaskStatus = anyio.TASK_STATUS_IGNORED,
+    ) -> None:
         listener = await anyio.create_tcp_listener(local_host=host, local_port=port)
         self._is_running = True
         try:
+            task_status.started()
             await listener.serve(self._accept_connection)
         finally:
             await listener.aclose()
