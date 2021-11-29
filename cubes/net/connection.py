@@ -48,11 +48,12 @@ class Connection:
         length = await _LengthVarInt.from_stream(self._stream)
         return io.BytesIO(await self._stream.receive(length))
 
-    async def send(self, packet: io.BytesIO) -> None:
-        new_packet = io.BytesIO()
-        _LengthVarInt(packet.getbuffer().nbytes).to_buffer(new_packet)
-        new_packet.write(packet.getvalue())
-        await self._stream.send(new_packet.getvalue())
+    async def send(self, *packets: io.BytesIO) -> None:
+        buffer = io.BytesIO()
+        for packet in packets:
+            _LengthVarInt(packet.getbuffer().nbytes).to_buffer(buffer)
+            buffer.write(packet.getvalue())
+        await self._stream.send(buffer.getvalue())
 
     async def close(self) -> None:
         await self._stream.aclose()
