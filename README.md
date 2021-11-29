@@ -17,7 +17,11 @@
 </p>
 
 ---
-<p align="center"><a href="https://pycubes.dmitrydavis.xyz">Documentation</a> | <a href="https://github.com/DavisDmitry/pyCubes/examples">Examples</a> | <a href="https://wiki.vg/Protocol">Protocol Specification</a></p>
+<p align="center">
+<a href="https://pycubes.dmitrydavis.xyz">Documentation</a> | 
+<a href="https://github.com/DavisDmitry/pyCubes/examples">Examples</a> | 
+<a href="https://wiki.vg/Protocol">Protocol Specification</a>
+</p>
 
 ---
 pyCubes is a library for creating servers and clients for Minecraft Java Edition.
@@ -43,14 +47,14 @@ pip install pyCubes[fast]
 * Low level server
 * NBT module (wrapper over the [nbtlib](https://github.com/vberlier/nbtlib))
 * `generate_uuid` utility (generates UUID by player_name for using in offline mode)
-* AnyIO support (an asynchronous networking and concurrency library)
+* [AnyIO](https://github.com/agronholm/anyio) support (an asynchronous networking and concurrency library)
 
 ## TODO
 
-* All packets Data types
-* Packets descriptor
-* High level server application with event driven API
-* High level client application with event driven API
-* High level proxy application with event driven API
-* Chat API (chat messages constructor)
-* Commands API
+* [ ] All packets Data types
+* [ ] Packets descriptor
+* [ ] High level server application with event driven API
+* [ ] High level client application with event driven API
+* [ ] High level proxy application with event driven API
+* [ ] Chat API (chat messages constructor)
+* [ ] Commands API
