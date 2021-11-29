@@ -19,45 +19,43 @@
 </p>
 
 ---
+<p align="center"><a href="https://wiki.vg/Protocol">Спецификация протокола</a></p>
+
+---
 
 pyCubes — это библиотека для создания серверов и клиентов Minecraft Java Edition.
 
 **❗ 0.x версии не стабильны, API библиотеки может изменяться.**
 
-Установка:
+## Установка
 
 ```bash
 pip install pyCubes
 ```
 
-## Использование
+C дополнительными зависимостями для более быстрой работы (ujson, uvloop):
 
-Сначала вам нужно создать экземпляр приложения:
-
-```python3
-import cubes
-
-app = cubes.Application()
+```bash
+pip install pyCubes[fast]
 ```
 
-После этого добавьте низкоуровневый хендлер:
+## Особенности
 
-```python3
-async def process_handshake(packet_id: int, packet: cubes.ReadBuffer) -> None:
-    print('Protocol version:', packet.varint)
-    print('Server host:', packet.string)
-    print('Server port:', packet.unsigned_short)
-    print('Next state:', cubes.ConnectionStatus(packet.varint))
+* [Сетевые типы данных](https://wiki.vg/Data_types) (кроме: Chat, Position, Entity Metadata, Particle and BitSet)
+* Класс подключения
+* Низкоуровневый сервер
+* NBT модуль (обёртка над [nbtlib](https://github.com/vberlier/nbtlib))
+* `generate_uuid` утилита (генерирует UUID по нику игрока для использования в offline режиме)
+* Поддержка [AnyIO](https://github.com/agronholm/anyio) (библиотека для асинхронной работы с сетью и конкурентости)
 
-app.add_low_level_handler(cubes.ConnectionStatus.HANDSHAKE, 0x00, process_handshake)
-```
+## TODO
 
-Остаётся только запустить приложение:
-
-```python3
-app.run('127.0.0.1', 25565)
-```
-
-Более подробный пример можно найти [здесь](https://github.com/DavisDmitry/pyCubes/blob/master/example.py).
-
-Все пакеты описаны [здесь](https://wiki.vg/Protocol).
+* [ ] Все сетевые типы данных
+* [ ] Дескриптор пакетов
+* [ ] Реализовать сжатие пакетов
+* [ ] Высокоуровневый класс-приложение для сервера с event driven API
+* [ ] Высокоуровневый класс-приложение для клиента с event driven API
+* [ ] Высокоуровневый класс-приложение для прокси с event driven API
+* [ ] Chat API (конструктор сообщений чата)
+* [ ] Commands API
+* [ ] Добавить описание API в документацию

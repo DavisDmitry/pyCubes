@@ -35,13 +35,17 @@ plugins:
         ru: Russian
       nav_translations:
         ru:
+          Home: Главная
+          Examples: Примеры
           Migrations: Миграции
 
 repo_url: https://github.com/DavisDmitry/pyCubes
 repo_name: DavisDmitry/pyCubes
 
 markdown_extensions:
+  - pymdownx.tasklist
   - pymdownx.superfences
+  - pymdownx.snippets
   - pymdownx.tabbed:
       alternate_style: true 
 
@@ -53,14 +57,10 @@ extra:
         link: https://t.me/ancaptimes
 
 nav:
-  - index.md
+  - Home: index.md
+  - Examples:
+    - examples/client.md
+    - examples/server.md
   - dev.md
   - Migrations:
     - '0.1 -> 0.2': migrations/0_2.md
-  - Current API Reference:
-    - app: reference/app.md
-    - buffer: reference/buffer.md
-    - connection: reference/connection.md
-    - nbt: reference/nbt.md
-    - types_: reference/types_.md
-    - utils: reference/utils.md
