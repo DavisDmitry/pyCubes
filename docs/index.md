@@ -51,8 +51,10 @@ pip install pyCubes[fast]
 
 * [ ] All packets Data types
 * [ ] Packets descriptor
+* [ ] Implement compression
 * [ ] High level server application with event driven API
 * [ ] High level client application with event driven API
 * [ ] High level proxy application with event driven API
 * [ ] Chat API (chat messages constructor)
 * [ ] Commands API
+* [ ] Add API Reference to docs
