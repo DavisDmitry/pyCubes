@@ -54,7 +54,11 @@ class UnsignedByte(_mixins.RangeValidationMixin[int], _OneByteBaseType[int]):
 
 
 class Angle(UnsignedByte):
-    pass
+    def __init__(self, value: int):
+        if value > 255 or value < 0:
+            value %= 255
+
+        super().__init__(value)
 
 
 class Short(_mixins.RangeValidationMixin[int], _BaseType[int]):

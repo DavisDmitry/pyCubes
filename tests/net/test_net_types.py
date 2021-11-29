@@ -154,6 +154,20 @@ def test_valid_unsigned_byte(buffer: io.BytesIO, value: int):
 
 @pytest.mark.parametrize(
     "value",
+    (
+        types_.Angle._RANGE[0],
+        types_.Angle._RANGE[1],
+        types_.Angle._RANGE[0] - 1,
+        types_.Angle._RANGE[1] + 1,
+    ),
+)
+def test_angle(value: int):
+    value = types_.Angle(value)._value
+    assert types_.Angle._RANGE[0] <= value <= types_.Angle._RANGE[1]
+
+
+@pytest.mark.parametrize(
+    "value",
     (types_.UnsignedByte._RANGE[0] - 1, types_.UnsignedByte._RANGE[1] + 1, "test"),
 )
 def test_invalid_unsigned_byte(value):
