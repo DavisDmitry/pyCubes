@@ -32,6 +32,29 @@ def test_invalid_nbt():
 
 
 @pytest.mark.parametrize(
+    "value",
+    (
+        (types_.ParticleID.ANGRY_VILLAGER,),
+        (types_.ParticleID.BLOCK, 0),
+        (types_.ParticleID.DUST, 0, 0, 0, 1),
+        (types_.ParticleID.DUST_COLOR_TRANSITION, 0, 0, 0, 1, 0, 0, 0),
+        (types_.ParticleID.ITEM, None),
+        (types_.ParticleID.VIBRATION, 0, 0, 0, 0, 0, 0, 1),
+    ),
+)
+def test_valid_particle(buffer: io.BytesIO, value: types_.ParticleType):
+    value[0].identifier
+    data = types_.Particle(value).pack()
+    assert types_.Particle.unpack(data) == value
+    types_.Particle(value).to_buffer(buffer)
+    buffer.seek(0)
+    assert types_.Particle.from_buffer(buffer) == value
+
+
+def test_invalid_particle(buffer: io.BytesIO, value: types_.)
+
+
+@pytest.mark.parametrize(
     ("x", "y", "z"),
     ((-30000000, -2048, -30000000), (0, 0, 0), (30000000, 2047, 30000000)),
 )

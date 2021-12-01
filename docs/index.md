@@ -22,7 +22,7 @@
 <p align="center"><a href="https://wiki.vg/Protocol">Protocol Specification</a></p>
 
 ---
-pyCubes is a library for creating servers and clients for Minecraft Java Edition.
+pyCubes is a library for creating servers and clients for Minecraft Java Edition (1.14+).
 
 **❗ 0.x versions are not stable. The library API is subject to change.**
 
