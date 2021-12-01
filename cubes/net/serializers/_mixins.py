@@ -1,9 +1,9 @@
 import io
 
-from cubes.net.types_ import _abc
+from cubes.net.serializers import _abc
 
 
-class StupidValidationMixin(_abc.AbstractType[_abc.T]):
+class StupidValidationMixin(_abc.AbstractSerializer[_abc.T]):
     TYPE: _abc.T
 
     @classmethod
@@ -11,7 +11,7 @@ class StupidValidationMixin(_abc.AbstractType[_abc.T]):
         cls._TYPE(value)
 
 
-class RangeValidationMixin(_abc.AbstractType[_abc.T]):
+class RangeValidationMixin(_abc.AbstractSerializer[_abc.T]):
     TYPE: _abc.T
     _RANGE: tuple[_abc.T, _abc.T]
 
@@ -23,8 +23,8 @@ class RangeValidationMixin(_abc.AbstractType[_abc.T]):
             raise ValueError
 
 
-class BufferPackMixin(_abc.AbstractType[_abc.T]):
-    def pack(self) -> bytes:
+class BufferSerializeMixin(_abc.AbstractSerializer[_abc.T]):
+    def serialize(self) -> bytes:
         buffer = io.BytesIO()
         self.to_buffer(buffer)
         return buffer.getvalue()

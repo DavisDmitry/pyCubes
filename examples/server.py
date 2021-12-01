@@ -12,7 +12,7 @@ import anyio
 import anyio.abc
 
 from cubes import net
-from cubes.net import types_
+from cubes.net import serializers
 
 _VERSION = "1.17.1"
 _PROTOCOL = 756
@@ -20,14 +20,16 @@ _SERVER_DESCRIPTION = "Example server"
 
 
 async def process_handshake(conn: net.Connection, packet: io.BytesIO):
-    protocol = types_.VarInt.from_buffer(packet)
-    types_.String.from_buffer(packet)  # host
-    types_.UnsignedShort.from_buffer(packet)  # port
-    conn.status = intention = net.ConnectionStatus(types_.VarInt.from_buffer(packet))
+    protocol = serializers.VarIntSerializer.from_buffer(packet)
+    serializers.StringSerializer.from_buffer(packet)  # host
+    serializers.UnsignedShortSerializer.from_buffer(packet)  # port
+    conn.status = intention = net.ConnectionStatus(
+        serializers.VarIntSerializer.from_buffer(packet)
+    )
     if intention == net.ConnectionStatus.LOGIN and protocol != _PROTOCOL:
         disconnect_packet = io.BytesIO()
-        types_.VarInt(0).to_buffer(disconnect_packet)
-        types_.String(
+        serializers.VarIntSerializer(0).to_buffer(disconnect_packet)
+        serializers.StringSerializer(
             json.dumps(
                 {
                     "translate": "disconnect.genericReason",
@@ -45,8 +47,8 @@ async def process_legacy_ping(conn: net.Connection):
 
 async def process_status(conn: net.Connection):
     response = io.BytesIO()
-    types_.VarInt(0).to_buffer(response)
-    types_.String(
+    serializers.VarIntSerializer(0).to_buffer(response)
+    serializers.StringSerializer(
         json.dumps(
             {
                 "version": {"name": _VERSION, "protocol": _PROTOCOL},
@@ -65,7 +67,7 @@ async def process_status_ping(conn: net.Connection, packet: io.BytesIO):
 
 
 async def process_packet(conn: net.Connection, packet: io.BytesIO):
-    packet_id = types_.VarInt.from_buffer(packet)
+    packet_id = serializers.VarIntSerializer.from_buffer(packet)
     match (conn.status, packet_id):
         case (net.ConnectionStatus.HANDSHAKE, 0x00):
             await process_handshake(conn, packet)
@@ -86,8 +88,10 @@ async def process_new_connection(conn: net.Connection):
 async def process_packet_receive_timeout(conn: net.Connection):
     if conn.status == net.ConnectionStatus.LOGIN:
         packet = io.BytesIO()
-        types_.VarInt(0x00).to_buffer(packet)
-        types_.String(json.dumps({"translate": "disconnect.timeout"})).to_buffer(packet)
+        serializers.VarIntSerializer(0x00).to_buffer(packet)
+        serializers.StringSerializer(
+            json.dumps({"translate": "disconnect.timeout"})
+        ).to_buffer(packet)
         await conn.send(packet)
     await conn.close()
 

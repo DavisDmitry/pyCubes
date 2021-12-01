@@ -4,10 +4,10 @@ import io
 import anyio
 import anyio.abc
 
-from cubes.net import types_
+from cubes.net import serializers
 
 
-class _LengthVarInt(types_.VarInt):
+class _LengthVarIntSerializer(serializers.VarIntSerializer):
     _MAX_BYTES = 3
     _RANGE = (1, 2097151)
 
@@ -45,13 +45,13 @@ class Connection:
         self._status = value
 
     async def receive(self) -> io.BytesIO:
-        length = await _LengthVarInt.from_stream(self._stream)
+        length = await _LengthVarIntSerializer.from_stream(self._stream)
         return io.BytesIO(await self._stream.receive(length))
 
     async def send(self, *packets: io.BytesIO) -> None:
         buffer = io.BytesIO()
         for packet in packets:
-            _LengthVarInt(packet.getbuffer().nbytes).to_buffer(buffer)
+            _LengthVarIntSerializer(packet.getbuffer().nbytes).to_buffer(buffer)
             buffer.write(packet.getvalue())
         await self._stream.send(buffer.getvalue())
 

@@ -5,7 +5,7 @@ from typing import Any, Callable, Coroutine
 import anyio
 
 from cubes import net
-from cubes.net import types_
+from cubes.net import serializers
 
 _PROTOCOL = 756
 _HOST = "127.0.0.1"
@@ -64,28 +64,32 @@ class Client:
             raise UnsuitedConnectionStatusForOperationError(self.connection.status)
 
         handshake = io.BytesIO()
-        types_.VarInt(0x00).to_buffer(handshake)
-        types_.VarInt(_PROTOCOL).to_buffer(handshake)
-        types_.String(self.connection.remote_address[0])
-        types_.UnsignedShort(self.connection.remote_address[1])
-        types_.VarInt(net.ConnectionStatus.LOGIN)
+        serializers.VarIntSerializer(0x00).to_buffer(handshake)
+        serializers.VarIntSerializer(_PROTOCOL).to_buffer(handshake)
+        serializers.StringSerializer(self.connection.remote_address[0])
+        serializers.UnsignedShortSerializer(self.connection.remote_address[1])
+        serializers.VarIntSerializer(net.ConnectionStatus.LOGIN)
 
         login_start = io.BytesIO()
-        types_.VarInt(0x00).to_buffer(login_start)
-        types_.String(player_name).to_buffer(login_start)
+        serializers.VarIntSerializer(0x00).to_buffer(login_start)
+        serializers.StringSerializer(player_name).to_buffer(login_start)
 
         await self.connection.send(handshake, login_start)
 
         self.connection.status = net.ConnectionStatus.LOGIN
 
         response = await self.connection.receive()
-        packet_id = types_.VarInt.from_buffer(response)
+        packet_id = serializers.VarIntSerializer.from_buffer(response)
         match packet_id:
             case 0x00:
-                raise DisconnectedByServerError(types_.String.from_buffer(response))
+                raise DisconnectedByServerError(
+                    serializers.StringSerializer.from_buffer(response)
+                )
             case 0x02:
-                uuid_ = types_.UUID.from_buffer(response)
-                player_name_from_server = types_.String.from_buffer(response)
+                uuid_ = serializers.UUIDSerializer.from_buffer(response)
+                player_name_from_server = serializers.StringSerializer.from_buffer(
+                    response
+                )
                 if player_name != player_name_from_server:
                     raise InvalidPlayerNameFromServer(player_name_from_server)
                 self.connection.status = net.ConnectionStatus.PLAY

@@ -1,13 +1,13 @@
 import io
 
 from cubes import nbt
-from cubes.net.types_ import _abc, _mixins
+from cubes.net.serializers import _abc, _mixins
 
 _WRAPPER_PREFIX = b"\x0A\x00\x00"
 
 
-class NamedBinaryTag(
-    _mixins.BufferPackMixin[nbt.Compound], _abc.AbstractType[nbt.Compound]
+class NBTSerializer(
+    _mixins.BufferSerializeMixin[nbt.Compound], _abc.AbstractSerializer[nbt.Compound]
 ):
     @classmethod
     def validate(cls, value: nbt.Compound) -> None:
@@ -15,7 +15,7 @@ class NamedBinaryTag(
             raise ValueError
 
     @classmethod
-    def unpack(cls, data: bytes) -> nbt.Compound:
+    def deserialize(cls, data: bytes) -> nbt.Compound:
         return cls.from_buffer(io.BytesIO(data))
 
     def to_buffer(self, buffer: io.BytesIO) -> None:
@@ -26,5 +26,4 @@ class NamedBinaryTag(
     def from_buffer(cls, buffer: io.BytesIO) -> nbt.Compound:
         buffer.read(3)
         result = nbt.Compound.parse(buffer)
-        cls.validate(result)
         return result

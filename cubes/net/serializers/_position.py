@@ -1,13 +1,13 @@
 import io
 import struct
 
-from cubes.net.types_ import _abc
+from cubes.net.serializers import _abc
 
 
-class Position(_abc.AbstractType[tuple[int, int, int]]):
+class PositionSerializer(_abc.AbstractSerializer[tuple[int, int, int]]):
     # pylint: disable=C0103
-    def __init__(self, x: int, y: int, z: int):
-        super().__init__((x, y, z))
+    def __init__(self, x: int, y: int, z: int, *, validate: bool = True):
+        super().__init__((x, y, z), validate=validate)
 
     @classmethod
     def validate(cls, value: tuple[int, int, int]) -> None:
@@ -27,7 +27,7 @@ class Position(_abc.AbstractType[tuple[int, int, int]]):
             num -= 1 << bits
         return num
 
-    def pack(self) -> bytes:
+    def serialize(self) -> bytes:
         x, y, z = self._value
         value = sum(
             (
@@ -39,7 +39,7 @@ class Position(_abc.AbstractType[tuple[int, int, int]]):
         return struct.pack(">Q", value)
 
     @classmethod
-    def unpack(cls, data: bytes) -> tuple[int, int, int]:
+    def deserialize(cls, data: bytes) -> tuple[int, int, int]:
         data = struct.unpack(">Q", data)[0]
         x = cls._from_twos_complement(data >> 38, 26)
         z = cls._from_twos_complement(data >> 12 & 0x3FFFFFF, 26)
@@ -47,8 +47,8 @@ class Position(_abc.AbstractType[tuple[int, int, int]]):
         return x, y, z
 
     def to_buffer(self, buffer: io.BytesIO) -> None:
-        buffer.write(self.pack())
+        buffer.write(self.serialize())
 
     @classmethod
     def from_buffer(cls, buffer: io.BytesIO) -> tuple[int, int, int]:
-        return cls.unpack(buffer.read(struct.calcsize("Q")))
+        return cls.deserialize(buffer.read(struct.calcsize("Q")))

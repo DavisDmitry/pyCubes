@@ -3,14 +3,14 @@ import struct
 
 import anyio.abc
 
-from cubes.net.types_ import _abc, _mixins
+from cubes.net.serializers import _abc, _mixins
 
 
-class _BaseVarType(_abc.AbstractType[int]):
+class _BaseVarSerializer(_abc.AbstractSerializer[int]):
     _BYTES_SHIFT: int
     _MAX_BYTES: int
 
-    def pack(self) -> bytes:
+    def serialize(self) -> bytes:
         value = self._value
         if value < 0:
             value += 1 << self._BYTES_SHIFT
@@ -24,11 +24,11 @@ class _BaseVarType(_abc.AbstractType[int]):
         return result
 
     @classmethod
-    def unpack(cls, data: bytes) -> int:
+    def deserialize(cls, data: bytes) -> int:
         return cls.from_buffer(io.BytesIO(data))
 
     def to_buffer(self, buffer: io.BytesIO) -> None:
-        buffer.write(self.pack())
+        buffer.write(self.serialize())
 
     @classmethod
     def from_buffer(cls, buffer: io.BytesIO) -> int:
@@ -40,7 +40,6 @@ class _BaseVarType(_abc.AbstractType[int]):
                 break
         if result & (1 << (cls._BYTES_SHIFT - 1)):
             result -= 1 << cls._BYTES_SHIFT
-        cls.validate(result)
         return result
 
     @classmethod
@@ -53,18 +52,17 @@ class _BaseVarType(_abc.AbstractType[int]):
                 break
         if result & (1 << (cls._BYTES_SHIFT - 1)):
             result -= 1 << cls._BYTES_SHIFT
-        cls.validate(result)
         return result
 
 
-class VarInt(_BaseVarType, _mixins.RangeValidationMixin[int]):
+class VarIntSerializer(_BaseVarSerializer, _mixins.RangeValidationMixin[int]):
     _BYTES_SHIFT = 32
     _MAX_BYTES = 5
     _TYPE = int
     _RANGE = (-2147483648, 2147483647)
 
 
-class VarLong(_BaseVarType, _mixins.RangeValidationMixin[int]):
+class VarLongSerializer(_BaseVarSerializer, _mixins.RangeValidationMixin[int]):
     _BYTES_SHIFT = 64
     _MAX_BYTES = 10
     _TYPE = int
