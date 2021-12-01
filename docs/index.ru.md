@@ -41,7 +41,7 @@ pip install pyCubes[fast]
 
 ## Особенности
 
-* [Сетевые типы данных](https://wiki.vg/Data_types) (кроме: Chat, Position, Entity Metadata, Particle and BitSet)
+* [Сетевые типы данных](https://wiki.vg/Data_types) (кроме: Chat, Entity Metadata, Particle, BitSet, Shunk Section (1.18) and Palleted container (1.18))
 * Класс подключения
 * Низкоуровневый сервер
 * NBT модуль (обёртка над [nbtlib](https://github.com/vberlier/nbtlib))

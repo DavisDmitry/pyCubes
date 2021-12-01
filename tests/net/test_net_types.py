@@ -31,6 +31,34 @@ def test_invalid_nbt():
         types_.NamedBinaryTag("test")
 
 
+@pytest.mark.parametrize(
+    ("x", "y", "z"),
+    ((-30000000, -2048, -30000000), (0, 0, 0), (30000000, 2047, 30000000)),
+)
+def test_valid_position(buffer: io.BytesIO, x: int, y: int, z: int):
+    data = types_.Position(x, y, z).pack()
+    assert types_.Position.unpack(data) == (x, y, z)
+    types_.Position(x, y, z).to_buffer(buffer)
+    buffer.seek(0)
+    assert types_.Position.from_buffer(buffer) == (x, y, z)
+
+
+@pytest.mark.parametrize(
+    ("x", "y", "z"),
+    (
+        (30000001, 0, 0),
+        (0, 2048, 0),
+        (0, 0, 30000001),
+        (-30000001, 0, 0),
+        (0, -2049, 0),
+        (0, 0, -30000001),
+    ),
+)
+def test_invalid_position(x: int, y: int, z: int):
+    with pytest.raises(ValueError):
+        types_.Position(x, y, z)
+
+
 @pytest.mark.parametrize("value", (True, False, 0, 1, "test"))
 def test_boolean(buffer: io.BytesIO, value):
     data = types_.Boolean(value).pack()

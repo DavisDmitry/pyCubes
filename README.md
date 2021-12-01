@@ -19,12 +19,12 @@
 ---
 <p align="center">
 <a href="https://pycubes.dmitrydavis.xyz">Documentation</a> | 
-<a href="https://github.com/DavisDmitry/pyCubes/examples">Examples</a> | 
+<a href="https://github.com/DavisDmitry/pyCubes/tree/master/examples">Examples</a> | 
 <a href="https://wiki.vg/Protocol">Protocol Specification</a>
 </p>
 
 ---
-pyCubes is a library for creating servers and clients for Minecraft Java Edition.
+pyCubes is a library for creating servers and clients for Minecraft Java Edition (1.14+).
 
 **❗ 0.x versions are not stable. The library API is subject to change.**
 
@@ -42,7 +42,7 @@ pip install pyCubes[fast]
 
 ## Features
 
-* [Data types](https://wiki.vg/Data_types) (missing Chat, Position, Entity Metadata, Particle and BitSet)
+* [Data types](https://wiki.vg/Data_types) (missing Chat, Entity Metadata, Particle, BitSet, Shunk Section (1.18) and Palleted container (1.18))
 * Connection
 * Low level server
 * NBT module (wrapper over the [nbtlib](https://github.com/vberlier/nbtlib))

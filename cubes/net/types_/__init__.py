@@ -1,4 +1,5 @@
 from cubes.net.types_._nbt import NamedBinaryTag
+from cubes.net.types_._position import Position
 from cubes.net.types_._simple import (
     Angle,
     Boolean,
