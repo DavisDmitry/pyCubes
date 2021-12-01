@@ -3,13 +3,12 @@ import io
 from cubes import nbt
 from cubes.net.types_ import _abc, _mixins, _nbt, _simple, _var_length
 
+SlotType = tuple[int, int, nbt.Compound | None]
 
-class Slot(
-    _mixins.BufferPackMixin[tuple[int, int, nbt.Compound | None] | None],
-    _abc.AbstractType[tuple[int, int, nbt.Compound | None] | None],
-):
+
+class Slot(_mixins.BufferPackMixin[SlotType], _abc.AbstractType[SlotType]):
     @classmethod
-    def validate(cls, value: tuple[int, int, nbt.Compound | None] | None) -> None:
+    def validate(cls, value: SlotType | None) -> None:
         if value is None:
             return
         item_id, count, tag = value
@@ -20,7 +19,7 @@ class Slot(
         _nbt.NamedBinaryTag.validate(tag)
 
     @classmethod
-    def unpack(cls, data: bytes) -> tuple[int, int, nbt.Compound | None] | None:
+    def unpack(cls, data: bytes) -> SlotType | None:
         return cls.from_buffer(io.BytesIO(data))
 
     def to_buffer(self, buffer: io.BytesIO) -> None:
@@ -37,9 +36,7 @@ class Slot(
         _nbt.NamedBinaryTag(tag).to_buffer(buffer)
 
     @classmethod
-    def from_buffer(
-        cls, buffer: io.BytesIO
-    ) -> tuple[int, int, nbt.Compound | None] | None:
+    def from_buffer(cls, buffer: io.BytesIO) -> SlotType | None:
         is_present = _simple.Boolean.from_buffer(buffer)
         if not is_present:
             return None

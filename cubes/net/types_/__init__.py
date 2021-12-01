@@ -12,7 +12,7 @@ from cubes.net.types_._simple import (
     UnsignedByte,
     UnsignedShort,
 )
-from cubes.net.types_._slot import Slot
+from cubes.net.types_._slot import Slot, SlotType
 from cubes.net.types_._string import Identifier, String
 from cubes.net.types_._uuid import UUID
 from cubes.net.types_._var_length import VarInt, VarLong
