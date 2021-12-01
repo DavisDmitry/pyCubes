@@ -19,7 +19,7 @@ class StringSerializer(_mixins.BufferSerializeMixin[str], _abc.AbstractSerialize
 
     def to_buffer(self, buffer: io.BytesIO) -> None:
         value = self._value.encode()
-        _var_length.VarIntSerializer(len(value)).to_buffer(buffer)
+        _var_length.VarIntSerializer(len(value), validate=False).to_buffer(buffer)
         buffer.write(value)
 
     @classmethod

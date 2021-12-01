@@ -12,8 +12,7 @@ class _BaseSimpleSerializer(_abc.AbstractSerializer[_abc.T]):
 
     @classmethod
     def deserialize(cls, data: bytes) -> _abc.T:
-        value = struct.unpack(f">{cls.FMT}", data)[0]
-        return value
+        return struct.unpack(f">{cls.FMT}", data)[0]
 
     def to_buffer(self, buffer: io.BytesIO) -> None:
         buffer.write(self.serialize())
