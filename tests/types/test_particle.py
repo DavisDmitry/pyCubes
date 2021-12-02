@@ -15,9 +15,8 @@ def test_invalid_particle():
         types_.Particle(types_.ParticleID.BLOCK)
 
 
-@pytest.mark.parametrize("block_state", (0, None))
-def test_block_particle(block_state: int | None):
-    assert types_.BlockParticle(block_state).block_state == block_state
+def test_block_particle():
+    assert types_.BlockParticle(0).block_state == 0
 
 
 def test_dust_particle():
@@ -41,9 +40,8 @@ def test_dust_color_transition():
     assert particle.to_blue == values[5]
 
 
-@pytest.mark.parametrize("block_state", (0, None))
-def test_falling_dust_particle(block_state: int | None):
-    assert types_.FallingDustParticle(block_state).block_state == block_state
+def test_falling_dust_particle():
+    assert types_.FallingDustParticle(0).block_state == 0
 
 
 @pytest.mark.parametrize("item", (types_.Slot(1, 64), None))

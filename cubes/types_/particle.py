@@ -135,9 +135,9 @@ class Particle(pydantic.BaseModel):
 
 
 class BlockParticle(Particle):
-    block_state: Optional[int] = pydantic.Field(ge=0, le=_MAX_STATES_VALUE)
+    block_state: int = pydantic.Field(ge=0, le=_MAX_STATES_VALUE)
 
-    def __init__(self, block_state: int | None = None):
+    def __init__(self, block_state: int):
         pydantic.BaseModel.__init__(self, id=ParticleID.BLOCK, block_state=block_state)
 
 
@@ -187,9 +187,9 @@ class DustColorTransitionParticle(Particle):
 
 
 class FallingDustParticle(Particle):
-    block_state: Optional[int] = pydantic.Field(ge=0, le=_MAX_STATES_VALUE)
+    block_state: int = pydantic.Field(ge=0, le=_MAX_STATES_VALUE)
 
-    def __init__(self, block_state: int | None = None):
+    def __init__(self, block_state: int):
         pydantic.BaseModel.__init__(
             self, id=ParticleID.FALLING_DUST, block_state=block_state
         )
