@@ -1,6 +1,5 @@
 import pydantic
 import pytest
-from pydantic.class_validators import validator
 
 from cubes import nbt as _nbt
 from cubes import types_
