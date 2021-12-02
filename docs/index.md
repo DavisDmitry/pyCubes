@@ -40,7 +40,7 @@ pip install pyCubes[fast]
 
 ## Features
 
-* [Data types](https://wiki.vg/Data_types) (missing Chat, Entity Metadata, Particle, BitSet, Shunk Section (1.18) and Palleted container (1.18))
+* Serializers for [Data types](https://wiki.vg/Data_types) (missing Chat, Entity Metadata, BitSet, Shunk Section (1.18) and Palleted container (1.18))
 * Connection
 * Low level server
 * NBT module (wrapper over the [nbtlib](https://github.com/vberlier/nbtlib))
@@ -49,7 +49,7 @@ pip install pyCubes[fast]
 
 ## TODO
 
-* [ ] All packets Data types
+* [ ] Serializer for all packets Data types
 * [ ] Packets descriptor
 * [ ] Implement compression
 * [ ] High level server application with event driven API

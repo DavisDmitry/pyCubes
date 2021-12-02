@@ -1,4 +1,5 @@
 from cubes.net.serializers._nbt import NBTSerializer
+from cubes.net.serializers._particle import ParticleSerializer
 from cubes.net.serializers._position import PositionSerializer
 from cubes.net.serializers._simple import (
     AngleSerializer,

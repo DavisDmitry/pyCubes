@@ -9,6 +9,7 @@ import pytest
 from cubes import nbt, types_
 from cubes.net import serializers
 from cubes.net.serializers import _string
+from cubes.types_ import particle
 
 
 @pytest.fixture
@@ -29,6 +30,26 @@ def test_valid_nbt(buffer: io.BytesIO):
 def test_invalid_nbt():
     with pytest.raises(ValueError):
         serializers.NBTSerializer("test")
+
+
+@pytest.mark.parametrize(
+    "value",
+    (
+        types_.Particle(particle.ParticleID.ANGRY_VILLAGER),
+        types_.BlockParticle(0),
+        types_.DustParticle(0, 0, 0, 1),
+        types_.DustColorTransitionParticle(1, 1, 1, 0, 0, 0, 0.5),
+        types_.FallingDustParticle(0),
+        types_.ItemParticle(types_.Slot(1, 64, nbt={})),
+        types_.VibrationParticle(0, 0, 0, 1, 1, 1, 5),
+    ),
+)
+def test_particle(buffer: io.BytesIO, value: types_.Particle):
+    data = serializers.ParticleSerializer(value).serialize()
+    assert serializers.ParticleSerializer.deserialize(data) == value
+    serializers.ParticleSerializer(value).to_buffer(buffer)
+    buffer.seek(0)
+    assert serializers.ParticleSerializer.from_buffer(buffer) == value
 
 
 @pytest.mark.parametrize(
