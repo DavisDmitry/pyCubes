@@ -6,7 +6,7 @@ import uuid
 import nbtlib
 import pytest
 
-from cubes import nbt
+from cubes import nbt, types_
 from cubes.net import serializers
 from cubes.net.serializers import _string
 
@@ -94,7 +94,7 @@ def test_valid_byte(buffer: io.BytesIO, value: int):
 )
 def test_invalid_byte(value):
     with pytest.raises(ValueError):
-        serializers.ByteSerializer.validate(value)
+        serializers.ByteSerializer(value)
 
 
 @pytest.mark.parametrize(
@@ -123,7 +123,7 @@ def test_valid_int(buffer: io.BytesIO, value: int):
 )
 def test_invalid_int(value):
     with pytest.raises(ValueError):
-        serializers.IntSerializer.validate(value)
+        serializers.IntSerializer(value)
 
 
 @pytest.mark.parametrize(
@@ -152,7 +152,7 @@ def test_valid_long(buffer: io.BytesIO, value: int):
 )
 def test_invalid_long(value):
     with pytest.raises(ValueError):
-        serializers.LongSerializer.validate(value)
+        serializers.LongSerializer(value)
 
 
 @pytest.mark.parametrize(
@@ -181,7 +181,7 @@ def test_valid_short(buffer: io.BytesIO, value: int):
 )
 def test_invalid_short(value):
     with pytest.raises(ValueError):
-        serializers.ShortSerializer.validate(value)
+        serializers.ShortSerializer(value)
 
 
 @pytest.mark.parametrize(
@@ -228,7 +228,7 @@ def test_angle(value: int):
 )
 def test_invalid_unsigned_byte(value):
     with pytest.raises(ValueError):
-        serializers.UnsignedByteSerializer.validate(value)
+        serializers.UnsignedByteSerializer(value)
 
 
 @pytest.mark.parametrize(
@@ -260,7 +260,7 @@ def test_valid_unsigned_short(buffer: io.BytesIO, value: int):
 )
 def test_invalid_unsigned_short(value):
     with pytest.raises(ValueError):
-        serializers.UnsignedShortSerializer.validate(value)
+        serializers.UnsignedShortSerializer(value)
 
 
 def test_valid_uuid(buffer: io.BytesIO):
@@ -324,7 +324,7 @@ async def test_valid_varint_async(value: int):
 )
 def test_invalid_varint(value):
     with pytest.raises(ValueError):
-        serializers.VarIntSerializer.validate(value)
+        serializers.VarIntSerializer(value)
 
 
 @pytest.mark.parametrize(
@@ -353,18 +353,25 @@ def test_valid_varlong(buffer: io.BytesIO, value: int):
 )
 def test_invalid_varlong(value):
     with pytest.raises(ValueError):
-        serializers.VarLongSerializer.validate(value)
+        serializers.VarLongSerializer(value)
 
 
 @pytest.mark.parametrize(
-    "value", ((1, 64, None), (276, 1, nbt.Compound({"Name": nbt.String("test")})), None)
+    "value", (types_.Slot(1, 64, nbt=nbt.Compound()), types_.Slot(1, 64))
 )
-def test_slot(buffer: io.BytesIO, value: tuple[int, int, nbt.Compound] | None):
-    data = serializers.Slot(value).serialize()
-    assert serializers.Slot.deserialize(data) == value
-    serializers.Slot(value).to_buffer(buffer)
+def test_slot(buffer: io.BytesIO, value: types_.Slot):
+    value2 = value.copy(update={"nbt": nbt.Compound()})
+    data = serializers.SlotSerializer(value).serialize()
+    assert serializers.SlotSerializer.deserialize(data) == value2
+    serializers.SlotSerializer(value).to_buffer(buffer)
     buffer.seek(0)
-    assert serializers.Slot.from_buffer(buffer) == value
+    assert serializers.SlotSerializer.from_buffer(buffer) == value2
+
+
+def test_deserialize_none_slot(buffer: io.BytesIO):
+    buffer.write(b"\x00")
+    buffer.seek(0)
+    assert serializers.SlotSerializer.from_buffer(buffer) is None
 
 
 def test_valid_string(buffer: io.BytesIO):
