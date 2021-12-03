@@ -9,12 +9,64 @@ import pytest
 from cubes import nbt, types_
 from cubes.net import serializers
 from cubes.net.serializers import _string
-from cubes.types_ import particle
+from cubes.types_ import entity
 
 
 @pytest.fixture
 def buffer() -> io.BytesIO:
     return io.BytesIO()
+
+
+def test_valid_entity_metadata(buffer: io.BytesIO):
+    values = (
+        (entity.FieldType.BYTE, 0),
+        (entity.FieldType.VARINT, 0),
+        (entity.FieldType.FLOAT, 0.5),
+        (entity.FieldType.STRING, "test"),
+        (entity.FieldType.CHAT, '{"text": "test"}'),
+        (entity.FieldType.OPT_CHAT, '{"text": "test"}'),
+        (entity.FieldType.OPT_CHAT, None),
+        (entity.FieldType.SLOT, types_.Slot(1, 64, nbt={})),
+        (entity.FieldType.SLOT, None),
+        (entity.FieldType.BOOLEAN, True),
+        (entity.FieldType.ROTATION, [0.5, 0.5, 0.5]),
+        (entity.FieldType.POSITION, (1, 1, 1)),
+        (entity.FieldType.OPT_POSITION, (-1, -1, -1)),
+        (entity.FieldType.OPT_POSITION, None),
+        (entity.FieldType.DIRECTION, entity.Direction.NORTH),
+        (entity.FieldType.OPT_UUID, uuid.uuid4()),
+        (entity.FieldType.OPT_UUID, None),
+        (entity.FieldType.OPT_BLOCK_ID, 1),
+        (entity.FieldType.OPT_BLOCK_ID, None),
+        (entity.FieldType.NBT, {}),
+        (entity.FieldType.PARTICLE, types_.Particle(types_.ParticleID.ANGRY_VILLAGER)),
+        (
+            entity.FieldType.VILLAGER_DATA,
+            [entity.VillagerType.TAIGA, entity.VillagerProfession.BUTCHER, 1],
+        ),
+        (entity.FieldType.OPT_VARINT, 1),
+        (entity.FieldType.OPT_VARINT, None),
+        (entity.FieldType.POSE, entity.Pose.SLEEPING),
+    )
+    serializers.EntityMetadataSerializer.validate(*values)
+    data = serializers.EntityMetadataSerializer(*values).serialize()
+    for index, value in enumerate(
+        serializers.EntityMetadataSerializer.deserialize(data)
+    ):
+        assert value == values[index][1]
+    serializers.EntityMetadataSerializer(*values).to_buffer(buffer)
+    buffer.seek(0)
+    for index, value in enumerate(
+        serializers.EntityMetadataSerializer.from_buffer(buffer)
+    ):
+        assert value == values[index][1]
+
+
+def test_invalid_entity_metadata():
+    with pytest.raises(ValueError):
+        serializers.EntityMetadataSerializer.validate_villager_data(
+            (entity.VillagerType.TAIGA, entity.VillagerProfession.BUTCHER, 6)
+        )
 
 
 def test_valid_nbt(buffer: io.BytesIO):
@@ -35,7 +87,7 @@ def test_invalid_nbt():
 @pytest.mark.parametrize(
     "value",
     (
-        types_.Particle(particle.ParticleID.ANGRY_VILLAGER),
+        types_.Particle(types_.ParticleID.ANGRY_VILLAGER),
         types_.BlockParticle(0),
         types_.DustParticle(0, 0, 0, 1),
         types_.DustColorTransitionParticle(1, 1, 1, 0, 0, 0, 0.5),
