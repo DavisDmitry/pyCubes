@@ -22,7 +22,7 @@
 <p align="center"><a href="https://wiki.vg/Protocol">Protocol Specification</a></p>
 
 ---
-pyCubes is a library for creating servers and clients Minecraft Java Edition.
+pyCubes is a library for creating servers and clients for Minecraft Java Edition (1.14+).
 
 **❗ 0.x versions are not stable. The library API is subject to change.**
 
@@ -40,7 +40,7 @@ pip install pyCubes[fast]
 
 ## Features
 
-* [Data types](https://wiki.vg/Data_types) (missing Chat, Position, Entity Metadata, Particle and BitSet)
+* Serializers for [Data types](https://wiki.vg/Data_types) (missing Chat (use String instead), Shunk Section (1.18) and Palleted container (1.18))
 * Connection
 * Low level server
 * NBT module (wrapper over the [nbtlib](https://github.com/vberlier/nbtlib))
@@ -49,7 +49,7 @@ pip install pyCubes[fast]
 
 ## TODO
 
-* [ ] All packets Data types
+* [ ] Serializer for all packets Data types
 * [ ] Packets descriptor
 * [ ] Implement compression
 * [ ] High level server application with event driven API

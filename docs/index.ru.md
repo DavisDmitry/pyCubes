@@ -23,7 +23,7 @@
 
 ---
 
-pyCubes — это библиотека для создания серверов и клиентов Minecraft Java Edition.
+pyCubes — это библиотека для создания серверов и клиентов Minecraft Java Edition (1.14+).
 
 **❗ 0.x версии не стабильны, API библиотеки может изменяться.**
 
@@ -41,7 +41,7 @@ pip install pyCubes[fast]
 
 ## Особенности
 
-* [Сетевые типы данных](https://wiki.vg/Data_types) (кроме: Chat, Position, Entity Metadata, Particle and BitSet)
+* Сериализаторы для [типов данных](https://wiki.vg/Data_types) (кроме: Chat (используйте String вместо него), Shunk Section (1.18) and Palleted container (1.18))
 * Класс подключения
 * Низкоуровневый сервер
 * NBT модуль (обёртка над [nbtlib](https://github.com/vberlier/nbtlib))
@@ -50,7 +50,7 @@ pip install pyCubes[fast]
 
 ## TODO
 
-* [ ] Все сетевые типы данных
+* [ ] Сериализаторы для всех типов данных
 * [ ] Дескриптор пакетов
 * [ ] Реализовать сжатие пакетов
 * [ ] Высокоуровневый класс-приложение для сервера с event driven API

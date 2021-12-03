@@ -7,11 +7,12 @@ from typing import Generic, TypeVar
 T = TypeVar("T")
 
 
-class AbstractType(abc.ABC, Generic[T]):
+class AbstractSerializer(abc.ABC, Generic[T]):
     __slots__ = ("_value",)
 
-    def __init__(self, value: T):
-        self.validate(value)
+    def __init__(self, value: T, validate: bool = True):
+        if validate:
+            self.validate(value)
         self._value = value
 
     @classmethod
@@ -20,12 +21,12 @@ class AbstractType(abc.ABC, Generic[T]):
         """"""
 
     @abc.abstractmethod
-    def pack(self) -> bytes:
+    def serialize(self) -> bytes:
         """"""
 
     @classmethod
     @abc.abstractmethod
-    def unpack(cls, data: bytes) -> T:
+    def deserialize(cls, data: bytes) -> T:
         """"""
 
     @abc.abstractmethod
