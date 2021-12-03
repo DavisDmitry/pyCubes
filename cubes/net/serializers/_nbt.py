@@ -9,10 +9,12 @@ _WRAPPER_PREFIX = b"\x0A\x00\x00"
 class NBTSerializer(
     _mixins.BufferSerializeMixin[nbt.Compound], _abc.AbstractSerializer[nbt.Compound]
 ):
+    def __init__(self, value: dict | nbt.Compound, validate: bool = True):
+        super().__init__(nbt.Compound(value), validate=False)
+
     @classmethod
     def validate(cls, value: nbt.Compound) -> None:
-        if not isinstance(value, nbt.Compound):
-            raise ValueError
+        nbt.Compound(value)
 
     @classmethod
     def deserialize(cls, data: bytes) -> nbt.Compound:
