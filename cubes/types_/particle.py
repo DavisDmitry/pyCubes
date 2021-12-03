@@ -3,14 +3,14 @@ from typing import Optional
 
 import pydantic
 
-from cubes.types_ import slot
+from cubes.types_ import _mixins, slot
 
 _MAX_STATES_VALUE = 9  # composter has 9 states
 
 # pylint: disable=W0231,W0233
 
 
-class ParticleID(enum.IntEnum):
+class ParticleID(_mixins.IdentifierMixin, enum.IntEnum):
     AMBIENT_ENTITY_EFFECT = 0
     ANGRY_VILLAGER = 1
     BARRIER = 2
@@ -100,10 +100,6 @@ class ParticleID(enum.IntEnum):
     WAX_OFF = 86
     ELECTRIC_SPARK = 87
     SCRAPE = 88
-
-    @property
-    def identifier(self) -> str:
-        return f"minecraft:{self.name.lower()}"
 
 
 class Particle(pydantic.BaseModel):
