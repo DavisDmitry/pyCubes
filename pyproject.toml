@@ -31,8 +31,6 @@ python = "^3.10"
 anyio = "^3.4.0"
 nbtlib = "2.0.4"
 pydantic = "^1.8.2"
-ujson = {version = "^4.3.0", optional = true, extras = ["fast"]}
-uvloop = {version = "^0.16.0", optional = true, extras = ["fast"]}
 mkdocs-material = {version = "^8.0.3", optional = true}
 mkdocs-static-i18n = {version = "^0.22", optional = true}
 pymdown-extensions = {version = "^9.1", optional = true}

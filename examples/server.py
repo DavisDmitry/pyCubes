@@ -2,11 +2,7 @@ import io
 import logging
 import signal
 
-try:
-    # ujson available in fast extra (pip install pycubes[fast])
-    import ujson as json
-except ImportError:
-    import json
+import json
 
 import anyio
 import anyio.abc

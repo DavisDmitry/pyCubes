@@ -34,12 +34,6 @@ pyCubes is a library for creating servers and clients for Minecraft Java Edition
 pip install pyCubes
 ```
 
-With `fast` extra (includes ujson and uvloop):
-
-```bash
-pip install pyCubes[fast]
-```
-
 ## Features
 
 * Serializers for [Data types](https://wiki.vg/Data_types) (missing Chat (use String instead), Shunk Section (1.18) and Palleted container (1.18))

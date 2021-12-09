@@ -33,12 +33,6 @@ pyCubes — это библиотека для создания серверов
 pip install pyCubes
 ```
 
-C дополнительными зависимостями для более быстрой работы (ujson, uvloop):
-
-```bash
-pip install pyCubes[fast]
-```
-
 ## Особенности
 
 * Сериализаторы для [типов данных](https://wiki.vg/Data_types) (кроме: Chat (используйте String вместо него), Shunk Section (1.18) and Palleted container (1.18))
