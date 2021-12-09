@@ -91,7 +91,7 @@ async def process_packet_receive_timeout(conn: net.Connection):
     await conn.close()
 
 
-async def process_close_connection(conn: net.Connection, reason: Exception | None):
+async def process_close_connection(conn: net.Connection, reason: Exception):
     logging.info(
         '"%s:%i" disconnected from server. Reason: %s.',
         *conn.remote_address,
