@@ -35,7 +35,7 @@ pip install pyCubes
 
 ## Особенности
 
-* Сериализаторы для [типов данных](https://wiki.vg/Data_types) (кроме: Chat (используйте String вместо него), Shunk Section (1.18) and Palleted container (1.18))
+* Сериализаторы для [типов данных](https://wiki.vg/Data_types) (кроме Chat, используйте String вместо него)
 * Класс подключения
 * Низкоуровневый сервер
 * NBT модуль (обёртка над [nbtlib](https://github.com/vberlier/nbtlib))
@@ -44,7 +44,7 @@ pip install pyCubes
 
 ## TODO
 
-* [ ] Сериализаторы для всех типов данных
+* [x] Сериализаторы для всех типов данных
 * [ ] Дескриптор пакетов
 * [ ] Реализовать сжатие пакетов
 * [ ] Высокоуровневый класс-приложение для сервера с event driven API
