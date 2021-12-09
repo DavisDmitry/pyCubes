@@ -1,8 +1,7 @@
 import io
+import json
 import logging
 import signal
-
-import json
 
 import anyio
 import anyio.abc
