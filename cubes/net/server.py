@@ -29,7 +29,7 @@ class Server:
             [connection.Connection, io.BytesIO], Coroutine[Any, Any, None]
         ],
         close_connection_handler: Callable[
-            [connection.Connection, Exception], Coroutine[Any, Any, None]
+            [connection.Connection, Exception | None], Coroutine[Any, Any, None]
         ],
         packet_receive_timeout: float = 20,
     ):
