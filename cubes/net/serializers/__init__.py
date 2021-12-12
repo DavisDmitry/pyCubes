@@ -1,3 +1,4 @@
+from cubes.net.serializers._abc import AbstractSerializer
 from cubes.net.serializers._entity_metadata import EntityMetadataSerializer
 from cubes.net.serializers._nbt import NBTSerializer
 from cubes.net.serializers._particle import ParticleSerializer
