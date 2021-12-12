@@ -134,9 +134,11 @@ def test_invalid_position(x: int, y: int, z: int):
 
 @pytest.mark.parametrize("value", (True, False, 0, 1, "test"))
 def test_boolean(buffer: io.BytesIO, value):
-    data = serializers.BooleanSerializer(value).serialize()
+    serializer = serializers.BooleanSerializer(value)
+    assert serializer.value is value
+    data = serializer.serialize()
     assert serializers.BooleanSerializer.deserialize(data) is bool(value)
-    serializers.BooleanSerializer(value).to_buffer(buffer)
+    serializer.to_buffer(buffer)
     buffer.seek(0)
     assert serializers.BooleanSerializer.from_buffer(buffer) is bool(value)
 
