@@ -15,6 +15,10 @@ class AbstractSerializer(abc.ABC, Generic[T]):
             self.validate(value)
         self._value = value
 
+    @property
+    def value(self) -> T:
+        return self._value
+
     @classmethod
     @abc.abstractmethod
     def validate(cls, value: T) -> None:
