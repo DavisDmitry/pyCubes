@@ -398,14 +398,14 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "mkdocs-static-i18n"
-version = "0.22"
+version = "0.31"
 description = "MkDocs i18n plugin using static translation markdown files"
 category = "main"
 optional = true
 python-versions = ">=3.6"
 
 [package.dependencies]
-mkdocs = ">=1.1.2"
+mkdocs = ">=1.2.3"
 
 [[package]]
 name = "mypy-extensions"
@@ -776,7 +776,7 @@ docs = ["mkdocs-material", "mkdocs-static-i18n", "pymdown-extensions"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "b8199a8c614f26f174597fb51eff25541758395f37a272e90a2f16c069c5aea1"
+content-hash = "550b78d2c2cd2386130851a045d169c700d06e5d3222a3c1c5cbce6555420047"
 
 [metadata.files]
 anyio = [
@@ -1090,7 +1090,7 @@ mkdocs-material-extensions = [
     {file = "mkdocs_material_extensions-1.0.3-py3-none-any.whl", hash = "sha256:a82b70e533ce060b2a5d9eb2bc2e1be201cf61f901f93704b4acf6e3d5983a44"},
 ]
 mkdocs-static-i18n = [
-    {file = "mkdocs-static-i18n-0.22.tar.gz", hash = "sha256:a51e65a7465709379dcba28a1e8f3601091b801690f6280a90832b903fa02bd9"},
+    {file = "mkdocs-static-i18n-0.31.tar.gz", hash = "sha256:555349fd7d7db4a1ac5865c3c1c3533f15b840796fe789603599aea9cd75160c"},
 ]
 mypy-extensions = [
     {file = "mypy_extensions-0.4.3-py2.py3-none-any.whl", hash = "sha256:090fedd75945a69ae91ce1303b5824f428daf5a028d2f6ab8a299250a846f15d"},
