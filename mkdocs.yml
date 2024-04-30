@@ -28,16 +28,16 @@ plugins:
         - en
         - ru
   - i18n:
-      default_language: en
-      material_alternate: true
       languages:
-        en: English
-        ru: Russian
-      nav_translations:
-        ru:
-          Home: Главная
-          Examples: Примеры
-          Migrations: Миграции
+        - locale: en
+          name: English
+          default: true
+        - locale: ru
+          name: Russian
+          nav_translations:
+            Home: Главная
+            Examples: Примеры
+            Migrations: Миграции
 
 repo_url: https://github.com/DavisDmitry/pyCubes
 repo_name: DavisDmitry/pyCubes

@@ -5,19 +5,19 @@
 Run formatting:
 
 ```bash
-make format
+pdm format
 ```
 
 Run linters:
 
 ```bash
-make lint
+pdm lint
 ```
 
 Run tests:
 
 ```bash
-make test
+pdm test
 ```
 
 ### Working with documentation
@@ -25,23 +25,23 @@ make test
 First you need to install requirments:
 
 ```bash
-poetry install -E docs
+pdm install -d -G docs
 ```
 
 Run the development server:
 
 ```bash
-make docs-serve
+pdm docs-serve
 ```
 
 Build (render) the docs:
 
 ```bash
-make docs-build
+pdm docs-build
 ```
 
 Build and deploy the documentation to github pages:
 
 ```bash
-make docs-deploy
+pdm docs-deploy
 ```
