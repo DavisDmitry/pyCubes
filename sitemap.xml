@@ -1,28 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
     <url>
-         <loc>None</loc>
-         <lastmod>2021-12-09</lastmod>
-         <changefreq>daily</changefreq>
+        <loc>None./</loc>
+        <lastmod>2024-04-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="None"/>
+        <xhtml:link rel="alternate" hreflang="ru" href="Noneru/"/>
     </url>
     <url>
-         <loc>None</loc>
-         <lastmod>2021-12-09</lastmod>
-         <changefreq>daily</changefreq>
+        <loc>Nonedev/</loc>
+        <lastmod>2024-04-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="Nonedev/"/>
+        <xhtml:link rel="alternate" hreflang="ru" href="Noneru/dev/"/>
     </url>
     <url>
-         <loc>None</loc>
-         <lastmod>2021-12-09</lastmod>
-         <changefreq>daily</changefreq>
+        <loc>Noneexamples/client/</loc>
+        <lastmod>2024-04-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="Noneexamples/client/"/>
+        <xhtml:link rel="alternate" hreflang="ru" href="Noneru/examples/client/"/>
     </url>
     <url>
-         <loc>None</loc>
-         <lastmod>2021-12-09</lastmod>
-         <changefreq>daily</changefreq>
+        <loc>Noneexamples/server/</loc>
+        <lastmod>2024-04-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="Noneexamples/server/"/>
+        <xhtml:link rel="alternate" hreflang="ru" href="Noneru/examples/server/"/>
     </url>
     <url>
-         <loc>None</loc>
-         <lastmod>2021-12-09</lastmod>
-         <changefreq>daily</changefreq>
+        <loc>Nonemigrations/0_2/</loc>
+        <lastmod>2024-04-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="Nonemigrations/0_2/"/>
+        <xhtml:link rel="alternate" hreflang="ru" href="Noneru/migrations/0_2/"/>
+    </url>
+    <url>
+        <loc>Noneru/</loc>
+        <lastmod>2024-04-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ru" href="Noneru/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="None"/>
+    </url>
+    <url>
+        <loc>Noneru/dev/</loc>
+        <lastmod>2024-04-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ru" href="Noneru/dev/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="Nonedev/"/>
+    </url>
+    <url>
+        <loc>Noneru/examples/client/</loc>
+        <lastmod>2024-04-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ru" href="Noneru/examples/client/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="Noneexamples/client/"/>
+    </url>
+    <url>
+        <loc>Noneru/examples/server/</loc>
+        <lastmod>2024-04-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ru" href="Noneru/examples/server/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="Noneexamples/server/"/>
+    </url>
+    <url>
+        <loc>Noneru/migrations/0_2/</loc>
+        <lastmod>2024-04-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ru" href="Noneru/migrations/0_2/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="Nonemigrations/0_2/"/>
     </url>
 </urlset>
