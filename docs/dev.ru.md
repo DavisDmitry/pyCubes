@@ -5,19 +5,19 @@
 Запуск форматирования:
 
 ```bash
-make format
+pdm format
 ```
 
 Запуск линтеров:
 
 ```bash
-make lint
+pdm lint
 ```
 
 Запуск тестов:
 
 ```bash
-make test
+pdm test
 ```
 
 ### Работа с документацией
@@ -25,23 +25,23 @@ make test
 Cначала нужно установить необходимые утилиты:
 
 ```bash
-poetry install -E docs
+pdm install -d -G docs
 ```
 
 Запуск dev-сервера:
 
 ```bash
-make docs-serve
+pdm docs-serve
 ```
 
 Сборка (рендер) документации:
 
 ```bash
-make docs-build
+pdm docs-build
 ```
 
 Сборка и загрузка на github pages:
 
 ```bash
-make docs-deploy
+pdm docs-deploy
 ```
