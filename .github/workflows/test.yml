@@ -16,7 +16,7 @@ jobs:
       with:
         cache: true
     - name: Install dependencies
-      run: pdm install -d -G tests
+      run: pdm install -dG tests
     - name: Test
       run: |
         pdm test
