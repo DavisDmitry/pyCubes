@@ -16,6 +16,6 @@ jobs:
       with:
         cache: true
     - name: Install dependencies
-      run: pdm install -dG linters
+      run: pdm install --without tests,docs
     - name: Lint
       run: pdm lint
