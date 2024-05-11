@@ -40,10 +40,10 @@ class PositionSerializer(_abc.AbstractSerializer[tuple[int, int, int]]):
 
     @classmethod
     def deserialize(cls, data: bytes) -> tuple[int, int, int]:
-        data = struct.unpack(">Q", data)[0]
-        x = cls._from_twos_complement(data >> 38, 26)
-        z = cls._from_twos_complement(data >> 12 & 0x3FFFFFF, 26)
-        y = cls._from_twos_complement(data & 0xFFF, 12)
+        _data = struct.unpack(">Q", data)[0]
+        x = cls._from_twos_complement(_data >> 38, 26)
+        z = cls._from_twos_complement(_data >> 12 & 0x3FFFFFF, 26)
+        y = cls._from_twos_complement(_data & 0xFFF, 12)
         return x, y, z
 
     def to_buffer(self, buffer: io.BytesIO) -> None:

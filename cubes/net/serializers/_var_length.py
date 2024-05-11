@@ -43,7 +43,7 @@ class _BaseVarSerializer(_abc.AbstractSerializer[int]):
         return result
 
     @classmethod
-    async def from_stream(cls, buffer: anyio.abc.ByteStream) -> int:
+    async def from_stream(cls, buffer: anyio.abc.ByteReceiveStream) -> int:
         result = 0
         for index in range(cls._MAX_BYTES):
             byte = ord(await buffer.receive(1))

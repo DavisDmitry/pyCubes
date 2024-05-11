@@ -9,7 +9,6 @@ authors = [
 dependencies = [
     "anyio>=4.3.0",
     "nbtlib>=2.0.4",
-    "pydantic>=2.7.1",
 ]
 requires-python = "<4.0,>=3.10"
 readme = "README.md"

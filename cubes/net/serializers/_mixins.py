@@ -4,7 +4,7 @@ from cubes.net.serializers import _abc
 
 
 class StupidValidationMixin(_abc.AbstractSerializer[_abc.T]):
-    TYPE: _abc.T
+    _TYPE: type[_abc.T]
 
     @classmethod
     def validate(cls, value: _abc.T) -> None:
@@ -12,7 +12,7 @@ class StupidValidationMixin(_abc.AbstractSerializer[_abc.T]):
 
 
 class RangeValidationMixin(_abc.AbstractSerializer[_abc.T]):
-    TYPE: _abc.T
+    _TYPE: type[_abc.T]
     _RANGE: tuple[_abc.T, _abc.T]
 
     @classmethod
