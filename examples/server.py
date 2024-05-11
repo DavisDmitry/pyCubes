@@ -1,3 +1,4 @@
+import enum
 import io
 import json
 import logging
@@ -9,19 +10,34 @@ import anyio.abc
 from cubes import net
 from cubes.net import serializers
 
-_VERSION = "1.17.1"
-_PROTOCOL = 756
+_VERSION = "1.20.5-1.20.6"
+_PROTOCOL = 766
 _SERVER_DESCRIPTION = "Example server"
+
+
+class ConnectionState(enum.IntEnum):
+    HANDSHAKE = 0
+    STATUS = 1
+    LOGIN = 2
+    TRANSFER = 3
+    CONFIGURATION = 4
+    PLAY = 5
+
+
+CONNECTION_STATES: dict[net.Connection, ConnectionState] = {}
 
 
 async def process_handshake(conn: net.Connection, packet: io.BytesIO):
     protocol = serializers.VarIntSerializer.from_buffer(packet)
     serializers.StringSerializer.from_buffer(packet)  # host
     serializers.UnsignedShortSerializer.from_buffer(packet)  # port
-    conn.status = intention = net.ConnectionStatus(
+    CONNECTION_STATES[conn] = intention = ConnectionState(
         serializers.VarIntSerializer.from_buffer(packet)
     )
-    if intention == net.ConnectionStatus.LOGIN and protocol != _PROTOCOL:
+    if (
+        intention in (ConnectionState.LOGIN, ConnectionState.TRANSFER)
+        and protocol != _PROTOCOL
+    ):
         disconnect_packet = io.BytesIO()
         serializers.VarIntSerializer(0).to_buffer(disconnect_packet)
         serializers.StringSerializer(
@@ -62,15 +78,16 @@ async def process_status_ping(conn: net.Connection, packet: io.BytesIO):
 
 
 async def process_packet(conn: net.Connection, packet: io.BytesIO):
+    state = CONNECTION_STATES[conn]
     packet_id = serializers.VarIntSerializer.from_buffer(packet)
-    match (conn.status, packet_id):
-        case (net.ConnectionStatus.HANDSHAKE, 0x00):
+    match (state, packet_id):
+        case (ConnectionState.HANDSHAKE, 0x00):
             await process_handshake(conn, packet)
-        case (net.ConnectionStatus.HANDSHAKE, 0xFE):
+        case (ConnectionState.HANDSHAKE, 0xFE):
             await process_legacy_ping(conn)
-        case (net.ConnectionStatus.STATUS, 0x00):
+        case (ConnectionState.STATUS, 0x00):
             await process_status(conn)
-        case (net.ConnectionStatus.STATUS, 0x01):
+        case (ConnectionState.STATUS, 0x01):
             await process_status_ping(conn, packet)
         case _:
             pass
@@ -78,10 +95,11 @@ async def process_packet(conn: net.Connection, packet: io.BytesIO):
 
 async def process_new_connection(conn: net.Connection):
     logging.info('"%s:%i" connected to server.', *conn.remote_address)
+    CONNECTION_STATES[conn] = ConnectionState.HANDSHAKE
 
 
 async def process_packet_receive_timeout(conn: net.Connection):
-    if conn.status == net.ConnectionStatus.LOGIN:
+    if CONNECTION_STATES[conn] == ConnectionState.LOGIN:
         packet = io.BytesIO()
         serializers.VarIntSerializer(0x00).to_buffer(packet)
         serializers.StringSerializer(
@@ -97,6 +115,7 @@ async def process_close_connection(conn: net.Connection, reason: Exception | Non
         *conn.remote_address,
         repr(reason),
     )
+    del CONNECTION_STATES[conn]
 
 
 async def sygnal_handler(scope: anyio.CancelScope):
@@ -120,6 +139,6 @@ async def main():
 
 if __name__ == "__main__":
     logging.basicConfig(level="DEBUG")
-    # you shoud use anyio for run server
+    # you shoud use anyio to run the server
     # you can use trio or asyncio as backend
     anyio.run(main, backend="trio")
