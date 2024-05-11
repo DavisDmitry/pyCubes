@@ -1,5 +1,5 @@
-import enum
 import io
+from typing import cast
 
 import anyio
 import anyio.abc
@@ -12,37 +12,27 @@ class _LengthVarIntSerializer(serializers.VarIntSerializer):
     _RANGE = (1, 2097151)
 
 
-class ConnectionStatus(enum.IntEnum):
-    HANDSHAKE = 0
-    STATUS = 1
-    LOGIN = 2
-    PLAY = 3
-
-
 class Connection:
-    __slots__ = ("_stream", "_remote_address", "_local_address", "_status")
+    __slots__ = ("_stream", "_remote_address", "_local_address", "_state")
 
     def __init__(self, stream: anyio.abc.SocketStream):
         self._stream = stream
-        self._remote_address = stream.extra(anyio.abc.SocketAttribute.remote_address)
-        self._local_address = stream.extra(anyio.abc.SocketAttribute.local_address)
-        self._status = ConnectionStatus.HANDSHAKE
+        self._remote_address = cast(
+            anyio.abc.IPSockAddrType,
+            stream.extra(anyio.abc.SocketAttribute.remote_address),
+        )
+        self._local_address = cast(
+            anyio.abc.IPSockAddrType,
+            stream.extra(anyio.abc.SocketAttribute.local_address),
+        )
 
     @property
-    def status(self) -> ConnectionStatus:
-        return self._status
-
-    @property
-    def remote_address(self) -> tuple[str, int]:
+    def remote_address(self) -> anyio.abc.IPSockAddrType:
         return self._remote_address
 
     @property
-    def local_address(self) -> tuple[str, int]:
+    def local_address(self) -> anyio.abc.IPSockAddrType:
         return self._local_address
-
-    @status.setter
-    def status(self, value: ConnectionStatus):
-        self._status = value
 
     async def receive(self) -> io.BytesIO:
         length = await _LengthVarIntSerializer.from_stream(self._stream)
