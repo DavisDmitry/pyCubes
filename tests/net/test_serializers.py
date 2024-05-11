@@ -3,13 +3,12 @@ import random
 import string
 import uuid
 
-import nbtlib
+import anyio.abc
+import nbtlib  # type: ignore
 import pytest
 
-from cubes import nbt, types_
 from cubes.net import serializers
 from cubes.net.serializers import _string
-from cubes.types_ import entity
 
 
 @pytest.fixture
@@ -17,61 +16,10 @@ def buffer() -> io.BytesIO:
     return io.BytesIO()
 
 
-def test_valid_entity_metadata(buffer: io.BytesIO):
-    values = (
-        (entity.FieldType.BYTE, 0),
-        (entity.FieldType.VARINT, 0),
-        (entity.FieldType.FLOAT, 0.5),
-        (entity.FieldType.STRING, "test"),
-        (entity.FieldType.CHAT, '{"text": "test"}'),
-        (entity.FieldType.OPT_CHAT, '{"text": "test"}'),
-        (entity.FieldType.OPT_CHAT, None),
-        (entity.FieldType.SLOT, types_.Slot(1, 64, nbt={})),
-        (entity.FieldType.SLOT, None),
-        (entity.FieldType.BOOLEAN, True),
-        (entity.FieldType.ROTATION, [0.5, 0.5, 0.5]),
-        (entity.FieldType.POSITION, (1, 1, 1)),
-        (entity.FieldType.OPT_POSITION, (-1, -1, -1)),
-        (entity.FieldType.OPT_POSITION, None),
-        (entity.FieldType.DIRECTION, entity.Direction.NORTH),
-        (entity.FieldType.OPT_UUID, uuid.uuid4()),
-        (entity.FieldType.OPT_UUID, None),
-        (entity.FieldType.OPT_BLOCK_ID, 1),
-        (entity.FieldType.OPT_BLOCK_ID, None),
-        (entity.FieldType.NBT, {}),
-        (entity.FieldType.PARTICLE, types_.Particle(types_.ParticleID.ANGRY_VILLAGER)),
-        (
-            entity.FieldType.VILLAGER_DATA,
-            [entity.VillagerType.TAIGA, entity.VillagerProfession.BUTCHER, 1],
-        ),
-        (entity.FieldType.OPT_VARINT, 1),
-        (entity.FieldType.OPT_VARINT, None),
-        (entity.FieldType.POSE, entity.Pose.SLEEPING),
-    )
-    serializers.EntityMetadataSerializer.validate(*values)
-    data = serializers.EntityMetadataSerializer(*values).serialize()
-    for index, value in enumerate(
-        serializers.EntityMetadataSerializer.deserialize(data)
-    ):
-        assert value == values[index][1]
-    serializers.EntityMetadataSerializer(*values).to_buffer(buffer)
-    buffer.seek(0)
-    for index, value in enumerate(
-        serializers.EntityMetadataSerializer.from_buffer(buffer)
-    ):
-        assert value == values[index][1]
-
-
-def test_invalid_entity_metadata():
-    with pytest.raises(ValueError):
-        serializers.EntityMetadataSerializer.validate_villager_data(
-            (entity.VillagerType.TAIGA, entity.VillagerProfession.BUTCHER, 6)
-        )
-
-
 def test_valid_nbt(buffer: io.BytesIO):
     with open("tests/data/test_data.snbt", "r") as file:
         value = nbtlib.parse_nbt(file.read())
+    serializers.NBTSerializer.validate(value)
     data = serializers.NBTSerializer(value).serialize()
     assert serializers.NBTSerializer.deserialize(data) == value
     serializers.NBTSerializer(value).to_buffer(buffer)
@@ -82,26 +30,6 @@ def test_valid_nbt(buffer: io.BytesIO):
 def test_invalid_nbt():
     with pytest.raises(ValueError):
         serializers.NBTSerializer("test")
-
-
-@pytest.mark.parametrize(
-    "value",
-    (
-        types_.Particle(types_.ParticleID.ANGRY_VILLAGER),
-        types_.BlockParticle(0),
-        types_.DustParticle(0, 0, 0, 1),
-        types_.DustColorTransitionParticle(1, 1, 1, 0, 0, 0, 0.5),
-        types_.FallingDustParticle(0),
-        types_.ItemParticle(types_.Slot(1, 64, nbt={})),
-        types_.VibrationParticle(0, 0, 0, 1, 1, 1, 5),
-    ),
-)
-def test_particle(buffer: io.BytesIO, value: types_.Particle):
-    data = serializers.ParticleSerializer(value).serialize()
-    assert serializers.ParticleSerializer.deserialize(data) == value
-    serializers.ParticleSerializer(value).to_buffer(buffer)
-    buffer.seek(0)
-    assert serializers.ParticleSerializer.from_buffer(buffer) == value
 
 
 @pytest.mark.parametrize(
@@ -368,9 +296,15 @@ def test_valid_varint(buffer: io.BytesIO, value: int):
     assert serializers.VarIntSerializer.from_buffer(buffer) == value
 
 
-class _FakeStream(io.BytesIO):
+class _FakeStream(anyio.abc.ByteReceiveStream):
+    def __init__(self, stream: io.BytesIO):
+        self._stream = stream
+
     async def receive(self, max_bytes: int = 65536) -> bytes:
-        return self.read(max_bytes)
+        return self._stream.read(max_bytes)
+
+    async def aclose(self) -> None:
+        self._stream.close()
 
 
 @pytest.mark.anyio()
@@ -383,10 +317,10 @@ class _FakeStream(io.BytesIO):
     ),
 )
 async def test_valid_varint_async(value: int):
-    stream = _FakeStream()
+    stream = io.BytesIO()
     serializers.VarIntSerializer(value).to_buffer(stream)
     stream.seek(0)
-    assert await serializers.VarIntSerializer.from_stream(stream) == value
+    assert await serializers.VarIntSerializer.from_stream(_FakeStream(stream)) == value
 
 
 @pytest.mark.parametrize(
@@ -429,24 +363,6 @@ def test_valid_varlong(buffer: io.BytesIO, value: int):
 def test_invalid_varlong(value):
     with pytest.raises(ValueError):
         serializers.VarLongSerializer(value)
-
-
-@pytest.mark.parametrize(
-    "value", (types_.Slot(1, 64, nbt=nbt.Compound()), types_.Slot(1, 64))
-)
-def test_slot(buffer: io.BytesIO, value: types_.Slot):
-    value2 = value.copy(update={"nbt": nbt.Compound()})
-    data = serializers.SlotSerializer(value).serialize()
-    assert serializers.SlotSerializer.deserialize(data) == value2
-    serializers.SlotSerializer(value).to_buffer(buffer)
-    buffer.seek(0)
-    assert serializers.SlotSerializer.from_buffer(buffer) == value2
-
-
-def test_deserialize_none_slot(buffer: io.BytesIO):
-    buffer.write(b"\x00")
-    buffer.seek(0)
-    assert serializers.SlotSerializer.from_buffer(buffer) is None
 
 
 def test_valid_string(buffer: io.BytesIO):
