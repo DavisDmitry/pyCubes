@@ -16,7 +16,7 @@
       
       
       <link rel="icon" href="../../../assets/command_block.png">
-      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.20">
+      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.21">
     
     
       
@@ -498,7 +498,8 @@
 
   <h1>Server</h1>
 
-<div class="highlight"><span class="filename">examples/server.py</span><pre><span></span><code><span class="kn">import</span> <span class="nn">io</span>
+<div class="highlight"><span class="filename">examples/server.py</span><pre><span></span><code><span class="kn">import</span> <span class="nn">enum</span>
+<span class="kn">import</span> <span class="nn">io</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">signal</span>
@@ -509,19 +510,34 @@
 <span class="kn">from</span> <span class="nn">cubes</span> <span class="kn">import</span> <span class="n">net</span>
 <span class="kn">from</span> <span class="nn">cubes.net</span> <span class="kn">import</span> <span class="n">serializers</span>
 
-<span class="n">_VERSION</span> <span class="o">=</span> <span class="s2">&quot;1.17.1&quot;</span>
-<span class="n">_PROTOCOL</span> <span class="o">=</span> <span class="mi">756</span>
+<span class="n">_VERSION</span> <span class="o">=</span> <span class="s2">&quot;1.20.5-1.20.6&quot;</span>
+<span class="n">_PROTOCOL</span> <span class="o">=</span> <span class="mi">766</span>
 <span class="n">_SERVER_DESCRIPTION</span> <span class="o">=</span> <span class="s2">&quot;Example server&quot;</span>
+
+
+<span class="k">class</span> <span class="nc">ConnectionState</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">IntEnum</span><span class="p">):</span>
+    <span class="n">HANDSHAKE</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">STATUS</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">LOGIN</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">TRANSFER</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">CONFIGURATION</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="n">PLAY</span> <span class="o">=</span> <span class="mi">5</span>
+
+
+<span class="n">CONNECTION_STATES</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">net</span><span class="o">.</span><span class="n">Connection</span><span class="p">,</span> <span class="n">ConnectionState</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
 
 <span class="k">async</span> <span class="k">def</span> <span class="nf">process_handshake</span><span class="p">(</span><span class="n">conn</span><span class="p">:</span> <span class="n">net</span><span class="o">.</span><span class="n">Connection</span><span class="p">,</span> <span class="n">packet</span><span class="p">:</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">):</span>
     <span class="n">protocol</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">VarIntSerializer</span><span class="o">.</span><span class="n">from_buffer</span><span class="p">(</span><span class="n">packet</span><span class="p">)</span>
     <span class="n">serializers</span><span class="o">.</span><span class="n">StringSerializer</span><span class="o">.</span><span class="n">from_buffer</span><span class="p">(</span><span class="n">packet</span><span class="p">)</span>  <span class="c1"># host</span>
     <span class="n">serializers</span><span class="o">.</span><span class="n">UnsignedShortSerializer</span><span class="o">.</span><span class="n">from_buffer</span><span class="p">(</span><span class="n">packet</span><span class="p">)</span>  <span class="c1"># port</span>
-    <span class="n">conn</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">intention</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">ConnectionStatus</span><span class="p">(</span>
+    <span class="n">CONNECTION_STATES</span><span class="p">[</span><span class="n">conn</span><span class="p">]</span> <span class="o">=</span> <span class="n">intention</span> <span class="o">=</span> <span class="n">ConnectionState</span><span class="p">(</span>
         <span class="n">serializers</span><span class="o">.</span><span class="n">VarIntSerializer</span><span class="o">.</span><span class="n">from_buffer</span><span class="p">(</span><span class="n">packet</span><span class="p">)</span>
     <span class="p">)</span>
-    <span class="k">if</span> <span class="n">intention</span> <span class="o">==</span> <span class="n">net</span><span class="o">.</span><span class="n">ConnectionStatus</span><span class="o">.</span><span class="n">LOGIN</span> <span class="ow">and</span> <span class="n">protocol</span> <span class="o">!=</span> <span class="n">_PROTOCOL</span><span class="p">:</span>
+    <span class="k">if</span> <span class="p">(</span>
+        <span class="n">intention</span> <span class="ow">in</span> <span class="p">(</span><span class="n">ConnectionState</span><span class="o">.</span><span class="n">LOGIN</span><span class="p">,</span> <span class="n">ConnectionState</span><span class="o">.</span><span class="n">TRANSFER</span><span class="p">)</span>
+        <span class="ow">and</span> <span class="n">protocol</span> <span class="o">!=</span> <span class="n">_PROTOCOL</span>
+    <span class="p">):</span>
         <span class="n">disconnect_packet</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">()</span>
         <span class="n">serializers</span><span class="o">.</span><span class="n">VarIntSerializer</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">to_buffer</span><span class="p">(</span><span class="n">disconnect_packet</span><span class="p">)</span>
         <span class="n">serializers</span><span class="o">.</span><span class="n">StringSerializer</span><span class="p">(</span>
@@ -562,15 +578,16 @@
 
 
 <span class="k">async</span> <span class="k">def</span> <span class="nf">process_packet</span><span class="p">(</span><span class="n">conn</span><span class="p">:</span> <span class="n">net</span><span class="o">.</span><span class="n">Connection</span><span class="p">,</span> <span class="n">packet</span><span class="p">:</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">):</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">CONNECTION_STATES</span><span class="p">[</span><span class="n">conn</span><span class="p">]</span>
     <span class="n">packet_id</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">VarIntSerializer</span><span class="o">.</span><span class="n">from_buffer</span><span class="p">(</span><span class="n">packet</span><span class="p">)</span>
-    <span class="k">match</span> <span class="p">(</span><span class="n">conn</span><span class="o">.</span><span class="n">status</span><span class="p">,</span> <span class="n">packet_id</span><span class="p">):</span>
-        <span class="k">case</span> <span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">ConnectionStatus</span><span class="o">.</span><span class="n">HANDSHAKE</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">):</span>
+    <span class="k">match</span> <span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">packet_id</span><span class="p">):</span>
+        <span class="k">case</span> <span class="p">(</span><span class="n">ConnectionState</span><span class="o">.</span><span class="n">HANDSHAKE</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">):</span>
             <span class="k">await</span> <span class="n">process_handshake</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">packet</span><span class="p">)</span>
-        <span class="k">case</span> <span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">ConnectionStatus</span><span class="o">.</span><span class="n">HANDSHAKE</span><span class="p">,</span> <span class="mh">0xFE</span><span class="p">):</span>
+        <span class="k">case</span> <span class="p">(</span><span class="n">ConnectionState</span><span class="o">.</span><span class="n">HANDSHAKE</span><span class="p">,</span> <span class="mh">0xFE</span><span class="p">):</span>
             <span class="k">await</span> <span class="n">process_legacy_ping</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
-        <span class="k">case</span> <span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">ConnectionStatus</span><span class="o">.</span><span class="n">STATUS</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">):</span>
+        <span class="k">case</span> <span class="p">(</span><span class="n">ConnectionState</span><span class="o">.</span><span class="n">STATUS</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">):</span>
             <span class="k">await</span> <span class="n">process_status</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
-        <span class="k">case</span> <span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">ConnectionStatus</span><span class="o">.</span><span class="n">STATUS</span><span class="p">,</span> <span class="mh">0x01</span><span class="p">):</span>
+        <span class="k">case</span> <span class="p">(</span><span class="n">ConnectionState</span><span class="o">.</span><span class="n">STATUS</span><span class="p">,</span> <span class="mh">0x01</span><span class="p">):</span>
             <span class="k">await</span> <span class="n">process_status_ping</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">packet</span><span class="p">)</span>
         <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
             <span class="k">pass</span>
@@ -578,10 +595,11 @@
 
 <span class="k">async</span> <span class="k">def</span> <span class="nf">process_new_connection</span><span class="p">(</span><span class="n">conn</span><span class="p">:</span> <span class="n">net</span><span class="o">.</span><span class="n">Connection</span><span class="p">):</span>
     <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;&quot;</span><span class="si">%s</span><span class="s1">:</span><span class="si">%i</span><span class="s1">&quot; connected to server.&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">conn</span><span class="o">.</span><span class="n">remote_address</span><span class="p">)</span>
+    <span class="n">CONNECTION_STATES</span><span class="p">[</span><span class="n">conn</span><span class="p">]</span> <span class="o">=</span> <span class="n">ConnectionState</span><span class="o">.</span><span class="n">HANDSHAKE</span>
 
 
 <span class="k">async</span> <span class="k">def</span> <span class="nf">process_packet_receive_timeout</span><span class="p">(</span><span class="n">conn</span><span class="p">:</span> <span class="n">net</span><span class="o">.</span><span class="n">Connection</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">conn</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">net</span><span class="o">.</span><span class="n">ConnectionStatus</span><span class="o">.</span><span class="n">LOGIN</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">CONNECTION_STATES</span><span class="p">[</span><span class="n">conn</span><span class="p">]</span> <span class="o">==</span> <span class="n">ConnectionState</span><span class="o">.</span><span class="n">LOGIN</span><span class="p">:</span>
         <span class="n">packet</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">()</span>
         <span class="n">serializers</span><span class="o">.</span><span class="n">VarIntSerializer</span><span class="p">(</span><span class="mh">0x00</span><span class="p">)</span><span class="o">.</span><span class="n">to_buffer</span><span class="p">(</span><span class="n">packet</span><span class="p">)</span>
         <span class="n">serializers</span><span class="o">.</span><span class="n">StringSerializer</span><span class="p">(</span>
@@ -597,6 +615,7 @@
         <span class="o">*</span><span class="n">conn</span><span class="o">.</span><span class="n">remote_address</span><span class="p">,</span>
         <span class="nb">repr</span><span class="p">(</span><span class="n">reason</span><span class="p">),</span>
     <span class="p">)</span>
+    <span class="k">del</span> <span class="n">CONNECTION_STATES</span><span class="p">[</span><span class="n">conn</span><span class="p">]</span>
 
 
 <span class="k">async</span> <span class="k">def</span> <span class="nf">sygnal_handler</span><span class="p">(</span><span class="n">scope</span><span class="p">:</span> <span class="n">anyio</span><span class="o">.</span><span class="n">CancelScope</span><span class="p">):</span>
@@ -620,7 +639,7 @@
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="s2">&quot;DEBUG&quot;</span><span class="p">)</span>
-    <span class="c1"># you shoud use anyio for run server</span>
+    <span class="c1"># you shoud use anyio to run the server</span>
     <span class="c1"># you can use trio or asyncio as backend</span>
     <span class="n">anyio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s2">&quot;trio&quot;</span><span class="p">)</span>
 </code></pre></div>
@@ -699,7 +718,7 @@
     <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.expand", "nvaigation.top", "content.code.annotate"], "search": "../../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "\u0421\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d\u043e \u0432 \u0431\u0443\u0444\u0435\u0440", "clipboard.copy": "\u041a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0432 \u0431\u0443\u0444\u0435\u0440", "search.result.more.one": "\u0415\u0449\u0451 1 \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.more.other": "\u0415\u0449\u0451 # \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.none": "\u0421\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u043e", "search.result.one": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e 1 \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0435", "search.result.other": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439: #", "search.result.placeholder": "\u041d\u0430\u0447\u043d\u0438\u0442\u0435 \u043f\u0435\u0447\u0430\u0442\u0430\u0442\u044c \u0434\u043b\u044f \u043f\u043e\u0438\u0441\u043a\u0430", "search.result.term.missing": "\u041e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0443\u0435\u0442", "select.version": "\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0432\u0435\u0440\u0441\u0438\u044e"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.dd8806f2.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.a7c05c9e.min.js"></script>
       
     
   </body>
