@@ -8,8 +8,9 @@ This module is a wrapper over the [nbtlib](https://github.com/vberlier/nbtlib).
 Examples:
     >>> cubes.nbt.String('vberlier is cool!')
 """
+
 # pylint: disable=W0611
-from nbtlib import (
+from nbtlib import (  # type: ignore
     Byte,
     ByteArray,
     Compound,

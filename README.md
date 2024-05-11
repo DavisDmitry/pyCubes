@@ -17,6 +17,7 @@
 </p>
 
 ---
+
 <p align="center">
 <a href="https://pycubes.dmitrydavis.xyz">Documentation</a> | 
 <a href="https://github.com/DavisDmitry/pyCubes/tree/master/examples">Examples</a> | 
@@ -24,7 +25,8 @@
 </p>
 
 ---
-pyCubes is a library for creating servers and clients for Minecraft Java Edition (1.14+).
+
+pyCubes is a library for creating servers and clients for Minecraft Java Edition.
 
 **❗ 0.x versions are not stable. The library API is subject to change.**
 
@@ -36,21 +38,21 @@ pip install pyCubes
 
 ## Features
 
-* Serializers for [Data types](https://wiki.vg/Data_types) (missing Chat, use String instead)
-* Connection
-* Low level server
-* NBT module (wrapper over the [nbtlib](https://github.com/vberlier/nbtlib))
-* `generate_uuid` utility (generates UUID by player_name for using in offline mode)
-* [AnyIO](https://github.com/agronholm/anyio) support (an asynchronous networking and concurrency library)
+- Serializers for some [Data types](https://wiki.vg/Data_types)
+- Connection
+- Low level server
+- NBT module (wrapper over the [nbtlib](https://github.com/vberlier/nbtlib))
+- `generate_uuid` utility (generates UUID by player_name for using in offline mode)
+- [AnyIO](https://github.com/agronholm/anyio) support (an asynchronous networking and concurrency library)
 
 ## TODO
 
-* [x] Serializer for all packets Data types
-* [ ] Packets descriptor
-* [ ] Implement compression
-* [ ] High level server application with event driven API
-* [ ] High level client application with event driven API
-* [ ] High level proxy application with event driven API
-* [ ] Chat API (chat messages constructor)
-* [ ] Commands API
-* [ ] Add API Reference to docs
+- [x] Serializers for Data types
+- [ ] Network packets
+- [ ] Implement compression
+- [ ] High level server application with event driven API
+- [ ] High level client application with event driven API
+- [ ] High level proxy application with event driven API
+- [ ] Chat API (chat messages constructor)
+- [ ] Commands API
+- [ ] Add API Reference to docs

@@ -1,12 +1,11 @@
+import hashlib
 import uuid
-
-# pylint: disable=R0903
 
 
 def generate_uuid(player_name: str) -> uuid.UUID:
     """Generates UUID by player_name for using in offline mode."""
+    digest = hashlib.md5(
+        b"OfflinePlayer:" + player_name.encode(), usedforsecurity=False
+    ).digest()
 
-    class _NameSpace:
-        bytes = b"OfflinePlayer:"
-
-    return uuid.uuid3(_NameSpace, player_name)
+    return uuid.UUID(bytes=digest[:16], version=3)

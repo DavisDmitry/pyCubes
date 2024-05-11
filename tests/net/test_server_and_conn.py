@@ -1,5 +1,5 @@
 import io
-from typing import Iterator
+from typing import AsyncGenerator
 
 import anyio
 import anyio.abc
@@ -15,7 +15,7 @@ _PORT = 25560
 
 
 @pytest.fixture
-async def stats_server() -> Iterator[tuple[dict[str, bool], net.Server]]:
+async def stats_server() -> AsyncGenerator[tuple[dict[str, bool], net.Server], None]:
     stats = {"new_conn": False, "timeout": False, "close_conn": False}
 
     async def _process_new_conn(_):
@@ -69,8 +69,6 @@ async def test_conn(stats_server: tuple[dict, net.Server]):
         assert server.is_running
         async with await anyio.connect_tcp(_HOST, _PORT) as stream:
             conn = net.Connection(stream)
-            conn.status = net.ConnectionStatus.LOGIN
-            assert conn.status == net.ConnectionStatus.LOGIN
             conn.remote_address
             conn.local_address
         task_group.cancel_scope.cancel()
