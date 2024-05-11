@@ -1,6 +1,6 @@
 [project]
 name = "pyCubes"
-version = "0.4.1"
+version = "0.4.2"
 description = "Library for creating servers and clients for Minecraft Java Edition"
 authors = [
     {name = "DmitryDavis", email = "dmitrydavis@protonmail.com"},
