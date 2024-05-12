@@ -8,12 +8,12 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      id-token: write
     steps:
     - uses: actions/checkout@v4
     - name: Setup PDM
       uses: pdm-project/setup-pdm@v4
     - name: Build and publish
-      env:
-        PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-      run: |
-        pdm publish -u __token__ -p $PYPI_PASSWORD
+      run: pdm publish
